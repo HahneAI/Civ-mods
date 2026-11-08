@@ -35,13 +35,13 @@ Ten mods from two YouTube videos, with grammar cleaned up from the auto-transcri
 
 ### Video 2: Five quality-of-life mods
 
-6. **Radial Measuring Tool** (by Zur13)
+6. **Radial Measuring Tool** (by Zur13) — **installed.** Workshop ID 1628605090.
    Measures exact tile distances on the map. Click the RMT button in the top-right corner, pick a starting tile, and drag to see the range. This is useful for wonders with an area effect (Temple of Artemis, the Colosseum), district placement, and city spacing, with no hex counting by hand.
 
 7. **City-state quest screen** (likely **Better City States (UI)** by infixo; the video didn't name it)
    Puts every city-state quest on one screen, so you can see at a glance what each one wants: a trade route, a building, a boost, or a converted city. Because it's all in one place, you naturally finish more quests and earn more envoys. It doesn't change any mechanics; it just removes friction.
 
-8. **Camera zoom mod** (likely **Enhanced Camera** by DahakaMVl; the video didn't name it)
+8. **Enhanced Camera** (by DahakaMVl) — **installed.** Workshop ID: TBD.
    Unlocks the camera so you can zoom out much farther to see your whole empire or a continent, and zoom in closer than usual to look at wonders up close. It pairs well with visual mods that make cities look denser as they grow.
 
 9. **Policy change reminder** (exact mod not confirmed; a mod named **Policy Change Reminder** exists)
@@ -75,7 +75,7 @@ Ten mods from two YouTube videos, with grammar cleaned up from the auto-transcri
 | Steel and Thunder | ✓ | ✓ | ✓ | Adds 11 global units, 8 of them with Gathering Storm. Updated for New Frontier Pass. |
 | Radial Measuring Tool | ✓ | ✓ | ✓ | Updated for Gathering Storm in 2019. Last update March 2020. |
 | Better City States (UI) | ✓ | ✓ | ✓ | Adapted for New Frontier Pass. |
-| Enhanced Camera | ? | ? | ? | Camera-only change; likely works on all. |
+| Enhanced Camera (DahakaMVl) | ? | ? | ? | Installed. Camera-only change; likely works on all. ~1,656 ratings. |
 | Policy Change Reminder | ? | ? | ? | Not confirmed. |
 | Repeat Project | ✓ | ✓ | ✓ | Some Rise and Fall and Gathering Storm projects are tagged separately. |
 

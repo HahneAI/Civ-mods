@@ -92,3 +92,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - Confirmed DLC from screenshots in `docs/dlc-owned.md`: both expansions, all six Civilizations Expanded packs, most of New Frontier Pass, full Leader Pass.
 - Owner confirmed the DLC list is complete; Vietnam and Kublai Khan Pack not owned.
 - Confirmed mod #4: Workable 4th Ring by PhantomJ_M (Workshop ID still TBD).
+- UI group installed: CQUI (decided as UI base), Radial Measuring Tool, Enhanced Camera. #7 and #9 on hold (CQUI covers them). CREDITS.md started.

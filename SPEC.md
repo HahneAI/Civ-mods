@@ -187,7 +187,7 @@ The ledger describes rules as ideas. It never contains copied game code, art, or
 | Decision | Options | Default until you decide |
 |---|---|---|
 | Which DLC you own | Fill in `docs/dlc-owned.md` | Assume base game + Gathering Storm |
-| CQUI or Concise UI | Pick one UI base | CQUI |
+| CQUI or Concise UI | **Decided: CQUI** (installed). #7 and #9 on hold: CQUI covers them. | CQUI |
 | Civilizations Expanded or Better Balanced Game | Pick one civ rework | Civilizations Expanded, if DLC allows |
 | Your first customizations | From your Phase 1 wall list | None yet |
 | Permadeath and map questions for the far-future mode | See the mastery map | Deferred |
