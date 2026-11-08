@@ -1,6 +1,6 @@
 # DLC Owned
 
-Status: **confirmed from in-game screenshots** (Additional Content, 2026-11-08). All listed items show "Enabled". The screenshots skip a few spots in the alphabetical list, so a few packs may be missing from this page (see "Not seen yet").
+Status: **confirmed from in-game screenshots** (Additional Content, 2026-11-08). All listed items show "Enabled". The owner confirmed this is the complete list.
 
 ## Required for Civilizations Expanded
 
@@ -36,11 +36,12 @@ Status: **confirmed from in-game screenshots** (Additional Content, 2026-11-08).
 
 Conquests of Alexander, Gifts of the Nile, and multiplayer scenarios: Ancient Rivals, Cavalry and Cannonades, Global Thermonuclear War, Hallowed Ground, Pirates, Red Death, War Machine.
 
-## Not seen yet (gaps between screenshots)
+## Not owned
 
-- **Vietnam and Kublai Khan Pack** (last New Frontier Pass pack). If owned, the full New Frontier Pass is owned.
-- Anything alphabetically between Catherine de Medici and Ethiopia, between Khmer and Maya, and after Gifts of the Nile.
-- "Ottoman" content the owner recalled: the Ottomans themselves ship with Gathering Storm, so this is likely covered.
+The owner confirmed the screenshots are the complete list. Anything not shown is not owned, including:
+
+- **Vietnam and Kublai Khan Pack**, so the New Frontier Pass is incomplete (5 of 6 civ packs). Nothing on the mod list needs it.
+- The Ottomans still come with Gathering Storm itself, so they're available anyway.
 
 ## What this decides
 
