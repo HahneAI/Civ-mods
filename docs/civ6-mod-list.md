@@ -131,7 +131,7 @@ Monopolies and Corporations matters for the resource mods: their new luxuries ca
 5. **Add Deity++.** Check that the new tiers appear in setup.
 6. **Add Steel and Thunder, then Civilizations Expanded** if you own the DLC.
 
-If a game bounces you back to the menu or crashes on load, open `Documents/My Games/Sid Meier's Civilization VI/Logs/` and read `Database.log` and `Modding.log`. The last mod you added is the likely cause.
+If a game bounces you back to the menu or crashes on load, open `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VI\Logs\` (older guides say Documents; that changed in the Leader Pass update) and read `Database.log` and `Modding.log`. The last mod you added is the likely cause.
 
 ### Caveats
 

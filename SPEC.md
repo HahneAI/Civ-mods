@@ -113,8 +113,8 @@ civ-layer/
 |---|---|
 | Workshop mods | `C:\Program Files (x86)\Steam\steamapps\workshop\content\289070\<workshop-id>\` |
 | Local Mods folder | `Documents\My Games\Sid Meier's Civilization VI\Mods\` |
-| Logs | `Documents\My Games\Sid Meier's Civilization VI\Logs\` |
-| Debug gameplay DB | `Documents\My Games\Sid Meier's Civilization VI\Cache\DebugGameplay.sqlite` (verify location) |
+| Logs | `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VI\Logs\` (moved from Documents in the Leader Pass update) |
+| Debug gameplay DB | `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VI\Cache\DebugGameplay.sqlite` (verify) |
 | Base game data | `...\steamapps\common\Sid Meier's Civilization VI\Base\Assets\Gameplay\Data\` |
 | DLC data | `...\Sid Meier's Civilization VI\DLC\<pack>\` |
 
