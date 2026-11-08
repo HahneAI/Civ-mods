@@ -11,7 +11,7 @@ Legend: **[You]** needs you at your computer or in the game. **[Claude]** a Clau
 
 - [ ] **[You]** Check owned DLC in Civ 6 → Additional Content. Record it in `docs/dlc-owned.md`: Rise and Fall, Gathering Storm, New Frontier Pass, Leader Pass, and the six civ packs Civilizations Expanded needs.
 - [ ] **[You]** Confirm your OS and the real paths for Workshop mods, Mods folder, Logs, and the debug database (SPEC section 5).
-- [ ] **[You]** Get exact names and links for the unnamed mods from each video's description: #7 city-state quests, #8 camera, #9 policy reminder, #10 repeat projects, Reindeer, and Workable 4th Ring.
+- [ ] **[You]** Get exact names and links for the unnamed mods (candidates in `docs/mod-candidates.md`; confirm against the videos) from each video's description: #7 city-state quests, #8 camera, #9 policy reminder, #10 repeat projects, Reindeer, and Workable 4th Ring.
 - [ ] **[Claude]** Update `docs/civ6-mod-list.md` with the confirmed names and drop any mod your DLC can't support.
 - [ ] **[You]** Decide: CQUI or Concise UI. Civilizations Expanded or Better Balanced Game. Record in SPEC section 11.
 - [ ] **[You]** Create a private GitHub repo and push this starter folder.
@@ -36,6 +36,7 @@ Legend: **[You]** needs you at your computer or in the game. **[Claude]** a Clau
 - [ ] **[Claude]** Write `tools/inventory.py` → `docs/inventory.md`.
 - [ ] **[Claude]** Write `tools/conflicts.py` → `docs/conflicts.md`.
 - [ ] **[Claude]** Write `tools/logtriage.py`, `tools/sqlcheck.py`, `tools/deploy.py`.
+  - Early start (owner approved, ahead of phase): `logtriage.py` and `deploy.py` written with tests on sample data. Not yet run on real logs or a real Mods folder. `sqlcheck.py` still to do.
 - [ ] **[Claude]** Add `pytest` tests for each tool, plus `luacheck` and XML lint.
 - [ ] **[Claude]** Write `CREDITS.md` with author, link, and license status for each mod.
 - [ ] **[Both]** Compare `docs/conflicts.md` against the Phase 1 baseline. Every real breakage should appear in the list.
