@@ -81,5 +81,6 @@ These tools don't exist until TODO Phase 2 builds them.
 
 ## Changelog
 
-- Repo created from starter: SPEC.md, TODO.md, CLAUDE.md. `docs/civ6-mod-list.md` not added yet (not provided).
+- Repo created from starter: SPEC.md, TODO.md, CLAUDE.md.
 - Added "Long-term direction" section: repo will later shift to the owner's own tile-rendered civ game.
+- Added `docs/civ6-mod-list.md` (the 10 mods, DLC needs, conflicts, extras).
