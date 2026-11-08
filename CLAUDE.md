@@ -91,3 +91,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - Added from starter zip: `CREDITS.md` and empty folders (`docs/ledger`, `docs/playtests`, `mod/CivLayer/{Data,Scripts,Text,UI}`).
 - Confirmed DLC from screenshots in `docs/dlc-owned.md`: both expansions, all six Civilizations Expanded packs, most of New Frontier Pass, full Leader Pass.
 - Owner confirmed the DLC list is complete; Vietnam and Kublai Khan Pack not owned.
+- Confirmed mod #4: Workable 4th Ring by PhantomJ_M (Workshop ID still TBD).

@@ -22,7 +22,7 @@ Ten mods from two YouTube videos, with grammar cleaned up from the auto-transcri
 
    On paper these don't change the balance much, but they make every map feel fresher and make tile evaluation more interesting. Sukritact's Oceans is the standout for naval and archipelago games: it adds new sea resources (such as seals, squid, coral, kelp forests, and lake caviar) and makes water tiles worth working. Coastal cities get better yields and more to improve without being overpowered, and everything looks like it could have shipped in the base game. The capybara is a highlight: once improved, it gives very strong food and gold. The new luxuries also work with the Monopolies and Corporations game mode, so they can form industries and monopolies.
 
-4. **Workable 4th Ring**
+4. **Workable 4th Ring** (by PhantomJ_M) — **confirmed by owner.** Workshop ID: TBD.
    Removes the base game's three-tile working radius. In vanilla, your borders can grow to the fourth or fifth ring, but citizens can't work those tiles, so that land is economically useless. This mod lets cities work tiles in the fourth ring at full yields. It also opens up aggressive play: an Encampment four tiles from your city center can sit just two tiles from an enemy city, making a forward military base you can also work tiles around. Overall it raises how big cities can scale, makes late border growth worth more, and allows more creative district placement.
 
 5. **Civilizations Expanded + Steel and Thunder: Unit Expansion** (two mods used together)
@@ -70,7 +70,7 @@ Ten mods from two YouTube videos, with grammar cleaned up from the auto-transcri
 | Sukritact's Resources | ? | ? | ? | Not stated in my sources. |
 | Latin American Resources | ? | ? | ? | Not stated in my sources. |
 | Reindeer | ? | ? | ? | Couldn't find this mod's page. Get the exact name from the video description. |
-| Workable 4th Ring | ? | ? | ? | Couldn't confirm the author or page. |
+| Workable 4th Ring (PhantomJ_M) | ✓ | ✓ | ✓ | Confirmed from Workshop page: tagged Base Game, Rise and Fall, Gathering Storm. Posted Apr 2024, updated Nov 7 2026, 41 change notes, ~1,766 ratings (5 stars). 38.8 MB. |
 | **Civilizations Expanded** | ✗ | **Required** | **Required** | **Also requires six civ packs** (see below). |
 | Steel and Thunder | ✓ | ✓ | ✓ | Adds 11 global units, 8 of them with Gathering Storm. Updated for New Frontier Pass. |
 | Radial Measuring Tool | ✓ | ✓ | ✓ | Updated for Gathering Storm in 2019. Last update March 2020. |
