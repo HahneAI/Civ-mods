@@ -22,8 +22,10 @@ from pathlib import Path
 
 LOG_FILES = ("Database.log", "Modding.log", "Lua.log", "GameEffects.log")
 
-# How far back to look for a file path when the error line has none.
-CONTEXT_LINES = 3
+# How far back and ahead to look for a file path when the error line has none.
+# Database.log names the file a few lines AFTER the error, so look both ways.
+CONTEXT_BEFORE = 3
+CONTEXT_AFTER = 4
 
 ERROR_PATTERNS = {
     "Database.log": re.compile(r"\bERROR\b|constraint failed|no such (table|column)|syntax error", re.I),
@@ -49,6 +51,13 @@ MOD_PATH = re.compile(
 )
 # Base game and DLC paths.
 GAME_PATH = re.compile(r"[\\/](Base|DLC[\\/][^\\/]+)[\\/]", re.I)
+# Firaxis files and messages that show up with no mods at all. Seen in the
+# owner's first real logs (docs/playtests/001-ui-group.md).
+GAME_NOISE = re.compile(
+    r"CurrentClickouts/|HallOfFame/|_Gossip_Text\.xml|_Translations_ConfigText_"
+    r"|Service missing\. Skipping|LocalizedText - Failed loading XML",
+    re.I,
+)
 
 UNKNOWN = "(unknown source)"
 BASE = "(base game / DLC)"
@@ -79,7 +88,8 @@ class Report:
 
     def by_source(self) -> "OrderedDict[str, list[Issue]]":
         grouped: "OrderedDict[str, list[Issue]]" = OrderedDict()
-        for issue in sorted(self.issues.values(), key=lambda i: (i.source == UNKNOWN, i.source.lower())):
+        order = lambda i: (i.source == UNKNOWN, i.source == BASE, i.source.lower())
+        for issue in sorted(self.issues.values(), key=order):
             grouped.setdefault(issue.source, []).append(issue)
         return grouped
 
@@ -92,7 +102,7 @@ def find_source(text: str) -> str | None:
     match = MOD_PATH.search(text)
     if match:
         return match.group(1).strip()
-    if GAME_PATH.search(text):
+    if GAME_PATH.search(text) or GAME_NOISE.search(text):
         return BASE
     return None
 
@@ -103,31 +113,34 @@ def is_issue(log: str, line: str) -> bool:
     return bool(ERROR_PATTERNS[log].search(line))
 
 
+def nearby_source(log: str, lines: list[str], i: int) -> str | None:
+    before = [lines[j] for j in range(i - 1, max(-1, i - 1 - CONTEXT_BEFORE), -1)]
+    after = lines[i + 1 : i + 1 + CONTEXT_AFTER]
+    # Database.log puts the file after the error; other logs put it before.
+    order = after + before if log == "Database.log" else before + after
+    for text in order:
+        source = find_source(text)
+        if source:
+            return source
+    return None
+
+
 def triage_lines(log: str, lines: list[str], report: Report) -> None:
-    recent: list[str] = []
+    cleaned = [strip_timestamp(raw) for raw in lines]
     last_source: str | None = None
-    for number, raw in enumerate(lines, start=1):
-        line = strip_timestamp(raw)
+    for i, line in enumerate(cleaned):
         if not line:
             continue
         here = find_source(line)
         if is_issue(log, line):
-            source = here
-            if source is None:
-                for previous in reversed(recent):
-                    source = find_source(previous)
-                    if source:
-                        break
+            source = here or nearby_source(log, cleaned, i)
             if source is None and log == "Modding.log":
                 # Modding.log names the component being applied before it fails.
                 source = last_source
             severity = "warning" if WARNING_WORDS.search(line) else "error"
-            report.add(Issue(log, severity, line, source or UNKNOWN, first_line=number))
+            report.add(Issue(log, severity, line, source or UNKNOWN, first_line=i + 1))
         if here:
             last_source = here
-        recent.append(line)
-        if len(recent) > CONTEXT_LINES:
-            recent.pop(0)
 
 
 def triage_dir(logdir: Path) -> Report:
@@ -176,6 +189,9 @@ def render(report: Report, logdir: Path) -> str:
     for source, items in grouped.items():
         out.append(f"## {source}")
         out.append("")
+        if source == BASE:
+            out.append("_Firaxis files. These also appear with no mods enabled, so they are usually harmless._")
+            out.append("")
         for issue in items:
             times = f" (x{issue.count})" if issue.count > 1 else ""
             out.append(f"- **{issue.log}:{issue.first_line}** [{issue.severity}]{times} `{issue.message}`")
