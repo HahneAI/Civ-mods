@@ -89,3 +89,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - Built `tools/logtriage.py` and `tools/deploy.py` early, with pytest tests (owner approved bending the phase order for these two).
 - Added branch workflow: feature branch → `version-control` → `main`; created `main` and `version-control`.
 - Added from starter zip: `CREDITS.md` and empty folders (`docs/ledger`, `docs/playtests`, `mod/CivLayer/{Data,Scripts,Text,UI}`).
+- Confirmed DLC from screenshots in `docs/dlc-owned.md`: both expansions, all six Civilizations Expanded packs, most of New Frontier Pass, full Leader Pass.
