@@ -20,14 +20,14 @@
 
 ## Owner's in-game checks
 
-_Waiting for the owner's notes._
+**Passed** (owner, 2026-11-08), except one check pinned for later.
 
-- [ ] CQUI city panel (Civ 5-style layout)
-- [ ] CQUI city-state quests in the city-state panel
-- [ ] CQUI policy popup after a civic
-- [ ] RMT button and radius display
-- [ ] Enhanced Camera: zoom range wider than normal
-- [ ] Save, reload, one more turn
+- [x] CQUI city panel (Civ 5-style layout)
+- [x] CQUI city-state quests in the city-state panel
+- [ ] **Pinned:** CQUI policy popup after a civic. Not reached in the turns played. Check in the next playtest that gets past the first civic.
+- [x] RMT button and radius display
+- [x] Enhanced Camera: zoom range wider than normal
+- [x] Save, reload, one more turn
 
 ## Tool fixes from this run
 

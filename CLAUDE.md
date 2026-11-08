@@ -94,3 +94,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - Confirmed mod #4: Workable 4th Ring by PhantomJ_M (Workshop ID still TBD).
 - UI group installed: CQUI (decided as UI base), Radial Measuring Tool, Enhanced Camera. #7 and #9 on hold (CQUI covers them). CREDITS.md started.
 - First real logs (UI group): clean. Filed `docs/playtests/001-ui-group.md`; fixed logtriage attribution (look-ahead, Firaxis noise).
+- UI group playtest passed; CQUI policy popup check pinned for a later run.
