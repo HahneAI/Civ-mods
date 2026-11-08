@@ -95,3 +95,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - UI group installed: CQUI (decided as UI base), Radial Measuring Tool, Enhanced Camera. #7 and #9 on hold (CQUI covers them). CREDITS.md started.
 - First real logs (UI group): clean. Filed `docs/playtests/001-ui-group.md`; fixed logtriage attribution (look-ahead, Firaxis noise).
 - UI group playtest passed; CQUI policy popup check pinned for a later run.
+- Group 2 IDs confirmed from Workshop pages: Repeat Project (yamada, 1505351262), Movable Districts (wltk, 2683624437). Test pending.

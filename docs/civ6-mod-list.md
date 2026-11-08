@@ -47,7 +47,7 @@ Ten mods from two YouTube videos, with grammar cleaned up from the auto-transcri
 9. **Policy change reminder** (exact mod not confirmed; a mod named **Policy Change Reminder** exists)
    Reminds you every time you can swap policies for free, so you don't run the wrong setup for twenty turns after unlocking a civic.
 
-10. **Auto-repeat projects** (likely **Repeat Project** by yamada; an alternative is **Non Stop Project** by Flavian)
+10. **Auto-repeat projects** — **Repeat Project** by yamada, **confirmed by owner** (ID 1505351262; UI mod, updated Jul 2021, 776 ratings). Alternative not used: Non Stop Project by Flavian.
     Lets a city project repeat on its own when it finishes, such as Campus Research Grants, Industrial Zone projects, and Theater Square festivals. This cuts late-game micromanagement and keeps your yields and great-person points steady.
 
 ---

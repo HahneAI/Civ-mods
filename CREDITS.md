@@ -8,3 +8,5 @@ Every mod used in patch mode or absorbed into CivLayer. Filled in during TODO Ph
 | Radial Measuring Tool | Zur13 | https://steamcommunity.com/sharedfiles/filedetails/?id=1628605090 | None stated; private use only | Installed, patch mode |
 | Enhanced Camera | DahakaMVl | https://steamcommunity.com/sharedfiles/filedetails/?id=2484412297 | None stated; private use only | Installed, patch mode |
 | Workable 4th Ring | PhantomJ_M | Workshop ID TBD | None stated; private use only | Chosen, not yet installed |
+| Repeat Project | yamada | https://steamcommunity.com/sharedfiles/filedetails/?id=1505351262 | None stated; private use only | Chosen, group 2 (not yet tested) |
+| Movable Districts | wltk | https://steamcommunity.com/sharedfiles/filedetails/?id=2683624437 | None stated; private use only | Chosen, group 2 (not yet tested) |
