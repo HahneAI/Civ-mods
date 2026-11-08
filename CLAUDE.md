@@ -23,6 +23,7 @@ This repo will shift over time. Civ 6 modding is the first stage only. The real 
 
 ## How to work
 
+- **Branch workflow:** work only on your chat's feature branch → owner merges it into `version-control` → once tests pass there, owner merges into `main`. Never push to `version-control` or `main` yourself. Each chat keeps its own feature branch unless told otherwise.
 - Work the first unchecked TODO item in the current phase. Don't skip phases.
 - One logical change per commit. Absorb at most one mod per commit.
 - Check items off in `TODO.md` only after the owner confirms the playtest passed.
@@ -86,3 +87,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - Added `docs/civ6-mod-list.md` (the 10 mods, DLC needs, conflicts, extras).
 - Added `docs/dlc-owned.md` (from memory) and `docs/mod-candidates.md` (unconfirmed links for the unnamed mods).
 - Built `tools/logtriage.py` and `tools/deploy.py` early, with pytest tests (owner approved bending the phase order for these two).
+- Added branch workflow: feature branch → `version-control` → `main`; created `main` and `version-control`.
