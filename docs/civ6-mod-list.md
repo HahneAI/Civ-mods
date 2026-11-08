@@ -41,7 +41,7 @@ Ten mods from two YouTube videos, with grammar cleaned up from the auto-transcri
 7. **City-state quest screen** (likely **Better City States (UI)** by infixo; the video didn't name it)
    Puts every city-state quest on one screen, so you can see at a glance what each one wants: a trade route, a building, a boost, or a converted city. Because it's all in one place, you naturally finish more quests and earn more envoys. It doesn't change any mechanics; it just removes friction.
 
-8. **Enhanced Camera** (by DahakaMVl) — **installed.** Workshop ID: TBD.
+8. **Enhanced Camera** (by DahakaMVl) — **installed.** Workshop ID 2484412297.
    Unlocks the camera so you can zoom out much farther to see your whole empire or a continent, and zoom in closer than usual to look at wonders up close. It pairs well with visual mods that make cities look denser as they grow.
 
 9. **Policy change reminder** (exact mod not confirmed; a mod named **Policy Change Reminder** exists)
