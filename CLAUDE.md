@@ -96,3 +96,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - First real logs (UI group): clean. Filed `docs/playtests/001-ui-group.md`; fixed logtriage attribution (look-ahead, Firaxis noise).
 - UI group playtest passed; CQUI policy popup check pinned for a later run.
 - Group 2 IDs confirmed from Workshop pages: Repeat Project (yamada, 1505351262), Movable Districts (wltk, 2683624437). Test pending.
+- Group 2 partial results filed (`docs/playtests/002-group2.md`): Repeat Project works; Move gear present; logs pending; CQUI blank Options button open.
