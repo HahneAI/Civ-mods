@@ -24,6 +24,7 @@ Legend: **[You]** needs you at your computer or in the game. **[Claude]** a Clau
 
 - [ ] **[You]** Subscribe to the final mod list. Install in the order in `docs/civ6-mod-list.md` Part 2.
 - [ ] **[You]** Run the smoke test (SPEC section 7) after each group. Note what breaks.
+  - Plan change 2026-11-09: group 3 = Workable 4th Ring + Real Strategy (AI). Deity++ swapped out (on hold).
   - Group 1 (UI: CQUI, RMT, Enhanced Camera): passed 2026-11-08 (`docs/playtests/001-ui-group.md`). Pinned policy popup check passed in group 2.
   - Group 2 (Repeat Project, Movable Districts): passed 2026-11-09 (`docs/playtests/002-group2.md`). All five mods kept active.
 - [ ] **[You]** Attach the four log files from a clean run.

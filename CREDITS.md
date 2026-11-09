@@ -10,3 +10,4 @@ Every mod used in patch mode or absorbed into CivLayer. Filled in during TODO Ph
 | Workable 4th Ring | PhantomJ_M | Workshop ID TBD | None stated; private use only | Chosen, not yet installed |
 | Repeat Project | yamada | https://steamcommunity.com/sharedfiles/filedetails/?id=1505351262 | None stated; private use only | Installed, patch mode, tested 2026-11-09 |
 | Movable Districts | wltk | https://steamcommunity.com/sharedfiles/filedetails/?id=2683624437 | None stated; private use only | Installed, patch mode, tested 2026-11-09 |
+| Real Strategy (AI) | infixo | Workshop ID to confirm (likely 1617282434); https://forums.civfanatics.com/resources/real-strategy-ai.27195/ | None stated; private use only | Chosen, not yet installed (replaces Deity++) |
