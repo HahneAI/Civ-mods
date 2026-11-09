@@ -9,7 +9,7 @@ Ten mods from two YouTube videos, with grammar cleaned up from the auto-transcri
 ### Video 1: Five mods that change how Civ 6 plays
 
 1. **Movable Districts** (by wltk)
-   Spend gold to move a district you've already built to a new tile. Each district gets a Move button in the city's production panel. The cost is twice the district's original production cost, so a 50-production district costs 100 gold to move. The district isn't destroyed and rebuilt: it moves with all its buildings intact. Only main one-per-city districts are supported. Neighborhoods, Canals, and Dams can't be moved. This matters because district placement, one of the biggest tactical decisions in Civ 6, used to be permanent.
+   Spend gold to move a district you've already built to a new tile. While a city's production panel is open, each movable district shows a gear Move button on its tile. The cost is twice the district's original production cost, so a 50-production district costs 100 gold to move. The district isn't destroyed and rebuilt: it moves with all its buildings intact. Only main one-per-city districts are supported. Neighborhoods, Canals, and Dams can't be moved. This matters because district placement, one of the biggest tactical decisions in Civ 6, used to be permanent.
 
 2. **Deity++** (difficulty mod)
    Adds two difficulty tiers above Deity: Deity+ and Deity++. Vanilla Deity already gives the AI multipliers on production and gold, faster science, culture, and faith, extra early units and builders, and a combat-strength bonus. Deity++ extends that same progression further. It does **not** make the AI smarter. It only gives the AI more resources and bonuses, so opponents don't plan better, but they get far more early momentum.
@@ -115,7 +115,7 @@ Monopolies and Corporations matters for the resource mods: their new luxuries ca
 | Resource mods + Civ6 Plus or CIVITAS Resources | **Reported** | Missing resource icons. Not on your list. |
 | Better City States (UI) + CIVITAS City-States | **Confirmed conflict** | Not on your list. Both replace the City States screen. |
 | Better City States (UI) + CQUI | **Confirmed compatible** | Relevant if you also run CQUI. |
-| **Movable Districts + Repeat Project** | **Risk** | Both change the city production panel. If two UI mods replace the same panel file, one wins and the other's button vanishes. Test this pair first. |
+| **Movable Districts + Repeat Project** | **Tested OK** (2026-11-09, with CQUI) | Predicted risk did not happen: both add their own UI contexts instead of replacing the production panel file. See `docs/playtests/002-group2.md`. |
 | **Workable 4th Ring + other city UI mods** | **Risk** | A similar mod (CypRyan's Workable Outer Rings) had reported conflicts with mods that change citizen assignment, and its author said districts in the outer rings weren't supported. Expect the same kind of edge cases. |
 | Workable 4th Ring + Movable Districts | **Unknown** | Moving a district into the 4th ring may or may not be allowed. Test it. |
 | Repeat Project + Non Stop Project | **Don't run both** | They do the same job. |

@@ -97,3 +97,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - UI group playtest passed; CQUI policy popup check pinned for a later run.
 - Group 2 IDs confirmed from Workshop pages: Repeat Project (yamada, 1505351262), Movable Districts (wltk, 2683624437). Test pending.
 - Group 2 partial results filed (`docs/playtests/002-group2.md`): Repeat Project works; Move gear present; logs pending; CQUI blank Options button open.
+- Group 2 playtest PASSED (logs clean; Movable Districts and Repeat Project use AddUserInterfaces so no production panel clash). Five mods now active. Next: Workable 4th Ring (ID needed).

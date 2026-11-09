@@ -24,7 +24,8 @@ Legend: **[You]** needs you at your computer or in the game. **[Claude]** a Clau
 
 - [ ] **[You]** Subscribe to the final mod list. Install in the order in `docs/civ6-mod-list.md` Part 2.
 - [ ] **[You]** Run the smoke test (SPEC section 7) after each group. Note what breaks.
-  - Group 1 (UI: CQUI, RMT, Enhanced Camera): passed 2026-11-08 (`docs/playtests/001-ui-group.md`). **Pinned:** confirm CQUI policy popup in a later run.
+  - Group 1 (UI: CQUI, RMT, Enhanced Camera): passed 2026-11-08 (`docs/playtests/001-ui-group.md`). Pinned policy popup check passed in group 2.
+  - Group 2 (Repeat Project, Movable Districts): passed 2026-11-09 (`docs/playtests/002-group2.md`). All five mods kept active.
 - [ ] **[You]** Attach the four log files from a clean run.
 - [ ] **[Claude]** Write `docs/playtests/000-baseline.md`: what works, what breaks, which log errors come from which mod.
 - [ ] **[You]** Start a **wall list**: changes you want that no mod makes. Add to it all project long.
