@@ -157,7 +157,7 @@ What the triggers ask you to do `[derived]`:
 
 - Eras advance as you move through the **science** tree. `[sure]`
 - Era 2's great-person base cost is 60; by era 8 it is 1,320. See page 05.
-- A "next era" timer of 10 turns exists. `[sure]` Era score, confirmed `[sure]`: golden age needs **25**, dark age is below **25** (base thresholds); each past dark age makes the next threshold **10 easier**, each past golden age **5 harder**. What earns era score: not found in the dump. `[verify]`
+- A "next era" timer of 10 turns exists. `[sure]` Era score, confirmed `[sure]`: golden age needs **25**, dark age is below **25** (base thresholds); each past dark age makes the next threshold **10 easier**, each past golden age **5 harder**. What earns era score: 162 "moment" types worth 0 to 5 each (page 07, Step 8). `[sure]`
 
 ## Step 7 · How the trees connect to everything else
 
@@ -173,7 +173,7 @@ What the triggers ask you to do `[derived]`:
 
 **Core loop to test in your game:** *more land and buildings → more science and culture → nodes done → new buildings, units, and rules → more land and buildings.* Boosts add a second input: *do the thing the tree asks → 40% off.*
 
-**What the nodes unlock** (counted from the database, page 07): techs average 3.1 unlocks in era 1 and fall to 0.2 by era 8; civics average 2.7 to 5.1 until era 7. Most of a civic's unlocks are policy cards. See [`07-effects-system.md`](07-effects-system.md).
+**What the nodes unlock** (counted from the database including units, page 07): techs average 4.1 unlocks in era 1 and 1.8 in era 8; civics average 3.7 to 5.1 until era 7. Every tech and civic in eras 1 to 7 unlocks something. Most of a civic's unlocks are policy cards; 45 of 77 techs unlock at least one unit. See [`07-effects-system.md`](07-effects-system.md).
 
 ## Open items
 

@@ -84,55 +84,104 @@ Three of the tier 2 and 3 bonuses **only work in a city that has a governor** (t
 ## Step 5 · What techs and civics actually give `[sure]` / `[derived]`
 
 - **Techs have almost no effects of their own** (only 17 rows in the whole table: movement, embarking, one diplomatic vision, one spy, urban defense, and the end-game promotions). **A tech's reward is mostly an unlock**: it makes a building, district, improvement, unit, or card available.
-- **Counted unlocks (districts, buildings including wonders, improvements, cards, governments; units not counted):**
+- **Counted unlocks (districts, buildings including wonders, improvements, units, projects, cards, governments)** `[sure]`/`[derived]`:
 
 | Era | Techs: unlocks per tech | Civics: unlocks per civic |
 |---|---|---|
-| 1 | 3.1 | 3.6 |
-| 2 | 3.0 | 5.1 |
-| 3 | 1.9 | 3.7 |
-| 4 | 1.3 | 4.3 |
-| 5 | 1.6 | 3.9 |
-| 6 | 1.9 | 2.7 |
-| 7 | 1.0 | 3.4 |
-| 8 | 0.2 | 1.3 |
-| Future | 0.2 | 1.3 |
+| 1 | 4.1 | 3.7 |
+| 2 | 4.6 | 5.1 |
+| 3 | 4.5 | 4.3 |
+| 4 | 2.7 | 4.8 |
+| 5 | 3.5 | 4.1 |
+| 6 | 3.4 | 2.9 |
+| 7 | 2.9 | 3.6 |
+| 8 | 1.8 | 1.3 |
+| Future | 0.6 | 1.5 |
 
-Total unlocks counted: **34 districts, 116 buildings, 43 improvements, 118 cards, 12 governments.** Every civic in eras 1 to 7 unlocks something; **7 of 9 era-8 techs unlock none of these** (their reward is units and victory progress, not counted here).
-- **Civics hand out more than techs in every era** (cards dominate: 118 of the unlocks). Late techs are almost pure prerequisites. `[derived]`
+Total unlocks counted: **34 districts, 116 buildings, 115 units, 43 improvements, 15 projects, 118 cards, 12 governments (453)**. Every tech and civic in eras 1 to 7 unlocks something; the only ones with nothing are 4 of 8 future techs, 2 era-8 civics and 1 future civic. **This corrects the earlier draft** (before units were counted) that said most era-8 techs unlock nothing: they unlock units.
+- **Units:** the game has **159 units**; **44 need no tech at all** (starting, civilization-unique, and civilian/great-person ones), and **45 of the 77 techs unlock at least one unit** (medieval techs unlock the most: 21 units in era 3).
+- Techs still give more unlocks of things you **build or make**; civics give more **rules**: cards are 118 of the civic unlocks. Techs lead in the early eras (4.1 to 4.6 per tech vs. 3.7 to 5.1); civics lead from era 4 to 6.
 
-**Design note:** unlocks front-loaded into the first four eras, a long tail of prerequisite-only late nodes. If you copy the trees, decide whether you want that tail.
+**Design note:** unlocks are richest in the first three eras (about 4 to 5 per node) and thin out to about 2 per node by the end. A tree where every node unlocks something is a good rule; the thin tail is the only part to rethink.
 
 ## Step 6 · What beliefs do `[sure]`
 
-Beliefs are 88 rows, **64 of them wrappers** ("attach this other modifier to cities that follow the religion"), 9 add a religious building, 4 are tile adjacency bonuses (a holy-site bonus from tundra, desert, jungle, etc.), and a few are direct (+10% city growth, +15% border expansion). The real effect sits one level down in the attached modifier, so beliefs are not fully readable from this dump. `[verify]` (a follow-up resolves one level of wrapping)
+Beliefs are 88 rows, **64 of them wrappers** that attach another modifier. After resolving one level (round 4), the real effects are:
 
-## Step 7 · Condition sets `[sure]`
+| What the belief does | Rows |
+|---|---|
+| +1 or +2 of a yield on tiles with a certain improvement or resource | 13 |
+| Add a yield tied to the belief (faith per building, etc.) | 12 |
+| +N from a certain building | 4 |
+| More yield from international trade routes | 4 |
+| Unit strength, unit cost, free unit, housing, great-person points, tourism, wonder production | 2 each or fewer |
 
-An effect's "when" is a named set of requirements shared between many effects (for example "city has a commercial hub", "city follows this religion", "building is the palace or a tier-N government building"). Requirement sets are **reused**, which keeps the data small. Their full contents were not dumped. `[verify]`
+The typical pantheon-style belief reads: *"for cities that follow this belief, tiles with improvement X give +1 (or +2) of yield Y."* The typical religion belief reads: *"for cities that follow this religion, building X gives +N of yield Y, or can be bought with faith."* Combat-flavored ones give faith for kills (50% of the defeated strength), healing near holy sites (+30%), or +25% military production in early eras. 4 belief rows are direct tile adjacency bonuses; a few are direct (+10% city growth, +15% border expansion).
+
+**Design note:** a belief is a single sentence: **condition (follows this belief) + tile or building filter + yield bonus.** Nine in ten need no special code. That is the best part of the system to copy.
+
+## Step 7 · Condition sets `[sure]` / `[derived]`
+
+There are **880 named condition sets**; each is a short list of requirements joined together (and some inverted, "must not"). The most common requirement kinds:
+
+| Requirement | Uses |
+|---|---|
+| Player type or level (major, minor, and so on) | 115 |
+| City has building X | 102 |
+| Player met another player N turns ago | 85 |
+| Player has technology X | 84 |
+| Tile has improvement, terrain, feature or district type X | about 40 each |
+| Unit is attacking; unit domain matches; opponent's unit class matches | 30 to 42 each |
+| Another set is met (nesting) | 32 |
+| City has district X | 26 |
+| Tile adjacent to the owner | 29 |
+
+**Plain reading:** conditions are mostly *what the city or tile has* (a building, district, improvement, terrain, feature) and *who you are or what you know* (player type, technology, contact). Combat ones check who is attacking and what class is opposite. A set can use another set, so conditions nest. `[derived]`
+
+**Design note:** about 15 requirement kinds cover almost every card. A small, closed list of condition kinds is a good target for your game.
 
 ## Step 8 · Era score and ages `[sure]`
 
-- Golden age base threshold: **25 era score**. Dark age base threshold: **25**. A past dark age makes the next threshold **−10 easier**, a past golden age **+5 harder**. This confirms the comeback rule from page 04.
-- A few buildings add to era score directly (for example, +1 per "pride moment" up to a limit), so era score can be built.
+- Golden age base threshold: **25 era score**. Dark age base threshold: **25**. A past dark age makes the next threshold **10 easier**, a past golden age **5 harder**.
+- **Era score comes from "moments"**: the database lists **162 moment types**. Each is worth **0 to 5 era score**:
+
+| Score | Moments |
+|---|---|
+| 0 (no score) | 7 |
+| 1 | 42 |
+| 2 | 50 |
+| 3 | 43 |
+| 4 | 15 |
+| 5 | 5 |
+
+Adding every moment type once gives **356** points; the threshold of 25 is about 7% of that, so a golden age needs a spread of several different moments, not one big one.
+- **Two copies of many moments:** 42 "first time you do it" and 43 "first in the world" versions (the world-first is worth one more point). The five 5-point moments are all world-firsts or conquests: meeting every other major player first, a trading post in every civ first, first air unit, first to sail around the world, defeating a player's last city.
+- **Moment categories** by count: city (25), unit (15), district (10), project (10), player (9), military formation (8), government (8), improvement (8), building (7), and smaller groups (heroes, great people, religion, trade, spies, barbarians).
+- **12 commemoration categories** (scientific, cultural, infrastructure, religious, exploration, economic, industrial, military, tourism, aeronautical, espionage, automaton). At each new era you pick one to commemorate; each has a **golden-age bonus, a normal-age bonus, and a dark-age bonus**, and each is available only for certain eras (the early ones classical to medieval, the last ones era 8 on). 54 effect rows sit behind them.
+- Each era lasts **40 to 60 turns** (minimum and maximum) before it can end; liberating a city-state gives **2, 3, 3, 6, 6, 9, 9, 9** envoys by era. Grievance decay per turn falls from **10 to 2** across the eras (so old wars are forgiven more slowly later). Trade routes' minimum length rises by 10 turns every two eras (0, 0, 10, 10, 20, 20, 20, 30, 30). `[sure]`
+- A few buildings add era score directly (for example, +1 per "pride moment").
+
+**Design note:** era score is a *scoreboard of varied firsts* with a comeback rule. The world-first bonus (+1) is a clean way to reward being early without making it the only path.
 
 ## Step 9 · Other systems the dump surfaced `[sure]`
 
 | System | Numbers |
 |---|---|
+| **Projects** | 81 projects, 15 of them gated by a tech and some by a district (for example, space launches need the space district and a late tech, and cost 800 to 1,500 production) |
 | **Governors** | 12 types (7 standard, 1 leader-linked, 4 secret-society), 64 promotions arranged in levels 0 to 3 and columns; each carries identity pressure 8 (10 for secret-society ones) and a transition strength of 100 to 150; 116 modifier rows between them |
 | **Barbarians** | Camps limited to 3 per major civ, at least 4 tiles from a city and 7 from another camp; "boldness" rises 2 per turn, +15 per kill, −30 per camp attacked; clans bribe cost 50 per city |
 | **Espionage** | Spy max level 4; escape base chance 10%; fomenting unrest costs the target −15 loyalty (−5 per spy level) and adds identity |
 | **Climate** | 45% of coastal lowlands flood at the max level; units give 50% of CO2 |
+| **Minor-power types** | 6 city-state bonus types (scientific, religious, trade, cultural, militaristic, industrial); suzerain at 3 envoys `[sure]` |
 | **Resources** | 55 resources: 34 luxury, 11 bonus, 7 strategic, 2 artifact, 1 ley line. Each luxury gives **4 amenities** (3 of them give 6). Luxuries give gold +1 to +3, food +1 to +2, and 1 culture, faith, science or production in ones and twos; bonus resources give +1 food (6 of 11) or +2 gold (3); strategic give +1 to +3 production, plus 1 science or 1 food for 4 of them |
 | **Improvements** (17 buildable base ones) | farm +1 food; mine +1 production; quarry +1 production; fishing boat +1 food; pasture +1 production; plantation +2 gold; camp +2 gold; lumber mill +2 production; a few late ones (corporation-type +10 production, industry-type) are large; farms, boats, pastures, plantations and camps give **1 housing per 2 improved tiles** `[approx]` |
 
 ## Open items
 
-- One more level of wrapping (what the attached modifiers do) for beliefs and many cards.
-- The contents of the condition sets.
-- Which unit unlocks each tech gives (units were not in the dump).
-- Era-score earners (the moments table was not found under the guessed name).
+- Full list of condition-set contents per card (the digest is in the dump; a per-card readout would need a join).
+- Moment trigger details (what exactly counts), and the per-category commemoration bonuses (text not dumped).
+- Per-unit stat sheet for all 159 units (loaded; not written up).
+- Policy card effects after unwrapping (only beliefs were summarized here).
 
 ## Sources
 
