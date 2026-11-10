@@ -106,7 +106,7 @@ Each major player has a relationship **level from 0 to 100**; its state maps to 
 | Denounced | 16 | -75 |
 | War | 0 | -100 |
 
-How you move between states (the thresholds are on the score changes, not the level):
+How you move between states. The numbers are read from the transition table, but **my reading of what they mean is `[approx]`** (the table has four threshold columns I interpreted as score limits):
 
 | From | To | Condition |
 |---|---|---|
