@@ -51,7 +51,15 @@ Three plain rules:
 2. **Range:** a city can only work tiles within 3 tiles of its center. `[sure]`
 3. **One citizen per tile.** A tile worked by one city cannot be worked by another. Enemy units standing on it block it. `[sure]`
 
-How tiles are gained: the city fills a **culture** meter and claims the cheapest nearby tile each time it fills, or the player **buys** a tile with gold. Each tile claimed makes the next one cost more. `[sure]` The exact cost formula is `[verify]` (sources disagree; the in-game purchase lens shows the real price).
+How tiles are gained: the city fills a **culture** meter and claims the cheapest nearby tile each time it fills, or the player **buys** a tile with gold. Each tile claimed makes the next one cost more. `[sure]`
+
+Culture cost of the next tile `[approx]`, from modder testing:
+
+```
+cost = first_plot_cost + (later_multiplier x (tiles_claimed - 1)) ^ later_exponent
+```
+
+Older builds: first = 10, multiplier = 6, exponent = 1.3. Later builds appear to use bigger numbers (first about 20, multiplier about 15, exponent about 1.35), which is why sources disagree. Policies and civ traits can cut this cost by about 25%. Gold buy price has its own base (about 50) `[approx]` and is computed inside the game engine, not in a readable table, so the formula may not be recoverable from the database.
 
 **Guardrail:** land you do not own, or that is out of range, produces nothing for you. This is the rule that makes borders matter.
 **Design note:** a very strong idea to keep. It ties culture (a soft resource) directly to map control. Decide if you want gold to be able to buy land.
@@ -91,7 +99,7 @@ food needed to grow from size P  ≈  15 + 8 x (P - 1) + (P - 1)^1.5     (rounde
 | 3 | 33–34 |
 | 4 | ~44 |
 
-Turns to grow ≈ food needed ÷ surplus. Example: needs 24, surplus +4 → 6 turns.
+The formula has three knobs in the game's settings table (`GlobalParameters`): a per-size multiplier (default about 8), an exponent (about 1.5), and a flat start (about 15). `[approx]` names/values from modder posts. Turns to grow ≈ food needed ÷ surplus. Example: needs 24, surplus +4 → 6 turns.
 
 **Guardrail:** growth gets slower as you get larger, so a city cannot snowball forever on food alone.
 **Design note:** the rising basket is a "soft cap". Keep the idea, tune the numbers yourself.
@@ -118,11 +126,11 @@ Typical starting housing: a bit higher with fresh water (river/lake) than none. 
 
 ## Step 6 · Amenities: the happiness gate
 
-Rule in words: a city needs a number of amenities that rises with its population (a roughly "one per couple of citizens" shape). `[approx]`
+Rule in words: a city needs a number of amenities that rises with its population, about **1 per 2 citizens, rounded up, with the first few citizens free**. `[approx]` Sources disagree on where it starts (some say from size 3), so treat the exact start as `[verify]`.
 
 - Enough or more: bonus to yields and growth.
 - Short a little: growth slows.
-- Short a lot (unrest): non-food yields drop and rebellion risk starts.
+- Short a lot (unrest): all non-food yields drop by about 30%, and rebellion risk starts. `[approx]`
 
 `[verify]` exact thresholds and percentages.
 
@@ -200,12 +208,35 @@ net gold per turn = gold income - upkeep (buildings, units)
 
 ---
 
+## Step 11 · Where each number lives (for the database check)
+
+No game database is reachable from this chat (no computer is linked and the repo has no copy), so none of this was read from game data. Numbers above are from community posts. This map tells you where to look. Table and column names are `[verify]`.
+
+| Rule | Likely place |
+|---|---|
+| Food per citizen (2), growth knobs, border cost knobs, tile buy base | `GlobalParameters` (Name, Value) |
+| Terrain / feature / resource / improvement yields | `Terrain_YieldChanges`, `Feature_YieldChanges`, `Resource_YieldChanges`, `Improvement_YieldChanges` |
+| Building yields and housing | `Building_YieldChanges`, `Buildings` (Housing column) |
+| Amenity effects by happiness level | `Happinesses` |
+| Tech and civic costs, boosts | `Technologies`, `Civics`, `Boosts` |
+
+Note: in later game builds these parameters are split across several files, so one file may not hold every value.
+
+### How to check (about 10 minutes, no coding)
+
+1. Open `DebugGameplay.sqlite` (path in SPEC section 5) in DB Browser for SQLite.
+2. Run: `SELECT Name, Value FROM GlobalParameters WHERE Name LIKE '%GROWTH%' OR Name LIKE '%FOOD%' OR Name LIKE '%CULTURE_COST%' OR Name LIKE '%PLOT%' OR Name LIKE '%HOUSING%';`
+3. Paste the result rows here. I will replace every `[approx]` above with the real values.
+4. Optional second query: `SELECT * FROM Happinesses;` for the amenity levels.
+
+Or zip and attach the file (copy it first; do not edit the original).
+
 ## Open items (check against the real game/debug DB before treating as final)
 
 - Exact city-center yield floors.
 - Exact housing numbers by water type, and exact stepped growth percentages.
 - Exact amenities thresholds and penalty percentages.
-- Tile purchase cost formula; border culture cost formula.
+- Border culture cost knobs for your installed version; gold tile-buy formula (may be engine-only).
 - Gold purchase cost formula for production.
 - Base science/culture per citizen.
 
@@ -214,4 +245,6 @@ These can be pulled with `tools/sqlcheck.py` / the debug database once Phase 2 t
 ## Sources
 
 - Growth formula and housing steps: community Civ 6 wiki growth page (https://civilization.fandom.com/wiki/Growth_(Civ6)), cross-checked against forum posts. Numbers differ by 1 at some sizes, hence `[approx]`.
+- Border cost and growth knobs: CivFanatics modding threads, e.g. [City Tile Purchase Cost?](https://forums.civfanatics.com/threads/city-tile-purchase-cost.606599/latest), [Help with adjusting food growth](https://forums.civfanatics.com/threads/help-with-adjusting-food-growth.613552), [Calculating Border Growth Speed](https://forums.civfanatics.com/threads/calculating-border-growth-speed-bugs.663825).
+- Amenities: [Civ 6 wiki, Amenity](https://civilization.fandom.com/wiki/Amenity_(Civ6)); its own examples contradict each other.
 - Everything else: general game knowledge, not yet confirmed in game.
