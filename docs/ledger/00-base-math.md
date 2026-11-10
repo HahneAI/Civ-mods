@@ -51,7 +51,7 @@ Example: Grassland (2 food) + a Farm (+1 food) = 3 food. `[sure]`
 | Coast | 1 food, 1 gold | Natural wonders | each has its own set (3 to 5 of a kind) |
 | Ocean | 1 food | | |
 
-Desert hills and snow hills give 1 production. Resource and improvement yields are in the dump and will get their own table later. Game speed scales costs everywhere: **marathon 3.0, epic 1.5, standard 1.0, quick 0.67, online 0.5**.
+Desert hills and snow hills give 1 production. **Resources** (55): 34 luxury (4 amenities each, three give 6), 11 bonus, 7 strategic, 2 artifact, 1 ley line; luxuries add gold +1 to +3 or 1 to 2 of food, culture, faith, science or production, bonus resources add +1 food or +2 gold, strategic ones +1 to +3 production. **Improvements** (17 buildable): farm +1 food, mine +1 production, quarry +1 production, fishing boat +1 food, pasture +1 production, plantation +2 gold, camp +2 gold, lumber mill +2 production; farm-type improvements give 1 housing per 2 improved tiles. `[sure]` See [`07-effects-system.md`](07-effects-system.md). Game speed scales costs everywhere: **marathon 3.0, epic 1.5, standard 1.0, quick 0.67, online 0.5**.
 
 **Guardrail:** terrain and features are the map's fixed "budget". You choose which tiles to use, not how much they give.
 **Design note:** this additive tile sum is the easiest thing to keep. Open question: do you want adjacency bonuses (placement puzzles) in your game?
@@ -253,7 +253,6 @@ See [`db-check.md`](db-check.md) for the setup steps and the exact queries. Past
 - Housing steps between -1 and -3, and how the aqueduct settings combine.
 - Gold price of a tile and of production (engine-only; may need testing in game).
 - Base science and culture per citizen.
-- Per-tile yields of resources and improvements: parsed but not yet written up (see `docs/ledger/db-check.md`, follow-up list).
 
 ## Sources
 

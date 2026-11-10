@@ -56,6 +56,8 @@ Of the 157 cards, **118 need a specific civic** and 39 are open from the start o
 | Card | Yield, cost, or combat modifiers | a rule applied empire-wide (pages 00, 01) |
 | Culture | Everything above | civic meter feeds it all (page 04) |
 
+**What each government actually does** (the working effects, from the modifier table) is on [`07-effects-system.md`](07-effects-system.md), Step 4: one fixed bonus, a few conditional city bonuses, and in three cases a bonus that only works in a city with a governor.
+
 ## Part B · Great people
 
 ## Step 4 · What they are

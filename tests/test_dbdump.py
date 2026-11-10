@@ -88,3 +88,24 @@ def test_modifier_digest_and_catalog(tmp_path):
     assert "TRAIT_Y" not in text                  # civilization/leader content is skipped
     assert "## All GlobalParameters" in text and "A_PARAM" in text
     assert "## Table catalog" in text and "| PolicyModifiers | 1 |" in text
+
+
+def test_attach_wrapper_is_resolved_one_level(tmp_path):
+    db = tmp_path / "w.sqlite"
+    con = sqlite3.connect(db)
+    con.executescript(
+        """
+        CREATE TABLE Modifiers (ModifierId TEXT, ModifierType TEXT, SubjectRequirementSetId TEXT);
+        CREATE TABLE ModifierArguments (ModifierId TEXT, Name TEXT, Type TEXT, Value TEXT);
+        CREATE TABLE DynamicModifiers (ModifierType TEXT, CollectionType TEXT, EffectType TEXT);
+        CREATE TABLE BeliefModifiers (BeliefType TEXT, ModifierId TEXT);
+        INSERT INTO DynamicModifiers VALUES ('MT_ATTACH','COLLECTION_ALL_CITIES','EFFECT_ATTACH_MODIFIER'), ('MT_YIELD','COLLECTION_OWNER','EFFECT_ADJUST_PLOT_YIELD');
+        INSERT INTO Modifiers VALUES ('OUTER','MT_ATTACH',NULL), ('INNER','MT_YIELD','REQ_FARM');
+        INSERT INTO ModifierArguments VALUES ('OUTER','ModifierId','ARGTYPE_IDENTITY','INNER'), ('INNER','Amount','ARGTYPE_IDENTITY','1');
+        INSERT INTO BeliefModifiers VALUES ('BELIEF_Z','OUTER');
+        """
+    )
+    con.commit(); con.close()
+    out = tmp_path / "o.md"
+    dbdump.main(["--db", str(db), "--out", str(out)])
+    assert "==> COLLECTION_OWNER>EFFECT_ADJUST_PLOT_YIELD | Amount=1 | when REQ_FARM" in out.read_text(encoding="utf-8")

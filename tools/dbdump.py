@@ -274,6 +274,12 @@ def modifier_digest(con, names) -> str:
             line = f"{o} | {effect.get(mt, mt)} | {'; '.join(args.get(m, []))}"
             if m in mreq:
                 line += f" | when {mreq[m]}"
+            # a wrapper that attaches another modifier: show what the inner one does
+            inner = next((a.split("=", 1)[1] for a in args.get(m, []) if a.startswith("ModifierId=")), None)
+            if inner and inner in mtype:
+                line += f"  ==> {effect.get(mtype[inner], mtype[inner])} | {'; '.join(args.get(inner, []))}"
+                if inner in mreq:
+                    line += f" | when {mreq[inner]}"
             out.append(line)
         out += ["```", ""]
     return "\n".join(out) if out else "_No modifier link tables found._"

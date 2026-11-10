@@ -98,7 +98,7 @@ A religion holds up to four beliefs (one per type), plus the earlier pantheon. `
 ## Open items
 
 - Religions allowed per map size; religious victory rule.
-- Belief effects (the effect text is in the modifier tables, not dumped).
+- Belief effects: 64 of 88 belief rows are wrappers that attach another modifier; see [`07-effects-system.md`](07-effects-system.md), Step 6. A follow-up dump resolves one level of wrapping.
 - How price rises per unit bought.
 
 ## Sources
