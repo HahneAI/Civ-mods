@@ -113,8 +113,8 @@ civ-layer/
 |---|---|
 | Workshop mods | `C:\Program Files (x86)\Steam\steamapps\workshop\content\289070\<workshop-id>\` |
 | Local Mods folder | `Documents\My Games\Sid Meier's Civilization VI\Mods\` |
-| Logs | `Documents\My Games\Sid Meier's Civilization VI\Logs\` |
-| Debug gameplay DB | `Documents\My Games\Sid Meier's Civilization VI\Cache\DebugGameplay.sqlite` (verify location) |
+| Logs | `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VI\Logs\` (moved from Documents in the Leader Pass update) |
+| Debug gameplay DB | `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VI\Cache\DebugGameplay.sqlite` (verify) |
 | Base game data | `...\steamapps\common\Sid Meier's Civilization VI\Base\Assets\Gameplay\Data\` |
 | DLC data | `...\Sid Meier's Civilization VI\DLC\<pack>\` |
 
@@ -187,7 +187,7 @@ The ledger describes rules as ideas. It never contains copied game code, art, or
 | Decision | Options | Default until you decide |
 |---|---|---|
 | Which DLC you own | Fill in `docs/dlc-owned.md` | Assume base game + Gathering Storm |
-| CQUI or Concise UI | Pick one UI base | CQUI |
+| CQUI or Concise UI | **Decided: CQUI** (installed). #7 and #9 on hold: CQUI covers them. | CQUI |
 | Civilizations Expanded or Better Balanced Game | Pick one civ rework | Civilizations Expanded, if DLC allows |
 | Your first customizations | From your Phase 1 wall list | None yet |
 | Permadeath and map questions for the far-future mode | See the mastery map | Deferred |
