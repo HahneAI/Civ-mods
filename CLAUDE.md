@@ -20,6 +20,7 @@ This repo will shift over time. Civ 6 modding is the first stage only. The real 
 2. `TODO.md` — find the first unchecked item in the current phase.
 3. `docs/civ6-mod-list.md` — the mods, DLC needs, and known conflicts.
 4. `docs/dlc-owned.md` — what the owner actually has. If it's empty, ask before writing DLC-dependent code.
+5. `docs/ai-tuning/` — AI tuning notes. **Owner priority.** Start with `real-strategy.md`.
 
 ## How to work
 
@@ -99,3 +100,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - Group 2 partial results filed (`docs/playtests/002-group2.md`): Repeat Project works; Move gear present; logs pending; CQUI blank Options button open.
 - Group 2 playtest PASSED (logs clean; Movable Districts and Repeat Project use AddUserInterfaces so no production panel clash). Five mods now active. Next: Workable 4th Ring (ID needed).
 - Plan change: Real Strategy (AI) replaces Deity++; group 3 = Workable 4th Ring + Real Strategy. Deity++ on hold.
+- Workable 4th Ring ID 3220078106 and Real Strategy ID 1617282434 confirmed. Added `docs/ai-tuning/real-strategy.md` (owner priority: AI tuning) and a pointer in this file.
