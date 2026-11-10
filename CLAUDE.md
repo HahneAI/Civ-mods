@@ -92,3 +92,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - Added ledger page 02 (trade and diplomacy).
 - Added ledger page 03 (cities and districts).
 - Added ledger pages 04 (tech and civic trees) and 05 (governments and great people).
+- Added ledger page 06 (religion and faith) with a master map of all systems.

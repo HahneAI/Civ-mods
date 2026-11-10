@@ -108,6 +108,21 @@ WHERE Name LIKE '%GREAT_PERSON%' OR Name LIKE '%GOVERNMENT%' OR Name LIKE '%POLI
 
 Column names are guesses; the same fallback applies (`SELECT * FROM <table> LIMIT 1;`).
 
+## Page 06 · Religion and faith
+
+```sql
+SELECT Name, Value FROM GlobalParameters
+WHERE Name LIKE '%RELIGION%' OR Name LIKE '%FAITH%' OR Name LIKE '%PANTHEON%'
+   OR Name LIKE '%PRESSURE%' OR Name LIKE '%PROPHET%' OR Name LIKE '%THEOLOG%';
+
+SELECT BeliefType, BeliefClassType FROM Beliefs ORDER BY BeliefClassType;
+SELECT UnitType, Cost, ReligiousStrength, ReligionEvictPercent, SpreadCharges FROM Units WHERE SpreadCharges > 0 OR ReligiousStrength > 0;
+SELECT * FROM Religions;
+SELECT BuildingType, Cost, ReligiousPressure FROM Buildings WHERE ReligiousPressure IS NOT NULL OR BuildingType LIKE '%SHRINE%' OR BuildingType LIKE '%TEMPLE%';
+```
+
+Same fallback as before if a column errors. Also useful: `SELECT * FROM Maps_Religions` or any table from `sqlite_master` with `%Religion%` in the name, since the religion limit per map size is stored there.
+
 ## Keeping this file current
 
 Add a new section here whenever a new ledger page is started. Queries only: no game text or code is copied into the ledger (hard rule 8).
