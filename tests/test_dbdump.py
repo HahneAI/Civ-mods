@@ -59,3 +59,32 @@ def test_all_columns_marker_dumps_every_column(tmp_path):
     dbdump.main(["--db", str(db), "--out", str(out)])
     text = out.read_text(encoding="utf-8")
     assert "| N |" in text.split("### Districts")[1].split("###")[0]  # 14th column present
+
+
+def test_modifier_digest_and_catalog(tmp_path):
+    db = tmp_path / "m.sqlite"
+    con = sqlite3.connect(db)
+    con.executescript(
+        """
+        CREATE TABLE Modifiers (ModifierId TEXT, ModifierType TEXT, SubjectRequirementSetId TEXT);
+        CREATE TABLE ModifierArguments (ModifierId TEXT, Name TEXT, Type TEXT, Value TEXT);
+        CREATE TABLE DynamicModifiers (ModifierType TEXT, CollectionType TEXT, EffectType TEXT);
+        CREATE TABLE PolicyModifiers (PolicyType TEXT, ModifierId TEXT);
+        CREATE TABLE TraitModifiers (TraitType TEXT, ModifierId TEXT);
+        CREATE TABLE GlobalParameters (Name TEXT, Value TEXT);
+        INSERT INTO GlobalParameters VALUES ('A_PARAM','1');
+        INSERT INTO DynamicModifiers VALUES ('MT_YIELD','COLLECTION_OWNER','EFFECT_ADJUST_YIELD');
+        INSERT INTO Modifiers VALUES ('M1','MT_YIELD','REQ1'), ('M2','MT_YIELD',NULL);
+        INSERT INTO ModifierArguments VALUES ('M1','Amount','ARGTYPE_IDENTITY','2'), ('M1','YieldType','ARGTYPE_IDENTITY','YIELD_GOLD');
+        INSERT INTO PolicyModifiers VALUES ('POLICY_X','M1');
+        INSERT INTO TraitModifiers VALUES ('TRAIT_Y','M2');
+        """
+    )
+    con.commit(); con.close()
+    out = tmp_path / "o.md"
+    assert dbdump.main(["--db", str(db), "--out", str(out)]) == 0
+    text = out.read_text(encoding="utf-8")
+    assert "POLICY_X | COLLECTION_OWNER>EFFECT_ADJUST_YIELD | Amount=2; YieldType=YIELD_GOLD | when REQ1" in text
+    assert "TRAIT_Y" not in text                  # civilization/leader content is skipped
+    assert "## All GlobalParameters" in text and "A_PARAM" in text
+    assert "## Table catalog" in text and "| PolicyModifiers | 1 |" in text
