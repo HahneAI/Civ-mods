@@ -42,6 +42,22 @@ SELECT FeatureType, MovementCost, DefenseModifier FROM Features;
 
 If the two terrain queries error, run `SELECT * FROM Terrains LIMIT 1;` and paste the column names.
 
+## Page 02 · Trade and diplomacy
+
+Table names are the least certain here, so start by listing what exists:
+
+```sql
+SELECT name FROM sqlite_master WHERE type='table'
+AND (name LIKE '%Trade%' OR name LIKE '%Diplo%' OR name LIKE '%Grievance%'
+  OR name LIKE '%Agenda%' OR name LIKE '%Envoy%' OR name LIKE '%Alliance%' OR name LIKE '%CasusBelli%');
+
+SELECT Name, Value FROM GlobalParameters
+WHERE Name LIKE '%TRADE%' OR Name LIKE '%GRIEVANCE%' OR Name LIKE '%DIPLO%'
+   OR Name LIKE '%ENVOY%' OR Name LIKE '%WARMONGER%' OR Name LIKE '%FRIEND%' OR Name LIKE '%ALLIANCE%';
+```
+
+Paste both results. Based on the table list, Claude will write the follow-up queries.
+
 ## Keeping this file current
 
 Add a new section here whenever a new ledger page is started. Queries only: no game text or code is copied into the ledger (hard rule 8).
