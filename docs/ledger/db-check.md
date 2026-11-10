@@ -139,6 +139,8 @@ Same fallback as before if a column errors. Also useful: `SELECT * FROM Maps_Rel
 
 Round 1 (2026-11-10) read pages 00 to 06 from the owner's database. It answered most open numbers and corrected several earlier guesses (tech costs, housing stop point, city-center yield, wounded units, boost size). A few tables were cut to 12 columns, which hid the neighbor-district rows of the adjacency table and the per-building yields.
 
+**Round 2 (2026-11-10) done:** the follow-up dump was read and pages 02, 03, 05 and 06 updated.
+
 `tools/dbdump.py` now dumps those tables in full (adjacency, districts, building yields, great-person points, governments, policies). To fill the remaining gaps, run it again the same way and attach the new `db-results.md`. Expect a larger file (a few hundred KB).
 
 ## Keeping this file current

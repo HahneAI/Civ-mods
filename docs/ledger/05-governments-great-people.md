@@ -24,6 +24,18 @@ Builds on [`04-tech-civic-trees.md`](04-tech-civic-trees.md) (civics unlock gove
 
 Tier 1 unlocks from an early civic, tiers 2 and 3 from mid-tree civics (one civic per government), tier 4 from the three last civics in the tree (page 04). A start-of-game government exists with no civic needed.
 
+**Built-in bonus and envoy rate, from the database** `[sure]`: each government has one fixed bonus type and gives influence points toward envoys every turn:
+
+| Tier | Bonus types (one per government) | Influence per turn | Points per envoy |
+|---|---|---|---|
+| Start | none | 1 | 100 |
+| 1 | faster wonder building; combat experience; more great-person points | 3 | 100 |
+| 2 | more envoys; cheaper faith purchases; cheaper gold purchases | 5 | 150 (2 per threshold) |
+| 3 | faster unit production; overall production; district projects | 7 | 200 (3 per threshold) |
+| 4 | overall production (all three) | 9 | 250 (4 per threshold) |
+
+Of the 157 cards, **118 need a specific civic** and 39 are open from the start or from a tech. By slot type: wildcard-fit 50, military 39, economic 39, diplomatic 17, great-person-slot 12. `[sure]`
+
 ## Step 2 · Policy cards
 
 - A card is a small rule with a cost: for example +X% of a yield, a discount on a unit type, or a bonus under some condition. `[sure]`
@@ -61,6 +73,7 @@ Tier 1 unlocks from an early civic, tiers 2 and 3 from mid-tree civics (one civi
   - Worked out here: each step up is 60 bigger than the last, so cost = 30 × (1 + k(k−1)/2) for era number k (k=1 gives 30). The pattern fits all eight numbers. `[derived]`
 - You can also **buy** a person with gold or faith; the price depends on how many points you still lack. A forum guess: faith about 150 + 10 per missing point, gold about 200 + 15 per missing point. `[verify]` (not in the dump)
 - If no one of your type is left to claim, your points turn into faith, **1.0 faith per point**. `[sure]`
+- **Points per turn, from the database** `[sure]`: every specialty district gives **1 point per turn** of its class (a theater gives 1 each of writer, artist and musician; a unique faith district gives 2); each tier of building in the district adds **+1** (art and music buildings add **+2** to their own class); wonders add 1 to 5 (the biggest music wonder adds 5).
 - Class to district link, confirmed `[sure]`: general to the military-camp district, admiral to the harbor, engineer to the industrial district, merchant to the commercial district, **prophet to the faith district (only 1 per player)**, scientist to the campus, and writer, artist and musician all to the theater district.
 - The roster has **212 people**; per class and by era `[derived]`:
 
@@ -101,8 +114,8 @@ About **3 to 6 people per class per era**: a small, finite pool.
 ## Open items
 
 - Policy card list, effects and swap price formula.
-- Government built-in bonuses (text columns not dumped).
-- Great-person points per building and district; patronage price.
+- Policy card effects (the effect text is in the modifier tables, not dumped); swap price.
+- Patronage price.
 - Who wins a tie for the same person.
 
 ## Sources

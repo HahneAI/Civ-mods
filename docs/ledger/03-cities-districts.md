@@ -73,16 +73,18 @@ Rule in words: a district gains extra yield from what sits on the tiles touching
 district bonus  =  sum over neighbors of (value for that neighbor type)
 ```
 
-Adjacency rows read from the database `[sure]` (the dump kept only some neighbor columns, so the neighbor-district rows are missing: a follow-up dump will complete this):
+Adjacency rows read from the database, **complete** `[sure]`. The bonus is "+N per M matching neighbors" for the tiles around the district:
 
-| District | Likes (per neighbor) |
+| District | Neighbor and bonus |
 |---|---|
-| Science | mountains **+1 each**, jungle **+1 per 2**, reef or fissure **+2 each**, neighboring districts (+1 per 2) |
-| Faith | natural wonder **+2**, mountains **+1 each**, forest **+1 per 2**, neighboring districts (+1 per 2) |
-| Gold (commercial) | river **+2**, harbor-type neighbor **+2**, neighboring districts (+1 per 2) |
-| Culture (theater) | wonder **+2**, neighboring districts (+1 per 2 or 1) |
-| Production (industrial) | quarry/mine-type neighbors +1 to +2, districts +1 per 2 |
-| Harbor | sea resource +1, coast/other neighbors +1 to +2 |
+| Science (campus-type) | mountain **+1 each**; jungle **+1 per 2**; reef **+2 each**; thermal fissure **+2**; any other district **+1 per 2**; government district **+1** |
+| Faith (holy-site-type) | natural wonder **+2**; mountain **+1 each**; forest **+1 per 2**; any other district **+1 per 2**; government district **+1** |
+| Gold (commercial-hub-type) | river **+2**; harbor-type district **+2**; any other district **+1 per 2**; government district **+1** |
+| Culture (theater-type) | wonder **+2**; entertainment-type district **+2** (four kinds); any other district **+1 per 2**; government district **+1** |
+| Production (industrial-type) | quarry **+1 each**; mine **+1 per 2**; lumber mill **+1 per 2**; aqueduct, canal, dam, or bath-type district **+2 each**; strategic resource **+1**; any other district **+1 per 2**; government district **+1** |
+| Harbor | sea resource **+1**; city center **+2**; any other district **+1 per 2**; government district **+1** |
+
+Military camp, entertainment, aqueduct, and housing districts have **no adjacency bonus**. `[sure]`
 
 Fractions floor (round down) per source, so a pile of small bonuses can be wasted. `[approx]`
 Some neighbors are the map's gift (rivers, mountains, wonders); others you build yourself (a district next to a district).
@@ -100,6 +102,8 @@ This is the link to page 00: a citizen is either a **farmer/worker on land** (ti
 
 **Guardrail:** you cannot put every citizen in a building; slots are limited by what you built.
 
+**The building ladder inside a district, from the database** `[sure]`: each specialty district holds a short run of buildings in cost steps of roughly **90 to 150, then 250 to 330, then 440**. Typical yields per building: first tier +2 (science, gold) to +3 (production), mid tier +4 to +5, last tier +3 to +4 on top. Faith buildings run **+2, +4, then +3 to +6**. Every building in a specialty district has **1 citizen slot** (so a specialist can work it), and entertainment, aqueduct and housing districts have **no citizen slots**. Maintenance is 0 to 3 gold per building, rising with tier. The city center holds a granary-type (+2 housing, +1 food), a monument-type (+1 culture, 60 cost), walls (80), a castle (220) and a sewer (200, +2 housing).
+
 ## Step 6 · Housing and amenities from districts
 
 - Districts and buildings are the main source of **housing** (growth brake, page 00) and **amenities** (happiness gate, page 00). `[sure]`
@@ -113,7 +117,7 @@ This is the link to page 00: a citizen is either a **farmer/worker on land** (ti
 - A city has about 200 HP, and its defense strength comes from its garrison, walls, districts (+2 each), population (1 per 2 citizens), being a capital, and hills. `[sure]` for the districts and population parts.
 - A city fires back at attackers; with no ranged units built, its strength is low. `[approx]`
 - Districts can be pillaged or damaged. `[approx]`
-- **Loyalty** `[sure]`: a city starts at **100** (the maximum). Nearby citizens exert identity pressure within **10 tiles**; a city can gain or lose up to **20 loyalty per turn** from it. After capture by combat a city restarts at **50**; after liberation or a cultural flip, at **100**. Low loyalty can make a city rebel or flip.
+- **Loyalty** `[sure]`: a city starts at **100** (the maximum). Nearby citizens exert identity pressure within **10 tiles**; a city can gain or lose up to **20 loyalty per turn** from it. After capture by combat a city restarts at **50**; after liberation or a cultural flip, at **100**. Low loyalty can make a city rebel or flip. **Loyalty levels, confirmed** `[sure]`: 76 to 100 is the top band (no yield penalty, +1.0 growth change); 51 to 75 (−0.25 yield, +0.75 growth); 26 to 50 (−0.5 yield, +0.25 growth); 0 to 25 (−1.0 yield, 0 growth).
 
 **Guardrail:** conquest needs to be able to hold what it takes, so taking a city requires loyalty pressure, not just force.
 **Design note:** loyalty is a second control layer next to borders. Decide if your game needs both.
@@ -136,8 +140,7 @@ This is the link to page 00: a citizen is either a **farmer/worker on land** (ti
 
 ## Open items
 
-- Full adjacency table including neighbor districts (needs a second dump of all columns).
-- Specialist slot counts and yields per district and building.
+- Per-improvement housing and yields (Improvements dumped; not yet written up).
 - City HP and wall HP; exact district cost curve.
 - Exact start of the district limit.
 

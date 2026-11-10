@@ -108,3 +108,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - Merged `version-control` into the feature branch (conflict was only the CLAUDE.md changelog; kept both sets).
 - Built `tools/dbdump.py` (one-click read-only database check, output `db-results.md`, git-ignored) with tests; `docs/ledger/db-check.md` now leads with it.
 - Round 1 database read (owner ran `dbdump.py`): ledger pages 00 to 06 updated with confirmed numbers; page 04 rewritten from real tree data; `dbdump.py` extended for a follow-up dump (adjacency, buildings, policies, great-person points).
+- Round 2 database read: complete adjacency, building ladders, trade yields by district, diplomacy ladder, alliances, government bonuses, great-person points and religious units added to ledger pages 02, 03, 05, 06.

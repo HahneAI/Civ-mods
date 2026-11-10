@@ -52,7 +52,21 @@ What community testing found `[approx]`:
 - International routes lean toward **gold**, and a harbor at the destination adds gold.
 - City population and era did not affect the yield in a tester's results. `[verify]`
 - Roads: a route **builds roads** along its way. `[sure]`
-- **Gold:** about **+2 per district** at the origin and **+2 per district** at the destination, per turn. `[sure]`
+- **Yield table, read from the database** `[sure]`: the route pays by **what districts the destination city has**, and the origin city collects it. Origin-side values are all 0.
+
+| Destination district | Domestic route pays | International route pays |
+|---|---|---|
+| City center | +1 food, +1 production | **+3 gold** |
+| Commercial hub, harbor (and their unique versions) | +1 production | **+3 gold** |
+| Industrial zone, military camp (and unique versions) | +1 production | +1 production |
+| Campus-type | +1 food | +1 science |
+| Faith district | +1 food | +1 faith |
+| Theater-type | +1 food | +1 culture |
+| Entertainment-type | +1 food | +1 food |
+| Government district | +1 food, +1 production | +2 gold |
+| Diplomatic quarter | +1 food, +1 production | +1 culture |
+
+So a destination with many different districts pays more, and **international routes pay gold from trade-type districts and a little of everything else**. There is also a separate setting of about +2 gold per district at each end. `[sure]` (how it combines with this table `[verify]`)
 - Trade routes also carry religion (page 06): **1.0 pressure at the destination and 0.5 at the origin**, and add tourism (+25%). `[sure]`
 
 **Guardrail:** yields reward linking different cities. Routing between two identical cities pays little.
@@ -77,6 +91,39 @@ What community testing found `[approx]`:
 | Warmonger points by era (conquering) | 0, 6, 12, 18, 24, then flat at 24 |
 | Grievances per turn for holding a conquered capital / other city | 3 / 1 |
 | Diplomatic victory points needed | 20 |
+
+### The relationship ladder, read from the database `[sure]`
+
+Each major player has a relationship **level from 0 to 100**; its state maps to a yield bonus (a bonus or penalty on shared yields):
+
+| State | Relationship level | Yield bonus |
+|---|---|---|
+| Allied | 100 | +50 |
+| Declared friend | 83 | +25 |
+| Friendly | 66 | +25 |
+| Neutral | 50 | 0 |
+| Unfriendly | 33 | -25 |
+| Denounced | 16 | -75 |
+| War | 0 | -100 |
+
+How you move between states (the thresholds are on the score changes, not the level):
+
+| From | To | Condition |
+|---|---|---|
+| Neutral | Friendly | score rises past about 15 |
+| Neutral | Unfriendly | score falls past about -15 |
+| Friendly | Declared friend | needs score of about 25 and a free action; can be offered |
+| Declared friend | Allied | needs about 35 and an alliance offer |
+| Unfriendly | Denounced | score at or below -25, by action |
+| Denounced | War | score at or below -35, by action |
+
+The step sizes are small (5 to 35), so state changes come from lots of small acts adding up. `[derived]`
+
+**Promises** (a request one player makes of another, kept by paying 30 favor; refusing costs 25 grievances; each broken-promise incident costs 25): *don't spy on me, don't convert my cities, don't dig my artifacts, don't settle near me.* `[sure]`
+
+**Alliances** have five types (military, economic, research, cultural, religious) and three levels (levels 2 and 3 at 320 and 960 points). `[sure]` Each type adds effects by level, 24 in total: level 1 is mostly extra trade-route yields of the alliance's kind (gold, faith, culture, science), or combat strength for the military type; level 2 adds things like shared vision, envoy points, research agreements, and great-person points; level 3 adds free unit upgrades, shared suzerain, and shared science, culture and tourism from your ally. `[sure]`
+
+**Visibility** (what lets you read another leader) comes from nine sources: a tech, a trader, a delegate, an ally, a spy, a high-level spy (needs spy level 3), a trait, a trading-post trait, and one great person. `[sure]`
 
 ## Step 5 · Links back to other systems
 
@@ -157,7 +204,7 @@ In the Gathering Storm rules:
 ## Open items
 
 - Route capacity sources, per-district yield table (the dump has route gold per district; capacity not in it).
-- Agenda list, relationship score values per action, casus belli list (tables not dumped).
+- Relationship score change per action, agenda list (112 agendas exist; names not needed for the ledger), casus belli list.
 - Envoy thresholds and city-state bonus list (influence settings: **3 envoys for suzerain**, `[sure]`).
 
 ## Sources

@@ -57,7 +57,7 @@ A religion holds up to four beliefs (one per type), plus the earlier pantheon. `
 - Every city has a **majority religion**, decided by comparing how many followers each religion has there. `[sure]`
 - A religion spreads by **pressure**: nearby cities with that religion push followers into a city each turn; pressure rises with the strength of a source (buildings add some) and weakens with distance. **Confirmed settings** `[sure]`: a city pushes pressure to other cities within **10 tiles**, **1 point per turn** each; a holy city pushes **×4** and a holy-site district **×2**; each trade route carries **1.0 pressure at the destination and 0.5 at the origin**; winning a religious fight gives **250** and capturing a unit **125** (within 6 tiles); having no religion (atheism) adds 50 per citizen. A strength multiplier of 200 scales it. Exact per-turn totals depend on how these combine `[verify]`.
 - Units speed this up: a **missionary-type** unit has a few **spread charges**; each use moves many followers into a city. A stronger **apostle-type** unit has more abilities (spread belief, start an inquisition). `[sure]`
-- Units are bought with **faith**. The price **rises with each one you already bought**. **Base costs, confirmed** `[sure]`: missionary **75**, inquisitor **75**, apostle **200**, all with 4 movement. How the price rises with each buy `[verify]` (the rule is engine-side).
+- Units are bought with **faith**. The price **rises with each one you already bought**. **Base costs, confirmed** `[sure]`: missionary **75**, inquisitor **75**, apostle **200**, all with 4 movement. All three have **3 spread charges**. Religious strength: missionary **100**, apostle **110**, inquisitor **75**. Each use removes a share of foreign followers: **10%, 25%, 75%** respectively (the inquisitor is the remover). A fourth unit type (guru) has 0 spread charges and **3 heal charges**. How the price rises with each buy `[verify]` (the rule is engine-side).
 
 **Guardrail:** you cannot flip the world with a button; spread is limited by charges, faith cost, and distance.
 **Design note:** "pressure by distance plus a push unit" gives both a slow background effect and an active player lever. Good shape.
@@ -98,7 +98,7 @@ A religion holds up to four beliefs (one per type), plus the earlier pantheon. `
 ## Open items
 
 - Religions allowed per map size; religious victory rule.
-- Spread charges per unit, religious strength values, belief effects (text columns not dumped).
+- Belief effects (the effect text is in the modifier tables, not dumped).
 - How price rises per unit bought.
 
 ## Sources
