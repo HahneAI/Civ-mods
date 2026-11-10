@@ -88,3 +88,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - Added `docs/dlc-owned.md` (from memory) and `docs/mod-candidates.md` (unconfirmed links for the unnamed mods).
 - Built `tools/logtriage.py` and `tools/deploy.py` early, with pytest tests (owner approved bending the phase order for these two).
 - Added branch workflow: feature branch → `version-control` → `main`; created `main` and `version-control`.
+- Added ledger pages 00 (base math) and 01 (units and combat) plus `docs/ledger/db-check.md` (queries the owner runs to confirm numbers).

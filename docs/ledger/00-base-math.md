@@ -222,14 +222,9 @@ No game database is reachable from this chat (no computer is linked and the repo
 
 Note: in later game builds these parameters are split across several files, so one file may not hold every value.
 
-### How to check (about 10 minutes, no coding)
+### How to check
 
-1. Open `DebugGameplay.sqlite` (path in SPEC section 5) in DB Browser for SQLite.
-2. Run: `SELECT Name, Value FROM GlobalParameters WHERE Name LIKE '%GROWTH%' OR Name LIKE '%FOOD%' OR Name LIKE '%CULTURE_COST%' OR Name LIKE '%PLOT%' OR Name LIKE '%HOUSING%';`
-3. Paste the result rows here. I will replace every `[approx]` above with the real values.
-4. Optional second query: `SELECT * FROM Happinesses;` for the amenity levels.
-
-Or zip and attach the file (copy it first; do not edit the original).
+See [`db-check.md`](db-check.md) for the setup steps and the exact queries. Paste the rows into the chat and every `[approx]` above gets replaced.
 
 ## Open items (check against the real game/debug DB before treating as final)
 
