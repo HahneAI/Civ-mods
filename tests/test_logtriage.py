@@ -90,3 +90,25 @@ def test_cli_writes_report(tmp_path):
 
 def test_cli_rejects_empty_folder(tmp_path):
     assert logtriage.main([str(tmp_path)]) == 2
+
+
+def test_database_error_uses_file_named_after_it(tmp_path):
+    # Real Database.log shape: the file comes a few lines after the ERROR.
+    write_logs(tmp_path, Database=(
+        "[1.0] [Localization] ERROR: UNIQUE constraint failed: LocalizedText.Language, LocalizedText.Tag\n"
+        "[1.0] [Localization]: While executing - 'insert into BaseGameText('Tag', 'Text') values (?, ?);'\n"
+        "[1.0] [Localization]: In XMLSerializer while inserting row into table BaseGameText.\n"
+        f"[1.0] [Localization]: In XMLSerializer while updating table BaseGameText from file {LOCAL}\\SomeMod\\Text\\a.xml.\n"
+    ))
+    report = logtriage.triage_dir(tmp_path)
+    assert sources(report) == {"SomeMod"}
+
+
+def test_known_firaxis_noise_is_base_game(tmp_path):
+    write_logs(tmp_path, Database=(
+        "[1.0] [Localization] ERROR: UNIQUE constraint failed: LocalizedText.Language, LocalizedText.Tag\n"
+        "[1.0] [Localization]: In XMLSerializer while updating table BaseGameText from file "
+        "CurrentClickouts/abc/Text/ClickoutText_en_US.xml.\n"
+    ), Modding="[1.0] Mod Selection Service missing. Skipping.\n")
+    report = logtriage.triage_dir(tmp_path)
+    assert sources(report) == {BASE}

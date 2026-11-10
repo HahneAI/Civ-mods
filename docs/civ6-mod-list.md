@@ -9,9 +9,9 @@ Ten mods from two YouTube videos, with grammar cleaned up from the auto-transcri
 ### Video 1: Five mods that change how Civ 6 plays
 
 1. **Movable Districts** (by wltk)
-   Spend gold to move a district you've already built to a new tile. Each district gets a Move button in the city's production panel. The cost is twice the district's original production cost, so a 50-production district costs 100 gold to move. The district isn't destroyed and rebuilt: it moves with all its buildings intact. Only main one-per-city districts are supported. Neighborhoods, Canals, and Dams can't be moved. This matters because district placement, one of the biggest tactical decisions in Civ 6, used to be permanent.
+   Spend gold to move a district you've already built to a new tile. While a city's production panel is open, each movable district shows a gear Move button on its tile. The cost is twice the district's original production cost, so a 50-production district costs 100 gold to move. The district isn't destroyed and rebuilt: it moves with all its buildings intact. Only main one-per-city districts are supported. Neighborhoods, Canals, and Dams can't be moved. This matters because district placement, one of the biggest tactical decisions in Civ 6, used to be permanent.
 
-2. **Deity++** (difficulty mod)
+2. **Deity++** (difficulty mod) — **on hold. Owner swapped it for Real Strategy (AI) on 2026-11-09**, preferring smarter opponents over bonus-fed ones. It can be added later; the two don't conflict.
    Adds two difficulty tiers above Deity: Deity+ and Deity++. Vanilla Deity already gives the AI multipliers on production and gold, faster science, culture, and faith, extra early units and builders, and a combat-strength bonus. Deity++ extends that same progression further. It does **not** make the AI smarter. It only gives the AI more resources and bonuses, so opponents don't plan better, but they get far more early momentum.
 
 3. **Resource pack** (four mods grouped as one entry)
@@ -22,7 +22,7 @@ Ten mods from two YouTube videos, with grammar cleaned up from the auto-transcri
 
    On paper these don't change the balance much, but they make every map feel fresher and make tile evaluation more interesting. Sukritact's Oceans is the standout for naval and archipelago games: it adds new sea resources (such as seals, squid, coral, kelp forests, and lake caviar) and makes water tiles worth working. Coastal cities get better yields and more to improve without being overpowered, and everything looks like it could have shipped in the base game. The capybara is a highlight: once improved, it gives very strong food and gold. The new luxuries also work with the Monopolies and Corporations game mode, so they can form industries and monopolies.
 
-4. **Workable 4th Ring**
+4. **Workable 4th Ring** (by PhantomJ_M) — **confirmed by owner.** Workshop ID: TBD.
    Removes the base game's three-tile working radius. In vanilla, your borders can grow to the fourth or fifth ring, but citizens can't work those tiles, so that land is economically useless. This mod lets cities work tiles in the fourth ring at full yields. It also opens up aggressive play: an Encampment four tiles from your city center can sit just two tiles from an enemy city, making a forward military base you can also work tiles around. Overall it raises how big cities can scale, makes late border growth worth more, and allows more creative district placement.
 
 5. **Civilizations Expanded + Steel and Thunder: Unit Expansion** (two mods used together)
@@ -35,19 +35,19 @@ Ten mods from two YouTube videos, with grammar cleaned up from the auto-transcri
 
 ### Video 2: Five quality-of-life mods
 
-6. **Radial Measuring Tool** (by Zur13)
+6. **Radial Measuring Tool** (by Zur13) — **installed.** Workshop ID 1628605090.
    Measures exact tile distances on the map. Click the RMT button in the top-right corner, pick a starting tile, and drag to see the range. This is useful for wonders with an area effect (Temple of Artemis, the Colosseum), district placement, and city spacing, with no hex counting by hand.
 
 7. **City-state quest screen** (likely **Better City States (UI)** by infixo; the video didn't name it)
    Puts every city-state quest on one screen, so you can see at a glance what each one wants: a trade route, a building, a boost, or a converted city. Because it's all in one place, you naturally finish more quests and earn more envoys. It doesn't change any mechanics; it just removes friction.
 
-8. **Camera zoom mod** (likely **Enhanced Camera** by DahakaMVl; the video didn't name it)
+8. **Enhanced Camera** (by DahakaMVl) — **installed.** Workshop ID 2484412297.
    Unlocks the camera so you can zoom out much farther to see your whole empire or a continent, and zoom in closer than usual to look at wonders up close. It pairs well with visual mods that make cities look denser as they grow.
 
 9. **Policy change reminder** (exact mod not confirmed; a mod named **Policy Change Reminder** exists)
    Reminds you every time you can swap policies for free, so you don't run the wrong setup for twenty turns after unlocking a civic.
 
-10. **Auto-repeat projects** (likely **Repeat Project** by yamada; an alternative is **Non Stop Project** by Flavian)
+10. **Auto-repeat projects** — **Repeat Project** by yamada, **confirmed by owner** (ID 1505351262; UI mod, updated Jul 2021, 776 ratings). Alternative not used: Non Stop Project by Flavian.
     Lets a city project repeat on its own when it finishes, such as Campus Research Grants, Industrial Zone projects, and Theater Square festivals. This cuts late-game micromanagement and keeps your yields and great-person points steady.
 
 ---
@@ -70,12 +70,12 @@ Ten mods from two YouTube videos, with grammar cleaned up from the auto-transcri
 | Sukritact's Resources | ? | ? | ? | Not stated in my sources. |
 | Latin American Resources | ? | ? | ? | Not stated in my sources. |
 | Reindeer | ? | ? | ? | Couldn't find this mod's page. Get the exact name from the video description. |
-| Workable 4th Ring | ? | ? | ? | Couldn't confirm the author or page. |
+| Workable 4th Ring (PhantomJ_M) | ✓ | ✓ | ✓ | Confirmed from Workshop page: tagged Base Game, Rise and Fall, Gathering Storm. Posted Apr 2024, updated Nov 7 2026, 41 change notes, ~1,766 ratings (5 stars). 38.8 MB. |
 | **Civilizations Expanded** | ✗ | **Required** | **Required** | **Also requires six civ packs** (see below). |
 | Steel and Thunder | ✓ | ✓ | ✓ | Adds 11 global units, 8 of them with Gathering Storm. Updated for New Frontier Pass. |
 | Radial Measuring Tool | ✓ | ✓ | ✓ | Updated for Gathering Storm in 2019. Last update March 2020. |
 | Better City States (UI) | ✓ | ✓ | ✓ | Adapted for New Frontier Pass. |
-| Enhanced Camera | ? | ? | ? | Camera-only change; likely works on all. |
+| Enhanced Camera (DahakaMVl) | ? | ? | ? | Installed. Camera-only change; likely works on all. ~1,656 ratings. |
 | Policy Change Reminder | ? | ? | ? | Not confirmed. |
 | Repeat Project | ✓ | ✓ | ✓ | Some Rise and Fall and Gathering Storm projects are tagged separately. |
 
@@ -115,7 +115,7 @@ Monopolies and Corporations matters for the resource mods: their new luxuries ca
 | Resource mods + Civ6 Plus or CIVITAS Resources | **Reported** | Missing resource icons. Not on your list. |
 | Better City States (UI) + CIVITAS City-States | **Confirmed conflict** | Not on your list. Both replace the City States screen. |
 | Better City States (UI) + CQUI | **Confirmed compatible** | Relevant if you also run CQUI. |
-| **Movable Districts + Repeat Project** | **Risk** | Both change the city production panel. If two UI mods replace the same panel file, one wins and the other's button vanishes. Test this pair first. |
+| **Movable Districts + Repeat Project** | **Tested OK** (2026-11-09, with CQUI) | Predicted risk did not happen: both add their own UI contexts instead of replacing the production panel file. See `docs/playtests/002-group2.md`. |
 | **Workable 4th Ring + other city UI mods** | **Risk** | A similar mod (CypRyan's Workable Outer Rings) had reported conflicts with mods that change citizen assignment, and its author said districts in the outer rings weren't supported. Expect the same kind of edge cases. |
 | Workable 4th Ring + Movable Districts | **Unknown** | Moving a district into the 4th ring may or may not be allowed. Test it. |
 | Repeat Project + Non Stop Project | **Don't run both** | They do the same job. |
@@ -128,10 +128,10 @@ Monopolies and Corporations matters for the resource mods: their new luxuries ca
 2. **Add Repeat Project, then Movable Districts.** Check that both the repeat option and the Move button show in the production panel.
 3. **Add Workable 4th Ring.** Grow a city to the 4th ring and assign a citizen there.
 4. **Add the four resource mods.** Start a new map and look for new resources.
-5. **Add Deity++.** Check that the new tiers appear in setup.
+5. **Add Real Strategy (AI)** (replaces Deity++ per owner, 2026-11-09). Test it in the same group as Workable 4th Ring. Check for no Lua errors, and that the AI settles and builds normally.
 6. **Add Steel and Thunder, then Civilizations Expanded** if you own the DLC.
 
-If a game bounces you back to the menu or crashes on load, open `Documents/My Games/Sid Meier's Civilization VI/Logs/` and read `Database.log` and `Modding.log`. The last mod you added is the likely cause.
+If a game bounces you back to the menu or crashes on load, open `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VI\Logs\` (older guides say Documents; that changed in the Leader Pass update) and read `Database.log` and `Modding.log`. The last mod you added is the likely cause.
 
 ### Caveats
 
@@ -168,7 +168,7 @@ Mods outside the original 10. Each one notes how it relates to the goal: a tuned
 
 | Mod | What it does | How it relates | Rating |
 |---|---|---|---|
-| **Real Strategy (AI)** | Makes the AI play better through new decision logic and retuned priorities. | Fills the biggest gap. Deity++ only gives the AI more resources, so this pair makes it both richer and smarter. It's also a study case for the utility AI in your own game. | 8/10 |
+| **Real Strategy (AI)** (infixo; Workshop ID likely 1617282434, unconfirmed; v2.3.1, Aug 2023) — **CHOSEN by owner, replaces Deity++** | Makes the AI play better through Lua logic and retuned priorities (settling, unit choice, support units, aircraft, more aggression in later eras). It works through the mod system, so it tunes the AI rather than rewriting it. | Fills the biggest gap. Deity++ only gives the AI more resources, so this pair makes it both richer and smarter. It's also a study case for the utility AI in your own game. | 8/10 |
 | **Detailed Map Tacks** | Turns map pins into a district and wonder planner with yields, adjacency, and placement checks. | Plan before you commit, and use Movable Districts to fix mistakes. It overlaps with the Radial Measuring Tool for planning. In your own game, it's the "explain every number" UI idea. | 8/10 |
 | **Sukritact's Global Relations Panel** | Shows every leader's opinions, wars, alliances, and deals in one panel. | The diplomacy version of the city-state quest screen: same goal of less clicking around. | 7/10 |
 | **Real Era Tracker** | Lists historic moments you haven't earned yet, to help you reach Golden Ages. | A Rise and Fall quality-of-life mod. Useful only if you own Rise and Fall or Gathering Storm. | 7/10 |

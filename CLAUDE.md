@@ -88,6 +88,17 @@ These tools don't exist until TODO Phase 2 builds them.
 - Added `docs/dlc-owned.md` (from memory) and `docs/mod-candidates.md` (unconfirmed links for the unnamed mods).
 - Built `tools/logtriage.py` and `tools/deploy.py` early, with pytest tests (owner approved bending the phase order for these two).
 - Added branch workflow: feature branch → `version-control` → `main`; created `main` and `version-control`.
+- Added from starter zip: `CREDITS.md` and empty folders (`docs/ledger`, `docs/playtests`, `mod/CivLayer/{Data,Scripts,Text,UI}`).
+- Confirmed DLC from screenshots in `docs/dlc-owned.md`: both expansions, all six Civilizations Expanded packs, most of New Frontier Pass, full Leader Pass.
+- Owner confirmed the DLC list is complete; Vietnam and Kublai Khan Pack not owned.
+- Confirmed mod #4: Workable 4th Ring by PhantomJ_M (Workshop ID still TBD).
+- UI group installed: CQUI (decided as UI base), Radial Measuring Tool, Enhanced Camera. #7 and #9 on hold (CQUI covers them). CREDITS.md started.
+- First real logs (UI group): clean. Filed `docs/playtests/001-ui-group.md`; fixed logtriage attribution (look-ahead, Firaxis noise).
+- UI group playtest passed; CQUI policy popup check pinned for a later run.
+- Group 2 IDs confirmed from Workshop pages: Repeat Project (yamada, 1505351262), Movable Districts (wltk, 2683624437). Test pending.
+- Group 2 partial results filed (`docs/playtests/002-group2.md`): Repeat Project works; Move gear present; logs pending; CQUI blank Options button open.
+- Group 2 playtest PASSED (logs clean; Movable Districts and Repeat Project use AddUserInterfaces so no production panel clash). Five mods now active. Next: Workable 4th Ring (ID needed).
+- Plan change: Real Strategy (AI) replaces Deity++; group 3 = Workable 4th Ring + Real Strategy. Deity++ on hold.
 - Added ledger pages 00 (base math) and 01 (units and combat) plus `docs/ledger/db-check.md` (queries the owner runs to confirm numbers).
 - Added ledger page 02 (trade and diplomacy).
 - Added ledger page 03 (cities and districts).
