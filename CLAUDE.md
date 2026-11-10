@@ -61,6 +61,7 @@ python tools/conflicts.py           # rebuild docs/conflicts.md
 python tools/sqlcheck.py            # test CivLayer SQL against the debug DB copy
 python tools/logtriage.py <logdir>  # summarize game logs by mod
 python tools/deploy.py              # copy mod/CivLayer into the game's Mods folder
+python tools/dbdump.py              # read the debug DB, write db-results.md for the ledger
 pytest                              # tool tests
 luacheck mod/CivLayer               # Lua lint
 ```
@@ -99,3 +100,10 @@ These tools don't exist until TODO Phase 2 builds them.
 - Group 2 partial results filed (`docs/playtests/002-group2.md`): Repeat Project works; Move gear present; logs pending; CQUI blank Options button open.
 - Group 2 playtest PASSED (logs clean; Movable Districts and Repeat Project use AddUserInterfaces so no production panel clash). Five mods now active. Next: Workable 4th Ring (ID needed).
 - Plan change: Real Strategy (AI) replaces Deity++; group 3 = Workable 4th Ring + Real Strategy. Deity++ on hold.
+- Added ledger pages 00 (base math) and 01 (units and combat) plus `docs/ledger/db-check.md` (queries the owner runs to confirm numbers).
+- Added ledger page 02 (trade and diplomacy).
+- Added ledger page 03 (cities and districts).
+- Added ledger pages 04 (tech and civic trees) and 05 (governments and great people).
+- Added ledger page 06 (religion and faith) with a master map of all systems.
+- Merged `version-control` into the feature branch (conflict was only the CLAUDE.md changelog; kept both sets).
+- Built `tools/dbdump.py` (one-click read-only database check, output `db-results.md`, git-ignored) with tests; `docs/ledger/db-check.md` now leads with it.
