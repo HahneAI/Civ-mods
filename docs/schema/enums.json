@@ -1,0 +1,25 @@
+{
+  "_note": "Closed lists shared by the schema doc, the example data, and the test. Add to a list here first, then use it.",
+  "yields": ["food", "production", "gold", "science", "culture", "faith"],
+  "slot_types": ["military", "economic", "diplomatic", "wildcard"],
+  "meter_resets": ["reset", "carry_over"],
+  "cost_models": ["flat", "per_count_over_average", "game_progress", "per_size"],
+  "scopes": ["owner", "player_cities", "all_cities", "player_units", "player_districts", "city_districts", "city_tiles", "combat"],
+  "effect_kinds": [
+    "yield_pct", "yield_flat", "yield_per_citizen", "tile_yield", "adjacency_yield",
+    "production_pct_by_unit_class", "cost_mod", "strength_mod", "grant_ability", "growth_pct",
+    "housing", "amenity", "great_person_points", "trade_capacity", "trade_route_yield",
+    "influence_points", "grant_unit", "loyalty", "healing_mod", "movement_mod",
+    "experience_mod", "border_expansion_pct", "era_score", "attach_effect"
+  ],
+  "requirement_kinds": [
+    "city_has_building", "city_has_district", "city_follows_belief", "city_has_governor",
+    "tile_has_improvement", "tile_has_terrain", "tile_has_feature", "tile_has_resource_class",
+    "tile_adjacent_to_owner", "player_has_node", "player_met_turns_ago", "player_type",
+    "unit_class_is", "unit_is_attacking", "set_is_met"
+  ],
+  "boost_trigger_families": ["build_or_own", "chain_node", "combat", "diplomacy_trade", "explore", "religion", "none"],
+  "node_trees": ["science", "culture"],
+  "belief_classes": ["pantheon", "follower", "worship", "founder", "enhancer"],
+  "diplomatic_states": ["allied", "declared_friend", "friendly", "neutral", "unfriendly", "denounced", "war"]
+}

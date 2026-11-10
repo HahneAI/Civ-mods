@@ -1,0 +1,289 @@
+{
+  "_note": "Tiny made-up dataset that follows the schema. Names are placeholders, not from any game. The test checks it against the rules in game-data-schema.md.",
+  "eras": [
+    {
+      "id": "era_1",
+      "index": 1,
+      "great_person_base_cost": 30
+    },
+    {
+      "id": "era_2",
+      "index": 2,
+      "great_person_base_cost": 60
+    },
+    {
+      "id": "era_3",
+      "index": 3,
+      "great_person_base_cost": 120
+    }
+  ],
+  "meters": [
+    {
+      "id": "meter_food",
+      "fed_by": "food",
+      "cost_model": "per_size",
+      "cost_params": {
+        "start": 15,
+        "per_step": 8,
+        "exponent": 1.5
+      },
+      "on_full": "reset"
+    },
+    {
+      "id": "meter_science",
+      "fed_by": "science",
+      "cost_model": "flat",
+      "cost_params": {},
+      "on_full": "carry_over"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "node.a1",
+      "tree": "science",
+      "era": "era_1",
+      "cost": 25,
+      "requires": [],
+      "boost": {
+        "family": "build_or_own",
+        "trigger": {
+          "kind": "own_improvements",
+          "count": 2
+        },
+        "percent": 40
+      },
+      "unlocks": [
+        {
+          "type": "improvement",
+          "id": "imp.field"
+        }
+      ]
+    },
+    {
+      "id": "node.a2",
+      "tree": "science",
+      "era": "era_1",
+      "cost": 50,
+      "requires": [
+        "node.a1"
+      ],
+      "boost": {
+        "family": "none",
+        "percent": 0
+      },
+      "unlocks": [
+        {
+          "type": "district",
+          "id": "dist.study"
+        }
+      ]
+    },
+    {
+      "id": "node.b1",
+      "tree": "science",
+      "era": "era_2",
+      "cost": 120,
+      "requires": [
+        "node.a2"
+      ],
+      "boost": {
+        "family": "chain_node",
+        "trigger": {
+          "kind": "have_node",
+          "node": "node.a1"
+        },
+        "percent": 40
+      },
+      "unlocks": [
+        {
+          "type": "building",
+          "id": "bld.hall"
+        }
+      ]
+    },
+    {
+      "id": "node.c1",
+      "tree": "culture",
+      "era": "era_1",
+      "cost": 20,
+      "requires": [],
+      "boost": {
+        "family": "explore",
+        "trigger": {
+          "kind": "meet_player"
+        },
+        "percent": 40
+      },
+      "unlocks": [
+        {
+          "type": "card",
+          "id": "card.drill"
+        },
+        {
+          "type": "government",
+          "id": "gov.starter_plus"
+        }
+      ]
+    }
+  ],
+  "districts": [
+    {
+      "id": "dist.study",
+      "cost": 54,
+      "cost_model": "per_count_over_average",
+      "cost_params": {
+        "param": 40
+      },
+      "one_per_city": true,
+      "housing": 0,
+      "amenities": 0,
+      "city_strength_mod": 2,
+      "requires_node": "node.a2",
+      "great_person_class": "gp.scholar",
+      "gp_points_per_turn": 1,
+      "adjacency": [
+        {
+          "yield": "science",
+          "amount": 1,
+          "per": 1,
+          "neighbor": {
+            "terrain": "highland"
+          }
+        },
+        {
+          "yield": "science",
+          "amount": 1,
+          "per": 2,
+          "neighbor": {
+            "any_other_district": true
+          }
+        }
+      ]
+    }
+  ],
+  "buildings": [
+    {
+      "id": "bld.hall",
+      "district": "dist.study",
+      "cost": 90,
+      "housing": 0,
+      "amenities": 0,
+      "citizen_slots": 1,
+      "upkeep_gold": 1,
+      "yields": {
+        "science": 2
+      },
+      "great_person_points": {
+        "gp.scholar": 1
+      },
+      "requires_node": "node.b1"
+    }
+  ],
+  "great_person_classes": [
+    {
+      "id": "gp.scholar",
+      "district": "dist.study",
+      "max_per_player": null
+    }
+  ],
+  "conditions": [
+    {
+      "id": "cond.city_has_hall",
+      "mode": "all",
+      "requirements": [
+        {
+          "kind": "city_has_building",
+          "args": {
+            "building": "bld.hall"
+          },
+          "negate": false
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "id": "eff.hall_bonus",
+      "owner": "gov.starter_plus",
+      "scope": "player_cities",
+      "kind": "yield_pct",
+      "args": {
+        "yield": "science",
+        "amount": 10
+      },
+      "when": "cond.city_has_hall"
+    },
+    {
+      "id": "eff.drill_bonus",
+      "owner": "card.drill",
+      "scope": "player_cities",
+      "kind": "production_pct_by_unit_class",
+      "args": {
+        "unit_classes": [
+          "melee",
+          "ranged"
+        ],
+        "eras": [
+          "era_1",
+          "era_2"
+        ],
+        "amount": 50
+      },
+      "when": null
+    }
+  ],
+  "governments": [
+    {
+      "id": "gov.starter_plus",
+      "tier": 1,
+      "requires_node": "node.c1",
+      "slots": {
+        "military": 1,
+        "economic": 1,
+        "diplomatic": 0,
+        "wildcard": 1
+      },
+      "fixed_bonus": {
+        "kind": "yield_pct",
+        "args": {
+          "yield": "culture",
+          "amount": 5
+        }
+      },
+      "influence_per_turn": 3,
+      "points_per_envoy": 100
+    }
+  ],
+  "cards": [
+    {
+      "id": "card.drill",
+      "slot": "military",
+      "requires_node": "node.c1",
+      "effects": [
+        "eff.drill_bonus"
+      ]
+    }
+  ],
+  "improvements": [
+    {
+      "id": "imp.field",
+      "requires_node": "node.a1",
+      "valid_on": {
+        "terrain": [
+          "flat"
+        ],
+        "resource_class": [
+          "bonus",
+          null
+        ]
+      },
+      "yields": {
+        "food": 1
+      },
+      "housing_per_tiles": {
+        "housing": 1,
+        "tiles": 2
+      }
+    }
+  ]
+}

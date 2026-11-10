@@ -113,3 +113,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - Round 3 database read: new ledger page 07 (effects system), unlock counts and era thresholds on page 04, resources and improvements on page 00; `dbdump.py` now resolves attach-modifier wrappers.
 - `dbdump.py` round 4: condition-set digest, moments, era data, city-state bonuses, projects, unit upgrades and unit unlocks.
 - Round 4 database read: page 07 extended (unlocks including units, resolved belief effects, condition sets, era-score moments, era data); corrected earlier claim that late techs unlock nothing.
+- Added `docs/schema/` (draft v0.1 data schema for the owner's own game, enums, example data, tests) and `docs/ledger/README.md` / `docs/schema/README.md` with where-we-left-off notes.
