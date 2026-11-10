@@ -111,3 +111,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - Round 2 database read: complete adjacency, building ladders, trade yields by district, diplomacy ladder, alliances, government bonuses, great-person points and religious units added to ledger pages 02, 03, 05, 06.
 - `tools/dbdump.py` round 3: modifier digest (what policies, beliefs, buildings etc. do), all GlobalParameters, table catalog, extra systems.
 - Round 3 database read: new ledger page 07 (effects system), unlock counts and era thresholds on page 04, resources and improvements on page 00; `dbdump.py` now resolves attach-modifier wrappers.
+- `dbdump.py` round 4: condition-set digest, moments, era data, city-state bonuses, projects, unit upgrades and unit unlocks.

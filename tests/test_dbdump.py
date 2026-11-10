@@ -109,3 +109,24 @@ def test_attach_wrapper_is_resolved_one_level(tmp_path):
     out = tmp_path / "o.md"
     dbdump.main(["--db", str(db), "--out", str(out)])
     assert "==> COLLECTION_OWNER>EFFECT_ADJUST_PLOT_YIELD | Amount=1 | when REQ_FARM" in out.read_text(encoding="utf-8")
+
+
+def test_requirement_digest(tmp_path):
+    db = tmp_path / "r.sqlite"
+    con = sqlite3.connect(db)
+    con.executescript(
+        """
+        CREATE TABLE RequirementSets (RequirementSetId TEXT, RequirementSetType TEXT);
+        CREATE TABLE RequirementSetRequirements (RequirementSetId TEXT, RequirementId TEXT);
+        CREATE TABLE Requirements (RequirementId TEXT, RequirementType TEXT, Inverse INT);
+        CREATE TABLE RequirementArguments (RequirementId TEXT, Name TEXT, Type TEXT, Value TEXT);
+        INSERT INTO RequirementSets VALUES ('SET_A','REQUIREMENTSET_ALL');
+        INSERT INTO RequirementSetRequirements VALUES ('SET_A','R1'), ('SET_A','R2');
+        INSERT INTO Requirements VALUES ('R1','REQUIREMENT_CITY_HAS_BUILDING',0), ('R2','REQUIREMENT_PLOT_HAS_FEATURE',1);
+        INSERT INTO RequirementArguments VALUES ('R1','BuildingType','ARGTYPE_IDENTITY','BUILDING_X'), ('R2','FeatureType','ARGTYPE_IDENTITY','FEATURE_Y');
+        """
+    )
+    con.commit(); con.close()
+    out = tmp_path / "o.md"
+    dbdump.main(["--db", str(db), "--out", str(out)])
+    assert "SET_A | REQUIREMENT_CITY_HAS_BUILDING: BuildingType=BUILDING_X ; REQUIREMENT_PLOT_HAS_FEATURE (NOT): FeatureType=FEATURE_Y" in out.read_text(encoding="utf-8")

@@ -94,8 +94,14 @@ TABLES = [
     ("07 More systems", "Governors", ALL, ""),
     ("07 More systems", "GovernorPromotions", ["GovernorPromotionType", "Level", "Column", "BaseAbility"], ""),
     ("07 More systems", "UnitPromotions", ["UnitPromotionType", "Level", "Specialization", "PromotionClass", "Column"], ""),
-    ("07 More systems", "HistoricMoments", ALL, ""),
-    ("07 More systems", "Eras", ALL, ""),
+    ("07 More systems", "Moments", ALL, ""),
+    ("07 More systems", "CommemorationTypes", ALL, ""),
+    ("07 More systems", "Eras_XP1", ALL, ""),
+    ("07 More systems", "Eras_XP2", ALL, ""),
+    ("07 More systems", "MinorCivBonuses", ALL, ""),
+    ("07 More systems", "Projects", ["ProjectType", "Cost", "CostProgressionModel", "CostProgressionParam1", "PrereqTech", "PrereqCivic", "PrereqDistrict", "Repeatable"], ""),
+    ("07 More systems", "UnitUpgrades", ALL, ""),
+    ("07 More systems", "Units", ["UnitType", "PrereqTech", "PrereqCivic", "PrereqDistrict", "MandatoryObsoleteTech", "Cost", "Combat", "RangedCombat"], ""),
     ("06 Religion", "Units", ["UnitType", "SpreadCharges", "ReligiousStrength", "ReligionEvictPercent", "ReligiousHealCharges"],
      "SpreadCharges > 0 OR ReligiousStrength > 0"),
     ("06 Religion", "Religions", ["ReligionType", "Pantheon"], ""),
@@ -285,6 +291,32 @@ def modifier_digest(con, names) -> str:
     return "\n".join(out) if out else "_No modifier link tables found._"
 
 
+def requirement_digest(con, names) -> str:
+    """One line per condition set: 'SET | requirement type: args ; ...'."""
+    need = [names.get(n) for n in ("requirementsets", "requirementsetrequirements", "requirements", "requirementarguments")]
+    if not all(need):
+        return "_Requirement tables not found._"
+    _, srr, req, rarg = need
+    rtype = {}
+    rc = table_columns(con, req)
+    rl = [c.lower() for c in rc]
+    for row in con.execute(f'SELECT "{rc[rl.index("requirementid")]}", "{rc[rl.index("requirementtype")]}" '
+                           f'{(", " + chr(34) + rc[rl.index("inverse")] + chr(34)) if "inverse" in rl else ""} FROM "{req}"'):
+        rtype[row[0]] = row[1] + (" (NOT)" if len(row) > 2 and str(row[2]) == "1" else "")
+    ra: dict = {}
+    ac = table_columns(con, rarg)
+    al = [c.lower() for c in ac]
+    for rid, nm, val in con.execute(f'SELECT "{ac[al.index("requirementid")]}", "{ac[al.index("name")]}", "{ac[al.index("value")]}" FROM "{rarg}"'):
+        ra.setdefault(rid, []).append(f"{nm}={val}")
+    sc = table_columns(con, srr)
+    sl = [c.lower() for c in sc]
+    sets: dict = {}
+    for sid, rid in con.execute(f'SELECT "{sc[sl.index("requirementsetid")]}", "{sc[sl.index("requirementid")]}" FROM "{srr}"'):
+        sets.setdefault(sid, []).append(f"{rtype.get(rid, rid)}: {', '.join(ra.get(rid, []))}".rstrip(": "))
+    lines = [f"{sid} | {' ; '.join(parts)}" for sid, parts in sorted(sets.items())]
+    return "```\n" + "\n".join(lines[:2500]) + "\n```"
+
+
 def build_report(con) -> str:
     names = table_names(con)
     out = [f"# Database check results ({date.today().isoformat()})",
@@ -311,6 +343,10 @@ def build_report(con) -> str:
                 modifier_digest(con, names), ""]
     except (sqlite3.Error, ValueError) as e:  # never lose the rest of the report
         out += [f"_Modifier digest failed: {e}_", ""]
+    try:
+        out += ["## Condition sets (what the 'when' parts mean)", "", requirement_digest(con, names), ""]
+    except (sqlite3.Error, ValueError) as e:
+        out += [f"_Condition digest failed: {e}_", ""]
     out += ["## Table catalog (every table and its row count)", "", catalog(con), ""]
     return "\n".join(out)
 

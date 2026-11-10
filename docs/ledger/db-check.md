@@ -147,7 +147,7 @@ Round 1 (2026-11-10) read pages 00 to 06 from the owner's database. It answered 
 
 Rounds 1 and 2 gave the numbers. Round 3 adds **what each thing actually does**: the game stores the effect of every policy card, belief, building, civic, tech, district, improvement, governor promotion and unit promotion as a "modifier" row. `tools/dbdump.py` now turns those into one line each (`owner | effect | arguments`), skips civilization and leader content, and also dumps **every** GlobalParameters row, a catalog of **all 430 tables** with row counts, and a few more systems (resources, improvements, governors, promotions, historic moments, full eras). Expect a larger file (about 0.5 to 2 MB).
 
-**Round 3 (2026-11-10) done:** the modifier digest was read; see page 07. The digest now also resolves one level of "attach another modifier" wrappers (beliefs and many cards hide their real effect there). An optional round 4 re-run will fill that in.
+**Round 3 (2026-11-10) done:** the modifier digest was read; see page 07. The digest now also resolves one level of "attach another modifier" wrappers (beliefs and many cards hide their real effect there). **Round 4** (next run) also resolves the attach wrappers, adds a condition-set digest (what each "when" means), era-score moments, era data for both expansions, city-state bonuses, projects, unit upgrades, and which tech or civic unlocks each unit.
 
 ## Keeping this file current
 
