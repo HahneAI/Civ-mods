@@ -1,6 +1,6 @@
 # Trade and Diplomacy: How Players Interact With Each Other
 
-Source: custom write-up from general Civ 6 knowledge plus a web check (see "Sources"). Plain words, nothing copied. Tags as before: `[sure]`, `[approx]`, `[verify]`. Real numbers come through [`db-check.md`](db-check.md).
+Source: custom write-up. **`[sure]` numbers were read from the owner's own game database** (2026-11-10, via `tools/dbdump.py`); the rest is general knowledge plus a web check. Plain words, nothing copied. Tags as before.
 Builds on [`00-base-math.md`](00-base-math.md) (yields, gold) and [`01-units-combat.md`](01-units-combat.md) (war).
 
 **Honest warning:** these two systems have the thinnest public math of the three pages. Trade yields are mostly per-building lookups, and diplomacy is mostly a tuned score, so there is less clean formula to record. Where I could not confirm a number, I say so.
@@ -31,9 +31,9 @@ Builds on [`00-base-math.md`](00-base-math.md) (yields, gold) and [`01-units-com
 
 | Limit | Plain meaning | Tag |
 |---|---|---|
-| Capacity | How many routes you can run at once. Raised by certain civics and buildings. | `[sure]` that it exists, `[verify]` how it grows |
-| Range | The target must be within a set distance of the trader's start. Sea routes can go farther. | `[approx]` |
-| Duration | A route runs for a fixed number of turns, then ends. | `[verify]` |
+| Capacity | How many routes you can run at once. Raised by certain civics and buildings. | `[sure]` that it exists; how it grows `[verify]` |
+| Range | **15 tiles** on land; **30** over water (refuel distances). | `[sure]` |
+| Duration | **20 turns** base. | `[sure]` |
 
 **Guardrail:** you cannot spam routes. Capacity caps how many you run; range caps where. This is what makes "who is near whom" matter.
 
@@ -51,7 +51,9 @@ What community testing found `[approx]`:
 - Domestic routes lean toward **food and production**, and the amount depends on the difference between the two cities' yields. Sending a trader from a food-poor city to a food-rich one helps the poor one.
 - International routes lean toward **gold**, and a harbor at the destination adds gold.
 - City population and era did not affect the yield in a tester's results. `[verify]`
-- Roads: a route can leave a road path along its way. `[approx]`
+- Roads: a route **builds roads** along its way. `[sure]`
+- **Gold:** about **+2 per district** at the origin and **+2 per district** at the destination, per turn. `[sure]`
+- Trade routes also carry religion (page 06): **1.0 pressure at the destination and 0.5 at the origin**, and add tourism (+25%). `[sure]`
 
 **Guardrail:** yields reward linking different cities. Routing between two identical cities pays little.
 **Design note:** the idea that "routes move surplus from where it exists to where it is needed" fits a community-building game well. This is a strong keep. The per-building lookup table, however, is just data and is easy to redesign.
@@ -60,6 +62,21 @@ What community testing found `[approx]`:
 
 - A trader can be pillaged or captured by an enemy military unit on the route. `[sure]`
 - Declaring war on a partner ends international routes with that partner. `[approx]`
+
+## Step 4b · Diplomacy numbers read from the database `[sure]`
+
+| Rule | Value |
+|---|---|
+| Minimum turns of war before peace | 10 |
+| Minimum turns of peace before a new war | 10 |
+| Declared friendship, alliance, defensive pact, denounce: how long each lasts | 30 turns |
+| Alliance levels | 3 (level 2 at 320 points, level 3 at 960) |
+| Alliance points | +1 per trade, +2 per deal, +2 per society action, ×4 multiplier |
+| Grievances for a denouncement | 25 |
+| Grievances from breaking a promise | ×200 (scale) |
+| Warmonger points by era (conquering) | 0, 6, 12, 18, 24, then flat at 24 |
+| Grievances per turn for holding a conquered capital / other city | 3 / 1 |
+| Diplomatic victory points needed | 20 |
 
 ## Step 5 · Links back to other systems
 
@@ -137,14 +154,15 @@ In the Gathering Storm rules:
 
 **Core loop to test in your game:** *peace and contact → trade links → richer cities → bigger armies → pressure on neighbors → grievances and alliances → back to peace or war.*
 
-## Open items (fill in using db-check.md)
+## Open items
 
-- Trade: capacity sources, range, route length, per-district yield table.
-- Diplomacy: score values per action, agenda list, grievance values, casus belli list.
-- City-states: envoy thresholds and suzerain bonus list.
+- Route capacity sources, per-district yield table (the dump has route gold per district; capacity not in it).
+- Agenda list, relationship score values per action, casus belli list (tables not dumped).
+- Envoy thresholds and city-state bonus list (influence settings: **3 envoys for suzerain**, `[sure]`).
 
 ## Sources
 
-- Trade yields and routes: [Trade Routes Guide](https://forums.civfanatics.com/threads/trade-routes-guide.604710/latest), [What effect trade route yield and by how much?](https://forums.civfanatics.com/threads/what-effect-trade-route-yield-and-by-how-much.601907), [Civ 6 wiki, Trade Route](https://civilization.fandom.com/wiki/Trade_Route_(Civ6)). The "pre-patch" yield-difference findings may be out of date. One widely quoted formula is from Civ 5 and was not used.
+- Route range, duration, gold, diplomacy numbers: the owner's game database.
+- Trade yields and routes (shape): [Trade Routes Guide](https://forums.civfanatics.com/threads/trade-routes-guide.604710/latest), [What effect trade route yield and by how much?](https://forums.civfanatics.com/threads/what-effect-trade-route-yield-and-by-how-much.601907), [Civ 6 wiki, Trade Route](https://civilization.fandom.com/wiki/Trade_Route_(Civ6)). The "pre-patch" yield-difference findings may be out of date. One widely quoted formula is from Civ 5 and was not used.
 - Diplomacy and grievances: [Civ 6 wiki, Diplomacy](https://civilization.fandom.com/wiki/Diplomacy_(Civ6)), [Grievances Guide](https://forums.civfanatics.com/threads/grievances-guide.642164), [Grievances balance](https://forums.civfanatics.com/threads/grievances-balance.647197).
 - Envoys and city-state bonuses: thin coverage; not confirmed.

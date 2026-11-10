@@ -47,3 +47,15 @@ def test_missing_db_returns_error(tmp_path, monkeypatch):
     monkeypatch.delenv("LOCALAPPDATA", raising=False)
     monkeypatch.setenv("HOME", str(tmp_path))
     assert dbdump.main(["--db", str(tmp_path / "nope.sqlite"), "--out", str(tmp_path / "o.md")]) == 2
+
+
+def test_all_columns_marker_dumps_every_column(tmp_path):
+    db = tmp_path / "d.sqlite"
+    con = sqlite3.connect(db)
+    con.executescript("CREATE TABLE Districts (DistrictType TEXT, A INT, B INT, C INT, D INT, E INT, F INT, G INT, H INT, I INT, J INT, K INT, L INT, M INT, N INT);"
+                      "INSERT INTO Districts VALUES ('D_X',1,2,3,4,5,6,7,8,9,10,11,12,13,14);")
+    con.commit(); con.close()
+    out = tmp_path / "o.md"
+    dbdump.main(["--db", str(db), "--out", str(out)])
+    text = out.read_text(encoding="utf-8")
+    assert "| N |" in text.split("### Districts")[1].split("###")[0]  # 14th column present

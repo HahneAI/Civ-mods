@@ -29,7 +29,8 @@ import sys
 from datetime import date
 from pathlib import Path
 
-ROW_LIMIT = 400  # per table, so the file stays small enough to attach
+ROW_LIMIT = 800  # per table, so the file stays small enough to attach
+ALL = ["*"]  # as the column list: dump every column of the table
 
 # GlobalParameters name patterns per page. Matched with LIKE (case-insensitive).
 PARAM_PATTERNS = {
@@ -55,11 +56,14 @@ TABLES = [
       "StrategicResource", "PopulationCost", "PromotionClass", "FormationClass"], ""),
     ("01 Combat", "Terrains", [], ""),
     ("01 Combat", "Features", [], ""),
-    ("03 Cities/Districts", "Districts",
-     ["DistrictType", "Cost", "CostProgressionModel", "CostProgressionParam1", "Housing", "Entertainment",
-      "CityStrengthModifier", "OnePerCity", "RequiresPlacement", "AllowsHolyCity", "Aqueduct", "Canal"], ""),
-    ("03 Cities/Districts", "District_Adjacencies", [], ""),
-    ("03 Cities/Districts", "Adjacency_YieldChanges", [], ""),
+    ("03 Cities/Districts", "Districts", ALL, ""),
+    ("03 Cities/Districts", "District_Adjacencies", ALL, ""),
+    ("03 Cities/Districts", "Adjacency_YieldChanges", ALL, ""),
+    ("03 Cities/Districts", "Buildings",
+     ["BuildingType", "PrereqDistrict", "Cost", "Housing", "Entertainment", "CitizenSlots", "Maintenance",
+      "PrereqTech", "PrereqCivic", "Capital", "OuterDefenseHitPoints", "OuterDefenseStrength", "Defense"], ""),
+    ("03 Cities/Districts", "Building_YieldChanges", ALL, ""),
+    ("03 Cities/Districts", "Improvements", ["ImprovementType", "PrereqTech", "PrereqCivic", "Housing", "TilesRequired", "BuildInLine"], ""),
     ("04 Trees", "Technologies", ["TechnologyType", "EraType", "Cost", "Repeatable"], ""),
     ("04 Trees", "TechnologyPrereqs", [], ""),
     ("04 Trees", "Civics", ["CivicType", "EraType", "Cost", "Repeatable"], ""),
@@ -68,12 +72,15 @@ TABLES = [
      ["TechnologyType", "CivicType", "BoostClass", "Boost", "NumItems", "Unit", "ImprovementType",
       "BuildingType", "ResourceType", "DistrictType", "Unit1Type", "Unit2Type"], ""),
     ("04 Trees", "Eras", [], ""),
-    ("05 Government/Great people", "Governments", ["GovernmentType", "PrereqCivic", "Tier", "InheritedBonus"], ""),
+    ("05 Government/Great people", "Governments", ALL, ""),
     ("05 Government/Great people", "Government_SlotCounts", [], ""),
-    ("05 Government/Great people", "Policies", ["PolicyType", "GovernmentSlotType", "PrereqCivic", "PrereqTech"], ""),
+    ("05 Government/Great people", "Policies", ALL, ""),
+    ("05 Government/Great people", "District_GreatPersonPoints", ALL, ""),
+    ("05 Government/Great people", "Building_GreatPersonPoints", ALL, ""),
     ("05 Government/Great people", "GreatPersonClasses", [], ""),
     ("05 Government/Great people", "GreatPersonIndividuals", [], ""),
     ("06 Religion", "Beliefs", ["BeliefType", "BeliefClassType"], ""),
+    ("06 Religion", "Unit_ReligiousChargesAndStrength", [], ""),
     ("06 Religion", "Religions", ["ReligionType", "Pantheon"], ""),
 ]
 
@@ -131,7 +138,10 @@ def dump_table(con, names: dict[str, str], table: str, prefer: list[str], where:
         return f"_Table `{table}` does not exist in this database._"
     have = table_columns(con, real)
     lower = {c.lower(): c for c in have}
-    cols = [lower[p.lower()] for p in prefer if p.lower() in lower] or have[:12]
+    if prefer == ALL:
+        cols = have
+    else:
+        cols = [lower[p.lower()] for p in prefer if p.lower() in lower] or have[:12]
     total = con.execute(f'SELECT COUNT(*) FROM "{real}"').fetchone()[0]
     sql = f'SELECT {", ".join(chr(34) + c + chr(34) for c in cols)} FROM "{real}"'
     if where:

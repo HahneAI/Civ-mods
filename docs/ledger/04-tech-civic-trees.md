@@ -1,137 +1,186 @@
 # Tech and Civic Trees: The Progress Engine
 
-Source: custom write-up from general Civ 6 knowledge plus a web check (see "Sources"). Plain words, nothing copied. In line with hard rule 8, **no tech or civic names are used here**; nodes are described by era and position. Tags as before: `[sure]`, `[approx]`, `[verify]`. Real numbers come through [`db-check.md`](db-check.md).
-Builds on [`00-base-math.md`](00-base-math.md) (science and culture meters, Step 8).
+Source: custom write-up. **All numbers on this page were read from the owner's own game database** (`DebugGameplay.sqlite`, 2026-11-10, both expansions loaded, 77 techs and 61 civics) with `tools/dbdump.py`, then analyzed here. Rules in plain words; no tech or civic names are used (hard rule 8), nodes are described by era and position. Tags: `[sure]` = read from the database, `[derived]` = computed from database numbers, `[verify]` = still unconfirmed.
+Builds on [`00-base-math.md`](00-base-math.md) (the science and culture meters).
 
-**Why this page is longer:** the owner flagged the two trees as the favorite system, so this page goes deeper and separates what is measured from what is guessed.
-**What I could and could not get:** I got a real per-tech **science cost table** for the base game (computed below). I could **not** get per-civic culture costs, the exact boost percentage for civics, or the boost trigger list. Those are marked.
+**Correction notice:** an earlier draft of this page used a web table of costs. It was for a different version and was wrong by up to 40% in the middle eras. This version replaces it.
 
 ## Step 0 · The big picture
 
-> **A tree is a list of unlockable things, each with a price, a set of things you must already have, a possible discount if you do a certain act on the map, and a list of rewards. Two trees run side by side: one paid with science, one paid with culture.**
+> **A tree is a list of unlockable things, each with a price, a set of things you must already have, a discount if you do a certain act on the map, and a list of rewards. Two trees run side by side: one paid with science, one with culture.**
 
 ```
 SCIENCE per turn -> fills TECH meter -> tech done -> unlocks units, buildings, improvements, districts
 CULTURE per turn -> fills CIVIC meter -> civic done -> unlocks governments, policy cards, some buildings/units
                        ^
-        BOOST (do a map act) -> instant partial credit on that node
+        BOOST (do a map act) -> 40% off that node
 ```
 
-## Step 1 · What one node is (the data row)
+## Step 1 · What one node is
 
-Every node in either tree has the same five fields `[sure]`:
+Every node has the same fields `[sure]`:
 
 | Field | Plain meaning |
 |---|---|
 | Cost | How much of the meter you must fill |
-| Era | Which age of history the node belongs to |
-| Prerequisites | Other nodes you must already have (0 to 3 in the base tech table) |
-| Boost | A map act that gives a partial discount (the trigger) |
-| Unlocks | What you receive: units, buildings, districts, improvements, policy cards, governments |
+| Era | Which age of history it belongs to |
+| Prerequisites | Other nodes you must already have (0 to 4 for techs, 0 to 2 for civics) |
+| Boost | A map act that gives a partial discount |
+| Unlocks | What you receive |
 
-**Design note:** five fields is a very small, very reusable data shape. It is the cleanest part of the system to keep.
+A tech can also be flagged repeatable (only the very last one is).
 
-## Step 2 · The tech tree in numbers (base game)
+## Step 2 · The tech tree, in numbers
 
-Measured from a community table of the base game (no expansions) `[approx]`, then summed and compared here:
+| Era | Techs | Cost range | Average | Era total | Cost jump vs. previous era |
+|---|---|---|---|---|---|
+| 1 | 11 | 25 to 80 | 51 | 565 | n/a |
+| 2 | 8 | 120 to 200 | 160 | 1,280 | ×3.12 |
+| 3 | 8 | 300 to 390 | 345 | 2,760 | ×2.16 |
+| 4 | 9 | 600 to 730 | 658 | 5,920 | ×1.91 |
+| 5 | 8 | 930 to 1,070 | 1,000 | 8,000 | ×1.52 |
+| 6 | 8 | 1,250 to 1,370 | 1,310 | 10,480 | ×1.31 |
+| 7 | 8 | 1,480 to 1,660 | 1,548 | 12,380 | ×1.18 |
+| 8 | 9 | 1,850 to 2,155 | 1,952 | 17,565 | ×1.26 |
+| Future | 8 | 2,200 to 2,600 | 2,288 | 18,300 | (last one repeats) |
 
-| Era | Techs | Cost range | Average cost | Era total |
-|---|---|---|---|---|
-| 1 | 11 | 25 to 80 | 51 | 565 |
-| 2 | 8 | 120 to 200 | 160 | 1,280 |
-| 3 | 7 | 300 to 390 | 339 | 2,370 |
-| 4 | 9 | 540 to 660 | 593 | 5,340 |
-| 5 | 8 | 805 to 925 | 865 | 6,920 |
-| 6 | 7 | 1,035 to 1,135 | 1,092 | 7,645 |
-| 7 | 8 | 1,225 to 1,375 | 1,281 | 10,250 |
-| 8 | 9 | 1,540 to 1,795 | 1,625 | 14,625 |
-| End | 1 | about 2,050 | 2,050 | repeatable final tech |
+- **69 techs in the eight eras, 58,950 science total** `[derived]`; with the future era, 77 techs and 77,250. `[sure]`
+- Costs rise fast at first (×3.1, ×2.2) and flatten to about ×1.2 late. Each era has **two price levels** inside it: a cheaper first group and a dearer second group. `[derived]`
+- Cost is shifted by about **−20% for a node older than the current game era and +20% for one newer**, so players who fall behind get a discount and leaders pay more. `[sure]` that the two settings exist; the exact rule for "behind" `[verify]`.
+- Game speed multiplies every cost: **marathon 3.0, epic 1.5, standard 1.0, quick 0.67, online 0.5**. `[sure]`
+- No evidence of cost scaling with the number of cities. `[sure]` (no such setting exists)
 
-- **Totals:** 67 techs in the eight eras plus 1 final tech = 68 `[approx]`; about **49,000** science to finish the eight eras.
-- **Cost jump per era** (average of one era divided by the one before): ×3.1, ×2.1, ×1.75, ×1.46, ×1.26, ×1.17, ×1.27. So costs rise fast early, then flatten toward a **near-linear** climb late. `[derived here]`
-- **Inside an era** there are usually two price levels (cheap first half, dearer second half), about +25% to +65% between them in the early eras, about +10% to +15% in the late ones. `[derived here]`
-- Prerequisites: 5 techs in the first era need nothing, so the tree starts with 5 roots. Others need 1 to 3 earlier techs (the count includes either-or alternatives). Most nodes need 1 or 2. `[approx]`
-- Game speed multiplies all costs (faster speeds cut them, slower raise them). `[verify]` multipliers.
-- I found **no evidence** that tech or civic cost grows with your number of cities (unlike some other games). `[verify]`
+**Worked out here:** at a flat 100 science per turn, the eight eras (without boosts) take about 590 turns. The first three eras cost only 4,600 combined (8% of the tree); the last three cost 40,400 (69%). So almost the whole tree is paid late, by a large economy.
 
-**What it means for play, worked out here:**
-- At a rough 100 science per turn, the entire eight-era tree would take about 490 turns without boosts. That is why science output has to grow by many times over a game.
-- The early eras are short and cheap (4,215 total for the first three), the late eras hold most of the cost (35,000 of 49,000 are in the last four).
+## Step 3 · The tree's shape (the part the web could not give)
 
-**Guardrail:** price escalation means no tree is ever "finished" cheaply; each era demands a bigger economy (page 00) than the one before.
-**Design note:** a price ladder that flattens into a linear climb is easy to tune with two numbers (a start and a late slope). This is a great candidate to rebuild in your own terms.
+All figures are for the 69 eight-era techs; future techs have no recorded prerequisites, so they are handled apart.
 
-## Step 3 · Boosts: the map acts that discount research
+| Shape measure | Value |
+|---|---|
+| Nodes / links between them | 69 / 95 |
+| Starting nodes (no prerequisite) | **5**, all in era 1 |
+| Ending nodes (nothing depends on them) | 7 |
+| Longest chain (depth) | **15 steps** |
+| Prerequisites per node | 0: 5, 1: 37, 2: 24, 3: 2, 4: 1 |
+| Dependents per node | 0: 7, 1: 37, 2: 17, 3: 8 |
+| Links inside one era / to the next era | 29 / 66 |
+| Links that skip an era | **0** |
 
-- Each node has a trigger tied to something you do on the map (found, build, kill, meet, own a resource, and so on). Doing it gives a **large partial credit** to that node. `[sure]` that this exists.
-- Size of the credit for techs: **50%** in one community table, **40%** in another guide. Likely differs by patch. `[verify]`
-- Size for civics: **sources disagree widely** (a modding guide said 10%, other material said 40 to 50%). `[verify]`
-- A few triggers are automatic (done in every game), most depend on how you play. `[approx]`
-- The end-game repeatable tech has no boost. `[approx]`
+Width by depth (how many nodes sit at each step from the start):
 
-**What a boost is worth, worked out here** (taking 50%): with every boost, the tree costs about **24,500** instead of 49,000. A single boost on a cost-1,500 tech saves about 750 science, which at 100 science per turn is 7 turns.
+`5, 8, 4, 4, 7, 6, 4, 4, 4, 5, 5, 5, 2, 3, 3`
 
-**Guardrail:** research is not only a number to grow. It is also a list of things to do. The tree tells you what to do on the map.
-**Design note:** boosts turn the tree into a **quest list that rewards playing the world**. This is the single best idea in the system for a tile game: it ties science to action on the tiles. Strong keep, rating **9 out of 10**. A caution from the web search: boost lists can feel like a checklist, so vary triggers, avoid duplicates.
+Reading that: the tree **opens up in the first two steps (up to 8 side by side), stays 4 to 7 wide through the middle, and narrows to 2 or 3 at the end**: a funnel. Most nodes (54%) have a single prerequisite and a single dependent, so the middle is a set of long parallel chains with occasional joins (the 24 two-prerequisite nodes and 3 with more).
 
-## Step 4 · The civic tree
+- **Hubs:** the starting nodes unlock almost everything: the first-era starters gate 45 to 48 of the other 68 techs each. `[derived]`
+- **Critical chain:** the most expensive single chain to one end tech costs **13,980 science, only 24% of the whole tree**. So you can reach the last tier while skipping three quarters of the tree. `[derived]`
+- **No era skipping:** every link goes to the same era or the next, never further. That keeps the tree readable.
 
-- Same five-field shape as techs, paid with **culture** `[sure]`.
-- Civics unlock: **governments**, **policy cards** (see page 05), and some buildings and units. `[sure]`
-- Cost: a few examples from one list show mid-tree civics in the **low hundreds** and later ones at several hundred, with a separate cost list for the expansion rules. Full table: `[verify]`, needs db-check.
-- Civic boosts exist and are called inspirations. `[sure]` Percentages: see Step 3.
-- Like techs, civics are grouped by era. Counts differ widely by source (`[verify]`, expansions add many).
+**Design note:** a tree with one hard rule (links never skip an era), 1 to 2 prerequisites per node, a few starting nodes, and a funnel-shaped end is a simple, copyable recipe. Total node count (69) is about where players can still remember the whole tree.
 
-**Where the two trees differ in role** `[approx]`:
+## Step 4 · The civic tree, in numbers
+
+| Era | Civics | Cost range | Average | Era total | Cost jump |
+|---|---|---|---|---|---|
+| 1 | 7 | 20 to 70 | 49 | 340 | n/a |
+| 2 | 7 | 110 to 175 | 131 | 920 | ×2.71 |
+| 3 | 7 | 220 to 420 | 334 | 2,340 | ×2.54 |
+| 4 | 6 | 440 to 720 | 587 | 3,520 | ×1.75 |
+| 5 | 7 | 800 to 1,210 | 1,013 | 7,090 | ×1.73 |
+| 6 | 9 | 1,540 to 1,715 | 1,608 | 14,475 | ×1.59 |
+| 7 | 5 | 1,955 to 2,415 | 2,231 | 11,155 | ×1.39 |
+| 8 | 7 | 2,880 to 3,100 | 2,963 | 20,740 | ×1.33 |
+| Future | 6 | 3,200 to 3,500 | 3,250 | 19,500 | |
+
+- **55 civics in the eight eras, 60,580 culture total**; with the future era, 61 and 80,080. `[sure]`/`[derived]`
+- The same ±20% era shift and game-speed multipliers apply as for techs. `[sure]`
+- **Civics get more expensive than techs in the late game:** the last era averages 2,963 culture versus 1,952 science. `[derived]`
+
+Shape `[derived]`:
+
+| Shape measure | Value |
+|---|---|
+| Nodes / links | 55 / 78 |
+| Starting nodes | **1** (one civic opens the whole tree) |
+| Ending nodes | 13 |
+| Longest chain | **17 steps** |
+| Prerequisites per node | 0: 1, 1: 30, 2: 24 (never more than 2) |
+| Links inside one era / to the next | 41 / 37 |
+| Links that skip an era | 0 |
+
+Width by depth: `1, 2, 4, 3, 4, 3, 4, 4, 2, 4, 3, 3, 3, 6, 2, 3, 4`
+
+- The civic tree **starts as a single trunk**: the first civic gates all 54 others, and the next few civics each gate 43 to 48. `[derived]`
+- It is **deeper and flatter** than the tech tree (17 steps, steady width of 3 to 4, no wide opening). The most expensive chain costs 18,435 culture (30% of the total).
+- Its 13 ending nodes include the end-of-line unlocks: the highest-tier governments and policy chains (page 05).
+
+**Where the trees differ** `[derived]`:
 
 | | Tech tree | Civic tree |
 |---|---|---|
-| Paid with | science | culture |
-| Mainly unlocks | things you **build or make** | **rules you choose** and governments |
-| Feels like | what you can do | how you are run |
+| Starts | 5 side-by-side starters | 1 trunk |
+| Shape | wide opening, funnel end | long, steady width |
+| Depth | 15 | 17 |
+| Max prerequisites | 4 | 2 |
+| Late cost | cheaper | dearer |
+| Mostly unlocks | things you build and make | rules you choose (page 05) |
 
-**Guardrail:** two currencies means two different pressures; a civilization short on culture is held back in governance even if its science is high.
-**Design note:** keeping "build things" separate from "choose rules" is a strong shape. Open question: do you want two trees, or one tree with two node types?
+**Design note:** the contrast is intentional and worth keeping: science is a branching map of options, culture is a narrow road you walk in order, and the second one is dearer. Open question: do you want two trees, or one tree with two node types?
 
-## Step 5 · Eras: the clock the trees run on
+## Step 5 · Boosts: the map acts that discount research
+
+- **Both trees:** a boost takes **40%** off the node (not 50%). `[sure]` One late civic is the exception, at 90%. `[sure]`
+- **Coverage:** 73 of 77 techs and 53 of 61 civics have an entry. The three first starter techs and the repeatable end tech have none. Of the 73, **11 are placeholders** (a late "critical tech" label, no real trigger), so about **62 techs have a real boost**. `[derived]`
+- **Number of trigger kinds:** 45 different trigger types for 126 rows. `[sure]`
+
+What the triggers ask you to do `[derived]`:
+
+| Trigger family | Rows | Plain meaning |
+|---|---|---|
+| Build or own something | 84 | have N buildings, improvements, districts, wonders, units, cities, great people |
+| Chain: get another node first | 10 | research or learn a related node |
+| Combat | 10 | kill a unit type, clear a camp, receive or declare war |
+| Placeholder (no boost) | 11 | late techs with no normal trigger |
+| Diplomacy and trade | 6 | meet a civ, have an alliance, maintain trade routes |
+| Explore | 3 | discover a continent or natural wonder, extract an artifact |
+| Religion | 2 | found a religion or pantheon |
+
+**Two thirds of all boosts (67%) are "build or own something."** Only 10 involve fighting and 6 involve other players.
+
+**What a boost is worth** `[derived]`: with every boost, the eight-era tech tree costs about 35,400 instead of 58,950. A single boost on a 1,500-cost tech saves 600 science, 6 turns at 100 science per turn.
+
+**Guardrail:** research is not only a number to grow. The tree tells you what to build.
+**Design note:** boosts turn the tree into a **quest list that rewards playing the map**. Rating **9 out of 10** for your tile game. Two things to improve: (1) the "build or own" family dominates, so research mostly follows what you were building anyway; add more world-facing triggers. (2) 11 techs have none, which feels like a gap.
+
+## Step 6 · Eras: the clock the trees run on
 
 - Eras advance as you move through the **science** tree. `[sure]`
-- Each era has an **era score** (points for notable acts). At a new era, your score is compared to two thresholds: below the low one is a **dark age**, above the high one is a **golden age**, in between is normal. `[sure]` for the idea, numbers `[verify]` and vary per game.
-- A dark age eases the next threshold, giving a recovery path. `[approx]`
-- Sources conflict on whether a "heroic" age exists in the current version. `[verify]`
+- Era 2's great-person base cost is 60; by era 8 it is 1,320. See page 05.
+- A "next era" timer of 10 turns exists. `[sure]` Era score thresholds and what earns them were not in this dump. `[verify]`
 
-**Guardrail:** falling behind in the moment is a real cost, but not permanent.
-**Design note:** a score-per-era with a comeback rule is a neat pacing tool. Decide whether it is needed.
-
-## Step 6 · How the trees connect to everything else
+## Step 7 · How the trees connect to everything else
 
 | From | To | Rule in plain words |
 |---|---|---|
-| Citizens, districts, buildings (page 00, 03) | Science, culture meters | the sources of research |
-| Science | Tech node | fills the cost |
-| Culture | Civic node | fills the cost |
-| Map act (build, kill, meet...) | Boost | partial credit on a node |
-| Tech node | Units, buildings, districts, improvements | unlocks new options on the map (pages 01, 03) |
-| Civic node | Governments, policy cards | unlocks rule choices (page 05) |
-| Tech/era progress | Era score | clock for golden or dark age |
-| Trade, diplomacy (page 02) | Some boosts | triggers can need contact or trade |
+| Citizens, districts, buildings (pages 00, 03) | Science, culture meters | the sources |
+| Science / culture | Tech / civic node | fills the cost |
+| Map act | Boost | 40% off one node |
+| Tech node | Units, buildings, districts, improvements | new options on the map |
+| Civic node | Governments, policy cards | rule choices (page 05) |
+| Game era vs. node era | Cost ±20% | catch-up discount, leader surcharge |
+| Game speed | All costs | ×0.5 to ×3 |
 
-**Core loop to test in your game:** *more land and buildings → more science and culture → nodes done → new buildings, units, and rules → more land and buildings.* Boosts add a second input: *do the thing the tree asks → get ahead.*
+**Core loop to test in your game:** *more land and buildings → more science and culture → nodes done → new buildings, units, and rules → more land and buildings.* Boosts add a second input: *do the thing the tree asks → 40% off.*
 
-## Open items (fill in using db-check.md)
+## Open items
 
-- Full tech and civic cost tables from the actual game, including the expansions.
-- Exact prerequisite graph (the shape: how many branches, how wide, how deep).
-- Boost list per node, boost percentage by tree, and trigger types.
-- Game-speed multipliers.
-- Era score thresholds and what earns era score.
-
-**Next step for the trees:** if you run the page 04 queries, I can draw the actual tree shape (width and depth per era, number of dead ends) and turn the five-field row into a data schema for your own game.
+- Which techs and civics each boost belongs to (the trigger details: counts, item types). The dump has them, a follow-up page can list the shape of each trigger without names.
+- What each node unlocks (needs the unlock tables).
+- Exact meaning of "behind the game era" for the ±20% rule.
+- Era score thresholds.
+- Future-era prerequisites (random per game).
 
 ## Sources
 
-- Tech cost table, prerequisite counts, boost flags: [CivFanatics Civ 6 technology info](https://civfanatics.com/civ6/info/technology/), summed and analyzed here. Treat as base-game only.
-- Boost percentage: [On Towards the Stars: Eurekas and Inspirations](https://theahura.substack.com/p/on-towards-the-stars-eurekas-and) (40%) vs. the table above (50%).
-- Civic data and boost sizes: [Civ 6 wiki, List of civics](https://civilization.fandom.com/wiki/List_of_civics_in_Civ6) (could not be fully read; the fetch was blocked), [Civ 6 wiki, Technology](https://civ6.fandom.com/wiki/Technology).
-- Era score thresholds: [Civ 6 wiki, Age](https://civilization.fandom.com/wiki/Age_(Civ6)); sources conflict.
-- The per-era average, jump ratios, totals, and "turns to finish" figures are computed here, not source figures.
+- Everything above: the owner's game database, read with `tools/dbdump.py`. No web figures remain on this page.
