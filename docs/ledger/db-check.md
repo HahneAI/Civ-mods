@@ -4,9 +4,21 @@ Source: custom. Applies to every ledger page. Claude cannot reach the game files
 
 **Goal:** every `[approx]` / `[verify]` tag on a ledger page becomes a `[sure]` number read from the game's own data.
 
-## Setup (once, about 5 minutes)
+## Fastest way: one click (recommended)
 
-1. Copy `DebugGameplay.sqlite` to a safe spot. Path (verify): `Documents\My Games\Sid Meier's Civilization VI\Cache\DebugGameplay.sqlite`. Work on the copy, never the original.
+On your PC, in the repo folder, run:
+
+```
+python tools/dbdump.py
+```
+
+It finds `DebugGameplay.sqlite` itself, opens it read-only (it cannot change anything), and writes one file, `db-results.md`, covering every section below. Attach that file to the chat. If it cannot find the database, it says so; search your PC for `DebugGameplay.sqlite` and run `python tools/dbdump.py --db "C:\path\to\DebugGameplay.sqlite"`. Do not commit the results file (it is git-ignored): it holds game data.
+
+The manual steps below are the backup way, or for one-off questions.
+
+## Manual setup (about 5 minutes)
+
+1. Copy `DebugGameplay.sqlite` to a safe spot. Path (verify): `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VI\Cache\DebugGameplay.sqlite` (it moved from Documents in the Leader Pass update, same as the logs). Work on the copy, never the original.
 2. Open the copy in DB Browser for SQLite. Open the "Execute SQL" tab.
 3. Run one query at a time. Click the grid, select all, copy, and paste the rows into the chat. A screenshot also works.
 4. Claude updates the page and changes the tag.
