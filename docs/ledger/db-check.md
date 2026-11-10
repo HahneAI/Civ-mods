@@ -75,6 +75,39 @@ SELECT * FROM Adjacency_YieldChanges LIMIT 80;
 
 If a column errors, run `SELECT * FROM Districts LIMIT 1;` and paste the column names. Also paste `SELECT UnitType, Cost, PopulationCost FROM Units WHERE UnitType LIKE '%SETTLER%';`.
 
+## Page 04 · Tech and civic trees (highest value; the owner asked for depth here)
+
+```sql
+SELECT TechnologyType, EraType, Cost FROM Technologies ORDER BY Cost;
+SELECT CivicType, EraType, Cost FROM Civics ORDER BY Cost;
+SELECT * FROM TechnologyPrereqs;
+SELECT * FROM CivicPrereqs;
+SELECT TechnologyType, BoostClass, Boost, TriggerDescription, Unit, ImprovementType, BuildingType, ResourceType
+FROM Boosts;
+SELECT CivicType, BoostClass, Boost, TriggerDescription FROM Boosts WHERE CivicType IS NOT NULL;
+
+SELECT Name, Value FROM GlobalParameters
+WHERE Name LIKE '%TECH%' OR Name LIKE '%CIVIC%' OR Name LIKE '%BOOST%' OR Name LIKE '%ERA%';
+SELECT * FROM GameSpeeds;
+```
+
+Boosts may be one table with a TechnologyType and a CivicType column, or two tables. If a query errors, run the `sqlite_master` search from page 02, replacing the words with `%Boost%`, `%Prereq%`, `%Tech%`, `%Civic%`, and paste the list.
+
+## Page 05 · Governments, policy cards, great people
+
+```sql
+SELECT GovernmentType, InheritedBonus1, PrereqCivic FROM Governments;
+SELECT * FROM Government_SlotCounts;
+SELECT PolicyType, GovernmentSlotType, PrereqCivic FROM Policies LIMIT 200;
+
+SELECT GreatPersonClassType, DistrictType FROM GreatPersonClasses;
+SELECT * FROM GreatPersonIndividuals LIMIT 60;
+SELECT Name, Value FROM GlobalParameters
+WHERE Name LIKE '%GREAT_PERSON%' OR Name LIKE '%GOVERNMENT%' OR Name LIKE '%POLICY%' OR Name LIKE '%PATRON%';
+```
+
+Column names are guesses; the same fallback applies (`SELECT * FROM <table> LIMIT 1;`).
+
 ## Keeping this file current
 
 Add a new section here whenever a new ledger page is started. Queries only: no game text or code is copied into the ledger (hard rule 8).
