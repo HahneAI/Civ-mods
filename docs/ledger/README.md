@@ -1,6 +1,6 @@
 # Rule ledger: where we left off
 
-Source: custom. Updated 2026-11-10 (end of the first long design session). The ledger records how Civ 6's systems work, in plain words, as the design reference for the owner's own tile game (CLAUDE.md, "Long-term direction"). No copied text, code, or names (hard rule 8).
+Source: custom. Updated 2026-11-10 (end of the second design push: variables and extended example). The ledger records how Civ 6's systems work, in plain words, as the design reference for the owner's own tile game (CLAUDE.md, "Long-term direction"). No copied text, code, or names (hard rule 8).
 
 ## Pages
 
@@ -14,6 +14,7 @@ Source: custom. Updated 2026-11-10 (end of the first long design session). The l
 | `05-governments-great-people.md` | governments, slots, cards, great people | confirmed; card effects only partly unpacked |
 | `06-religion-faith.md` | pantheon, beliefs, spread, faith units | confirmed; belief effects unpacked on page 07 |
 | `07-effects-system.md` | how every effect is stored as data; unlocks; era score | new; beliefs, conditions and moments done |
+| `08-design-variables.md` | the four open design questions as switches, with decisions and how to test | new; decisions made, not yet playtested |
 | `db-check.md` | how to read the game database (one click) | rounds 1 to 4 done |
 
 ## How the numbers were obtained
@@ -22,7 +23,7 @@ The owner ran `tools/dbdump.py` on their PC (read-only, one file out, `db-result
 
 ## Where we left off
 
-**Done:** pages 00 to 07, the one-click dump tool (26 tests), and a draft data schema (`../schema/`).
+**Done:** pages 00 to 08, the one-click dump tool, and a draft data schema (`../schema/`) with an extended example, a rule checker (`tools/schemacheck.py`), and 53 tests in total for schema and dump.
 
 **Known gaps** (each is tagged `[verify]` or listed under "Open items" on its page):
 
@@ -39,7 +40,7 @@ The owner ran `tools/dbdump.py` on their PC (read-only, one file out, `db-result
 
 1. Round 5 dump (optional): units in full, promotions, requirements per card, moment triggers. Needs the owner to rerun `tools/dbdump.py` (steps in `db-check.md`).
 2. Fill the gaps above, one page at a time.
-3. Owner decisions that change what gets written (see `../schema/README.md`): one tree or two, religion shape, great-person pool.
+3. The four owner decisions are now made as switchable variables (page 08): two trees, pressure-only religion, trim the late tail, shared great-person pool. They are starting points; the owner can flip any in `rules_config`. Playtest data will confirm or reverse them.
 4. Playtest-based checks: the wounded-unit rule and a few `[approx]` values are quickest confirmed in a game, not in the database.
 
 **Process notes for the next session:**

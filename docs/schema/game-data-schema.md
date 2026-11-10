@@ -1,8 +1,10 @@
-# Game Data Schema (draft v0.1)
+# Game Data Schema (draft v0.2)
 
 Source: custom design note, built from ledger pages 00 to 07 (which were read from the owner's Civ 6 database). **This is a design document, not engine code.** It describes the *shape* of the data for the owner's own tile game, in the owner's own terms. Names in it are generic placeholders. Numbers marked "reference" are what Civ 6 used (from the ledger) and are starting points to tune, not rules. No Civ 6 names, text, or code are copied (hard rule 8, SPEC section 9).
 
-Machine-checkable parts: `enums.json` (closed lists), `example-data.json` (a tiny dataset), and `tests/test_schema_example.py` (checks the example against the rules in section 5).
+Machine-checkable parts: `enums.json` (closed lists), `variants.json` (the four design variables and the decisions made), `example-data.json` (an extended mini-world: 10 nodes, 3 districts, 6 buildings, 6 cards), `tools/schemacheck.py` (checks any dataset against the rules in section 5), and `tests/test_schema_example.py` (53 tests: the example passes, and every rule and variable fails when broken).
+
+**v0.2 change:** the four open questions from v0.1 are now **switchable variables** with decisions (section 3.11, ledger page 08). Flip a value in `rules_config` and `python tools/schemacheck.py` lists what in the data must change.
 
 ## 1. Principles (from the master map, ledger page 06)
 
@@ -104,7 +106,8 @@ District cap (reference): **1 specialty district per 3 citizens** (`districts_pe
 | Field | Type | Meaning |
 |---|---|---|
 | `id` | string | `node.` prefix |
-| `tree` | `science` or `culture` | which meter pays |
+| `tree` | `science` or `culture` (or `main` when `tree_layout = one_tree`) | which tree the node sits in |
+| `paid_with` | yield | which yield pays for it; must equal the tree in `two_trees`, either `science` or `culture` in `one_tree` |
 | `era` | era id | |
 | `cost` | int | before modifiers |
 | `requires` | list of node ids | same tree only; 0 to 4 |
@@ -121,7 +124,7 @@ Cost modifiers (global): game speed multiplier (reference marathon 3.0, epic 1.5
 
 ### 3.6 Government and cards
 
-`government`: `id`, `tier`, `requires_node`, `slots {military, economic, diplomatic, wildcard}`, `fixed_bonus` (an effect), `influence_per_turn`, `points_per_envoy`. Reference slot totals: starter 2, then 4, 6, 8, 10 by tier (tier 4 has 5 wildcards).
+`government`: `id`, `tier`, `requires_node`, `slots {military, economic, diplomatic, wildcard}`, `fixed_bonus` (an effect id or null), `influence_per_turn`, `points_per_envoy`. Reference slot totals: starter 2, then 4, 6, 8, 10 by tier (tier 4 has 5 wildcards).
 
 `card`: `id`, `slot`, `requires_node`, `effects` (list of effect ids). Reference: 157 cards; 118 gated by a civic.
 
@@ -166,6 +169,8 @@ Effect kinds, in plain words:
 
 `belief`: `id`, `class` (`pantheon, follower, worship, founder, enhancer`), `effects`. A belief is one sentence: condition (the city follows it) + tile or building filter + yield bonus. `religion`: `{id, beliefs, holy_city}`. Reference: religion starts with 2 beliefs; pantheon costs 25 faith; pressure within 10 tiles, 1 point per turn, holy city x4, holy-site district x2; trade routes carry 1.0 (destination) and 0.5 (origin) pressure. `faith_unit`: charges (reference 3), strength (100, 110, 75), evict percent (10, 25, 75), cost (75, 200, 75).
 
+Religion data in the dataset (variable `religion_mode`, section 3.11): `beliefs`, `religions`, `religion_pressure {radius, per_turn_adjacent_city, holy_city_multiplier, shrine_district_multiplier, route_destination, route_origin, pantheon_cost_faith}`, `faith_sinks` (what faith can be spent on: `great_person_patronage`, `building_purchase`), and `faith_units` (empty unless `units_and_pressure`).
+
 ### 3.9 Trade and diplomacy
 
 - `route_yield_rule`: `{district, domestic_dest: yields, international_dest: yields}`. Reference: the route pays by the destination's districts (domestic: +1 food or production; international: +3 gold from commerce-type, +1 science, culture or faith from the matching district). Range 15 land / 30 water, duration 20 turns, builds roads.
@@ -181,38 +186,62 @@ Effect kinds, in plain words:
 
 All listed in ledger pages 00 to 07. The most important are summarised in the sections above. The reference numbers are a *starting point*; the owner's design decisions (section 6) override them.
 
+### 3.11 Rules config: the four design variables
+
+The dataset carries a `rules_config` object. Each key is one design variable (full text in `variants.json` and ledger page 08):
+
+| Variable (`rules_config` key) | Options | Current decision | What the checker enforces |
+|---|---|---|---|
+| `tree_layout` | `two_trees`, `one_tree` | `two_trees` | V1: in `two_trees` a node's `paid_with` equals its tree; in `one_tree` every node is tree `main` |
+| `religion_mode` | `pressure_only`, `units_and_pressure`, `off` | `pressure_only` | V2: `pressure_only` needs beliefs, a religion, pressure settings, faith sinks and **no** faith units; `units_and_pressure` needs faith units; `off` needs none of it |
+| `late_tail` | `keep`, `trim` (+ `min_unlocks_per_node`) | `trim`, minimum 1 | V3: under `trim` every node unlocks at least the minimum |
+| `great_person_pool` | `shared_finite`, `personal` | `shared_finite` | V4: each great person has `max_claims = 1` (shared) or `null` (personal) |
+
+How to play with a variable: change its value in a copy of the dataset, run `python tools/schemacheck.py <file>`, read what must change, change it, then playtest and compare the metrics listed in `variants.json`.
+
 ## 5. Validation rules (these are tested)
 
-1. Every `id` is unique across the dataset.
-2. Node `requires` stay inside one tree; there are no cycles.
-3. A node `requires` only nodes in the **same era or the previous era** (no link skips an era). Reference: 0 of 95 tech links and 0 of 78 civic links skip.
-4. A node has at most 4 requirements (reference: techs up to 4, civics up to 2).
-5. Costs never fall as era rises (inside a tree).
-6. `boost.percent` is 0 to 100 and `boost.family` is from the closed list.
-7. Every `unlocks`, `requires_node`, `district`, `owner`, `when`, and effect reference resolves to an existing id.
-8. Every `effect.kind`, `effect.scope`, `requirement.kind` is in `enums.json`.
-9. Every government has all four slot types.
-10. Meters and adjacency rules use known yields and cost models.
+Structural rules (codes R1 to R15), run by `tools/schemacheck.py`:
 
-Not yet checked (needs more code): that unlock ids match their declared type; that card effects only use scopes the card's slot allows; that adjacency neighbor selectors reference real ids.
+| Code | Rule |
+|---|---|
+| R1 | Every `id` is unique across the dataset |
+| R2 | Node `requires` exist, stay inside one tree, and have no cycles |
+| R3 | A node requires only nodes in the **same or the previous era** (no link skips an era). Reference: 0 of 95 tech links and 0 of 78 civic links skip |
+| R4 | A node has at most 4 requirements (reference: techs up to 4, civics up to 2) |
+| R5 | Costs never fall as era rises, inside a tree |
+| R6 | `boost.percent` is 0 to 100; the family is from the closed list; the trigger kind exists and belongs to that family |
+| R7 | Every reference (`requires_node`, `district`, `owner`, `when`, effect ids, classes, eras) resolves |
+| R8 | Every effect kind, scope, requirement kind, belief class, card slot is in `enums.json` |
+| R9 | Every government lists all four slot types; total slots strictly rise with tier |
+| R10 | Meters and adjacency rules use known yields and cost models |
+| R11 | **Unlock consistency:** each unlocked id exists in the section its type names; each entity is unlocked by exactly one node; that node equals the entity's `requires_node` (and the reverse) |
+| R12 | **Card fits slot:** a card's effect kinds must be allowed in its slot (`slot_allowed_effect_kinds`; wildcard allows any) |
+| R13 | **Adjacency selectors resolve:** terrain, feature, improvement, resource class, district named in a neighbor selector exist |
+| R14 | Condition requirements reference real ids; conditions that nest (`set_is_met`) do not loop |
+| R15 | A node with no boost is only allowed in the first era (the reference game left 11 late nodes without one; this closes that gap) |
+
+Variable rules: V0 (config values are valid options) and V1 to V4 (section 3.11).
+
+R11 to R15 are new in v0.2: R11, R12 and R13 were the three "not yet checked" rules from v0.1, and R14 and R15 were added while building the extended example.
 
 ## 6. Design decisions, in the ledger's keep / change / cut language
 
-| Decision | Recommendation | Why |
+| Decision | Status | Why |
 |---|---|---|
 | One meter system | **Keep** | Same shape on five pages |
-| Districts spend land, adjacency pays | **Keep** (rating 9/10) | The placement puzzle |
-| Boosts reward map acts | **Keep, widen triggers** (9/10) | Two thirds of triggers are "build or own": add more world-facing ones |
-| Two trees (science, culture) | **Open** | Keep both as one `node` type with `tree` field, so one tree is a config change |
+| Districts spend land, adjacency pays | **Keep** (9/10) | The placement puzzle |
+| Boosts reward map acts | **Keep, widen triggers** (9/10) | Two thirds of reference triggers are "build or own"; the example uses six families: own, chain, combat, diplomacy and trade, explore, religion |
+| Two trees vs. one | **Decided: `two_trees`** (8/10) | Contrast in shape is a strength; one tree is a config switch |
 | 24 effect kinds, 15 requirement kinds | **Keep as the closed list** | Covers the reference game |
-| Policy cards repeated per class per era | **Change**: store once | 30% less data |
-| Belief wrappers | **Change**: put the condition on the inner effect | |
-| Government = fixed bonus + slots | **Keep** (8/10) | Editable ruleset layer |
-| Great-person shared finite pool | **Keep if multiplayer** (7/10) | Needs rivals |
-| Religion as a unit system | **Open** (6/10) | May fit better as a cultural influence layer |
-| Unit unlocks in tech nodes | **Keep** | 45 of 77 techs unlock units |
-| Tech tail with 0 to 2 unlocks per node | **Open** | Rethink or keep as pure prerequisites |
+| Policy cards repeated per class per era | **Change**: store once | Example: one card, one effect row with a class list and an era list |
+| Belief wrappers | **Change**: condition on the inner effect | Example beliefs have no wrapper rows |
+| Government = fixed bonus + slots | **Keep** (8/10) | Editable ruleset layer; slots rise with tier (R9) |
+| Great-person pool | **Decided: `shared_finite`** (7/10) | Rival communities exist; `personal` is one switch away |
+| Religion | **Decided: `pressure_only`** (7/10) | Keep the belief sentence and spread by pressure; drop the unit layer |
+| Thin late tail | **Decided: `trim`** (8/10) | Every node unlocks at least one thing; R15 also forbids unboosted late nodes |
+| Unit unlocks in tech nodes | **Keep** | 45 of 77 reference techs unlock units |
 
 ## 7. What this draft does not cover
 
-Per-unit stat sheet and promotions in detail; city-state and envoy rules; governors; espionage; barbarians; climate; victory conditions; combat formula as data (only the constants are listed); save-game format; anything about rendering or the engine (Phase 6).
+Per-unit stat sheet and promotions in detail; city-state and envoy rules; governors; espionage; barbarians; climate; victory conditions; combat formula as data (only the constants are listed); a few `faith_sinks` details (price rules); save-game format; anything about rendering or the engine (Phase 6).

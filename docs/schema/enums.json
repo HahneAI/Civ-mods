@@ -1,25 +1,217 @@
 {
   "_note": "Closed lists shared by the schema doc, the example data, and the test. Add to a list here first, then use it.",
-  "yields": ["food", "production", "gold", "science", "culture", "faith"],
-  "slot_types": ["military", "economic", "diplomatic", "wildcard"],
-  "meter_resets": ["reset", "carry_over"],
-  "cost_models": ["flat", "per_count_over_average", "game_progress", "per_size"],
-  "scopes": ["owner", "player_cities", "all_cities", "player_units", "player_districts", "city_districts", "city_tiles", "combat"],
+  "yields": [
+    "food",
+    "production",
+    "gold",
+    "science",
+    "culture",
+    "faith"
+  ],
+  "slot_types": [
+    "military",
+    "economic",
+    "diplomatic",
+    "wildcard"
+  ],
+  "meter_resets": [
+    "reset",
+    "carry_over"
+  ],
+  "cost_models": [
+    "flat",
+    "per_count_over_average",
+    "game_progress",
+    "per_size"
+  ],
+  "scopes": [
+    "owner",
+    "player_cities",
+    "all_cities",
+    "player_units",
+    "player_districts",
+    "city_districts",
+    "city_tiles",
+    "combat"
+  ],
   "effect_kinds": [
-    "yield_pct", "yield_flat", "yield_per_citizen", "tile_yield", "adjacency_yield",
-    "production_pct_by_unit_class", "cost_mod", "strength_mod", "grant_ability", "growth_pct",
-    "housing", "amenity", "great_person_points", "trade_capacity", "trade_route_yield",
-    "influence_points", "grant_unit", "loyalty", "healing_mod", "movement_mod",
-    "experience_mod", "border_expansion_pct", "era_score", "attach_effect"
+    "yield_pct",
+    "yield_flat",
+    "yield_per_citizen",
+    "tile_yield",
+    "adjacency_yield",
+    "production_pct_by_unit_class",
+    "cost_mod",
+    "strength_mod",
+    "grant_ability",
+    "growth_pct",
+    "housing",
+    "amenity",
+    "great_person_points",
+    "trade_capacity",
+    "trade_route_yield",
+    "influence_points",
+    "grant_unit",
+    "loyalty",
+    "healing_mod",
+    "movement_mod",
+    "experience_mod",
+    "border_expansion_pct",
+    "era_score",
+    "attach_effect"
   ],
   "requirement_kinds": [
-    "city_has_building", "city_has_district", "city_follows_belief", "city_has_governor",
-    "tile_has_improvement", "tile_has_terrain", "tile_has_feature", "tile_has_resource_class",
-    "tile_adjacent_to_owner", "player_has_node", "player_met_turns_ago", "player_type",
-    "unit_class_is", "unit_is_attacking", "set_is_met"
+    "city_has_building",
+    "city_has_district",
+    "city_follows_belief",
+    "city_has_governor",
+    "tile_has_improvement",
+    "tile_has_terrain",
+    "tile_has_feature",
+    "tile_has_resource_class",
+    "tile_adjacent_to_owner",
+    "player_has_node",
+    "player_met_turns_ago",
+    "player_type",
+    "unit_class_is",
+    "unit_is_attacking",
+    "set_is_met"
   ],
-  "boost_trigger_families": ["build_or_own", "chain_node", "combat", "diplomacy_trade", "explore", "religion", "none"],
-  "node_trees": ["science", "culture"],
-  "belief_classes": ["pantheon", "follower", "worship", "founder", "enhancer"],
-  "diplomatic_states": ["allied", "declared_friend", "friendly", "neutral", "unfriendly", "denounced", "war"]
+  "boost_trigger_families": [
+    "build_or_own",
+    "chain_node",
+    "combat",
+    "diplomacy_trade",
+    "explore",
+    "religion",
+    "none"
+  ],
+  "node_trees": [
+    "science",
+    "culture"
+  ],
+  "belief_classes": [
+    "pantheon",
+    "follower",
+    "worship",
+    "founder",
+    "enhancer"
+  ],
+  "diplomatic_states": [
+    "allied",
+    "declared_friend",
+    "friendly",
+    "neutral",
+    "unfriendly",
+    "denounced",
+    "war"
+  ],
+  "slot_allowed_effect_kinds": {
+    "military": [
+      "production_pct_by_unit_class",
+      "strength_mod",
+      "experience_mod",
+      "healing_mod",
+      "movement_mod",
+      "cost_mod",
+      "grant_ability",
+      "grant_unit"
+    ],
+    "economic": [
+      "yield_pct",
+      "yield_flat",
+      "yield_per_citizen",
+      "tile_yield",
+      "adjacency_yield",
+      "growth_pct",
+      "housing",
+      "amenity",
+      "trade_capacity",
+      "trade_route_yield",
+      "cost_mod",
+      "border_expansion_pct"
+    ],
+    "diplomatic": [
+      "influence_points",
+      "trade_route_yield",
+      "loyalty",
+      "era_score",
+      "cost_mod"
+    ],
+    "wildcard": "any"
+  },
+  "unlock_sections": {
+    "district": "districts",
+    "building": "buildings",
+    "improvement": "improvements",
+    "unit": "units",
+    "project": "projects",
+    "card": "cards",
+    "government": "governments"
+  },
+  "boost_trigger_kinds": {
+    "own_improvements": "build_or_own",
+    "own_buildings": "build_or_own",
+    "own_districts": "build_or_own",
+    "own_units_of_class": "build_or_own",
+    "have_node": "chain_node",
+    "kill_unit_class": "combat",
+    "clear_camp": "combat",
+    "meet_player": "diplomacy_trade",
+    "maintain_trade_routes": "diplomacy_trade",
+    "have_alliance": "diplomacy_trade",
+    "discover_continent": "explore",
+    "find_natural_wonder": "explore",
+    "adopt_belief": "religion",
+    "found_religion": "religion"
+  },
+  "requirement_arg_refs": {
+    "city_has_building": [
+      "building",
+      "buildings"
+    ],
+    "city_has_district": [
+      "district",
+      "districts"
+    ],
+    "city_follows_belief": [
+      "belief",
+      "beliefs"
+    ],
+    "tile_has_improvement": [
+      "improvement",
+      "improvements"
+    ],
+    "tile_has_terrain": [
+      "terrain",
+      "terrains"
+    ],
+    "tile_has_feature": [
+      "feature",
+      "features"
+    ],
+    "tile_has_resource_class": [
+      "resource_class",
+      "resource_classes"
+    ],
+    "player_has_node": [
+      "node",
+      "nodes"
+    ],
+    "set_is_met": [
+      "condition",
+      "conditions"
+    ]
+  },
+  "adjacency_neighbor_keys": {
+    "terrain": "terrains",
+    "feature": "features",
+    "improvement": "improvements",
+    "resource_class": "resource_classes",
+    "district": "districts",
+    "river": null,
+    "wonder": null,
+    "natural_wonder": null,
+    "any_other_district": null
+  }
 }

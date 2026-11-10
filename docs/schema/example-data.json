@@ -1,5 +1,16 @@
 {
-  "_note": "Tiny made-up dataset that follows the schema. Names are placeholders, not from any game. The test checks it against the rules in game-data-schema.md.",
+  "_note": "Extended example: one mini-world of 3 eras. Made-up placeholder names, not from any game. It follows the schema and the four design decisions in rules_config. Check it with: python tools/schemacheck.py",
+  "rules_config": {
+    "tree_layout": "two_trees",
+    "trees": [
+      "science",
+      "culture"
+    ],
+    "religion_mode": "pressure_only",
+    "late_tail": "trim",
+    "min_unlocks_per_node": 1,
+    "great_person_pool": "shared_finite"
+  },
   "eras": [
     {
       "id": "era_1",
@@ -35,95 +46,191 @@
       "cost_model": "flat",
       "cost_params": {},
       "on_full": "carry_over"
+    },
+    {
+      "id": "meter_culture",
+      "fed_by": "culture",
+      "cost_model": "flat",
+      "cost_params": {},
+      "on_full": "carry_over"
+    },
+    {
+      "id": "meter_border",
+      "fed_by": "culture",
+      "cost_model": "per_size",
+      "cost_params": {
+        "start": 10,
+        "per_step": 6,
+        "exponent": 1.3
+      },
+      "on_full": "reset"
+    },
+    {
+      "id": "meter_great_person",
+      "fed_by": "culture",
+      "cost_model": "flat",
+      "cost_params": {
+        "from": "era.great_person_base_cost"
+      },
+      "on_full": "reset"
     }
   ],
-  "nodes": [
+  "terrains": [
     {
-      "id": "node.a1",
-      "tree": "science",
-      "era": "era_1",
-      "cost": 25,
-      "requires": [],
-      "boost": {
-        "family": "build_or_own",
-        "trigger": {
-          "kind": "own_improvements",
-          "count": 2
-        },
-        "percent": 40
+      "id": "terrain.flat",
+      "yields": {
+        "food": 1,
+        "production": 1
       },
-      "unlocks": [
-        {
-          "type": "improvement",
-          "id": "imp.field"
-        }
-      ]
+      "move_cost": 1,
+      "defense_bonus": 0,
+      "passable": true,
+      "is_water": false,
+      "is_highland": false
     },
     {
-      "id": "node.a2",
-      "tree": "science",
-      "era": "era_1",
-      "cost": 50,
-      "requires": [
-        "node.a1"
-      ],
-      "boost": {
-        "family": "none",
-        "percent": 0
+      "id": "terrain.highland",
+      "yields": {
+        "production": 1
       },
-      "unlocks": [
-        {
-          "type": "district",
-          "id": "dist.study"
-        }
-      ]
+      "move_cost": 2,
+      "defense_bonus": 3,
+      "passable": true,
+      "is_water": false,
+      "is_highland": true
     },
     {
-      "id": "node.b1",
-      "tree": "science",
-      "era": "era_2",
-      "cost": 120,
-      "requires": [
-        "node.a2"
-      ],
-      "boost": {
-        "family": "chain_node",
-        "trigger": {
-          "kind": "have_node",
-          "node": "node.a1"
-        },
-        "percent": 40
+      "id": "terrain.wetland",
+      "yields": {
+        "food": 2
       },
-      "unlocks": [
-        {
-          "type": "building",
-          "id": "bld.hall"
-        }
+      "move_cost": 1,
+      "defense_bonus": 0,
+      "passable": true,
+      "is_water": false,
+      "is_highland": false
+    }
+  ],
+  "features": [
+    {
+      "id": "feature.forest",
+      "yields_added": {
+        "production": 1
+      },
+      "move_cost_added": 1,
+      "valid_terrain": [
+        "terrain.flat",
+        "terrain.highland"
       ]
+    }
+  ],
+  "resource_classes": [
+    {
+      "id": "rc.bonus"
     },
     {
-      "id": "node.c1",
-      "tree": "culture",
-      "era": "era_1",
-      "cost": 20,
-      "requires": [],
-      "boost": {
-        "family": "explore",
-        "trigger": {
-          "kind": "meet_player"
-        },
-        "percent": 40
+      "id": "rc.luxury"
+    }
+  ],
+  "unit_classes": [
+    {
+      "id": "uc.recon"
+    },
+    {
+      "id": "uc.melee"
+    },
+    {
+      "id": "uc.ranged"
+    }
+  ],
+  "improvements": [
+    {
+      "id": "imp.field",
+      "requires_node": "node.s1",
+      "valid_on": {
+        "terrain": [
+          "terrain.flat",
+          "terrain.wetland"
+        ]
       },
-      "unlocks": [
-        {
-          "type": "card",
-          "id": "card.drill"
-        },
-        {
-          "type": "government",
-          "id": "gov.starter_plus"
-        }
-      ]
+      "yields": {
+        "food": 1
+      },
+      "housing_per_tiles": {
+        "housing": 1,
+        "tiles": 2
+      }
+    },
+    {
+      "id": "imp.quarry",
+      "requires_node": "node.s3",
+      "valid_on": {
+        "terrain": [
+          "terrain.highland"
+        ]
+      },
+      "yields": {
+        "production": 1
+      },
+      "housing_per_tiles": null
+    }
+  ],
+  "units": [
+    {
+      "id": "unit.scout",
+      "class": "uc.recon",
+      "melee": 10,
+      "ranged": 0,
+      "range": 0,
+      "moves": 3,
+      "cost": 30,
+      "upkeep": 0,
+      "needs_resource": null,
+      "population_cost": 0,
+      "requires_node": "node.s1"
+    },
+    {
+      "id": "unit.archer",
+      "class": "uc.ranged",
+      "melee": 15,
+      "ranged": 25,
+      "range": 2,
+      "moves": 2,
+      "cost": 60,
+      "upkeep": 1,
+      "needs_resource": null,
+      "population_cost": 0,
+      "requires_node": "node.s4"
+    },
+    {
+      "id": "unit.guard",
+      "class": "uc.melee",
+      "melee": 25,
+      "ranged": 0,
+      "range": 0,
+      "moves": 2,
+      "cost": 65,
+      "upkeep": 1,
+      "needs_resource": null,
+      "population_cost": 0,
+      "requires_node": "node.s5"
+    }
+  ],
+  "great_person_classes": [
+    {
+      "id": "gp.scholar",
+      "district": "dist.study",
+      "max_per_player": null
+    },
+    {
+      "id": "gp.trader",
+      "district": "dist.market",
+      "max_per_player": null
+    },
+    {
+      "id": "gp.sage",
+      "district": "dist.shrine",
+      "max_per_player": null
     }
   ],
   "districts": [
@@ -138,7 +245,7 @@
       "housing": 0,
       "amenities": 0,
       "city_strength_mod": 2,
-      "requires_node": "node.a2",
+      "requires_node": "node.s2",
       "great_person_class": "gp.scholar",
       "gp_points_per_turn": 1,
       "adjacency": [
@@ -147,11 +254,85 @@
           "amount": 1,
           "per": 1,
           "neighbor": {
-            "terrain": "highland"
+            "terrain": "terrain.highland"
           }
         },
         {
           "yield": "science",
+          "amount": 1,
+          "per": 2,
+          "neighbor": {
+            "any_other_district": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "dist.market",
+      "cost": 54,
+      "cost_model": "per_count_over_average",
+      "cost_params": {
+        "param": 40
+      },
+      "one_per_city": true,
+      "housing": 0,
+      "amenities": 0,
+      "city_strength_mod": 2,
+      "requires_node": "node.s5",
+      "great_person_class": "gp.trader",
+      "gp_points_per_turn": 1,
+      "adjacency": [
+        {
+          "yield": "gold",
+          "amount": 2,
+          "per": 1,
+          "neighbor": {
+            "river": true
+          }
+        },
+        {
+          "yield": "gold",
+          "amount": 1,
+          "per": 2,
+          "neighbor": {
+            "any_other_district": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "dist.shrine",
+      "cost": 54,
+      "cost_model": "per_count_over_average",
+      "cost_params": {
+        "param": 40
+      },
+      "one_per_city": true,
+      "housing": 0,
+      "amenities": 0,
+      "city_strength_mod": 2,
+      "requires_node": "node.s3",
+      "great_person_class": "gp.sage",
+      "gp_points_per_turn": 1,
+      "adjacency": [
+        {
+          "yield": "faith",
+          "amount": 1,
+          "per": 1,
+          "neighbor": {
+            "terrain": "terrain.highland"
+          }
+        },
+        {
+          "yield": "faith",
+          "amount": 1,
+          "per": 2,
+          "neighbor": {
+            "feature": "feature.forest"
+          }
+        },
+        {
+          "yield": "faith",
           "amount": 1,
           "per": 2,
           "neighbor": {
@@ -176,25 +357,488 @@
       "great_person_points": {
         "gp.scholar": 1
       },
-      "requires_node": "node.b1"
+      "requires_node": "node.s4"
+    },
+    {
+      "id": "bld.academy",
+      "district": "dist.study",
+      "cost": 250,
+      "housing": 0,
+      "amenities": 0,
+      "citizen_slots": 1,
+      "upkeep_gold": 2,
+      "yields": {
+        "science": 4
+      },
+      "great_person_points": {
+        "gp.scholar": 1
+      },
+      "requires_node": "node.s6"
+    },
+    {
+      "id": "bld.market",
+      "district": "dist.market",
+      "cost": 120,
+      "housing": 0,
+      "amenities": 0,
+      "citizen_slots": 1,
+      "upkeep_gold": 0,
+      "yields": {
+        "gold": 2
+      },
+      "great_person_points": {
+        "gp.trader": 1
+      },
+      "requires_node": "node.s5"
+    },
+    {
+      "id": "bld.exchange",
+      "district": "dist.market",
+      "cost": 290,
+      "housing": 0,
+      "amenities": 0,
+      "citizen_slots": 1,
+      "upkeep_gold": 0,
+      "yields": {
+        "gold": 5
+      },
+      "great_person_points": {
+        "gp.trader": 1
+      },
+      "requires_node": "node.s6"
+    },
+    {
+      "id": "bld.chapel",
+      "district": "dist.shrine",
+      "cost": 120,
+      "housing": 0,
+      "amenities": 0,
+      "citizen_slots": 1,
+      "upkeep_gold": 1,
+      "yields": {
+        "faith": 3
+      },
+      "great_person_points": {
+        "gp.sage": 1
+      },
+      "requires_node": "node.s5"
+    },
+    {
+      "id": "bld.sanctum",
+      "district": "dist.shrine",
+      "cost": 190,
+      "housing": 0,
+      "amenities": 0,
+      "citizen_slots": 1,
+      "upkeep_gold": 0,
+      "yields": {
+        "faith": 4
+      },
+      "great_person_points": {
+        "gp.sage": 1
+      },
+      "requires_node": "node.s6"
     }
   ],
-  "great_person_classes": [
+  "nodes": [
     {
-      "id": "gp.scholar",
-      "district": "dist.study",
-      "max_per_player": null
+      "id": "node.s1",
+      "tree": "science",
+      "paid_with": "science",
+      "era": "era_1",
+      "cost": 25,
+      "requires": [],
+      "boost": {
+        "family": "none",
+        "percent": 0
+      },
+      "unlocks": [
+        {
+          "type": "improvement",
+          "id": "imp.field"
+        },
+        {
+          "type": "unit",
+          "id": "unit.scout"
+        }
+      ]
+    },
+    {
+      "id": "node.s2",
+      "tree": "science",
+      "paid_with": "science",
+      "era": "era_1",
+      "cost": 50,
+      "requires": [
+        "node.s1"
+      ],
+      "boost": {
+        "family": "build_or_own",
+        "percent": 40,
+        "trigger": {
+          "kind": "own_improvements",
+          "count": 2
+        }
+      },
+      "unlocks": [
+        {
+          "type": "district",
+          "id": "dist.study"
+        }
+      ]
+    },
+    {
+      "id": "node.s3",
+      "tree": "science",
+      "paid_with": "science",
+      "era": "era_1",
+      "cost": 50,
+      "requires": [
+        "node.s1"
+      ],
+      "boost": {
+        "family": "explore",
+        "percent": 40,
+        "trigger": {
+          "kind": "discover_continent"
+        }
+      },
+      "unlocks": [
+        {
+          "type": "improvement",
+          "id": "imp.quarry"
+        },
+        {
+          "type": "district",
+          "id": "dist.shrine"
+        }
+      ]
+    },
+    {
+      "id": "node.s4",
+      "tree": "science",
+      "paid_with": "science",
+      "era": "era_2",
+      "cost": 120,
+      "requires": [
+        "node.s2"
+      ],
+      "boost": {
+        "family": "combat",
+        "percent": 40,
+        "trigger": {
+          "kind": "kill_unit_class",
+          "unit_class": "uc.recon",
+          "count": 1
+        }
+      },
+      "unlocks": [
+        {
+          "type": "building",
+          "id": "bld.hall"
+        },
+        {
+          "type": "unit",
+          "id": "unit.archer"
+        }
+      ]
+    },
+    {
+      "id": "node.s5",
+      "tree": "science",
+      "paid_with": "science",
+      "era": "era_2",
+      "cost": 120,
+      "requires": [
+        "node.s3"
+      ],
+      "boost": {
+        "family": "diplomacy_trade",
+        "percent": 40,
+        "trigger": {
+          "kind": "maintain_trade_routes",
+          "count": 2
+        }
+      },
+      "unlocks": [
+        {
+          "type": "district",
+          "id": "dist.market"
+        },
+        {
+          "type": "building",
+          "id": "bld.market"
+        },
+        {
+          "type": "building",
+          "id": "bld.chapel"
+        },
+        {
+          "type": "unit",
+          "id": "unit.guard"
+        }
+      ]
+    },
+    {
+      "id": "node.s6",
+      "tree": "science",
+      "paid_with": "science",
+      "era": "era_3",
+      "cost": 300,
+      "requires": [
+        "node.s4",
+        "node.s5"
+      ],
+      "boost": {
+        "family": "build_or_own",
+        "percent": 40,
+        "trigger": {
+          "kind": "own_districts",
+          "count": 3
+        }
+      },
+      "unlocks": [
+        {
+          "type": "building",
+          "id": "bld.academy"
+        },
+        {
+          "type": "building",
+          "id": "bld.exchange"
+        },
+        {
+          "type": "building",
+          "id": "bld.sanctum"
+        }
+      ]
+    },
+    {
+      "id": "node.c1",
+      "tree": "culture",
+      "paid_with": "culture",
+      "era": "era_1",
+      "cost": 20,
+      "requires": [],
+      "boost": {
+        "family": "none",
+        "percent": 0
+      },
+      "unlocks": [
+        {
+          "type": "card",
+          "id": "card.drill"
+        }
+      ]
+    },
+    {
+      "id": "node.c2",
+      "tree": "culture",
+      "paid_with": "culture",
+      "era": "era_1",
+      "cost": 40,
+      "requires": [
+        "node.c1"
+      ],
+      "boost": {
+        "family": "diplomacy_trade",
+        "percent": 40,
+        "trigger": {
+          "kind": "meet_player"
+        }
+      },
+      "unlocks": [
+        {
+          "type": "government",
+          "id": "gov.council"
+        },
+        {
+          "type": "card",
+          "id": "card.surplus"
+        }
+      ]
+    },
+    {
+      "id": "node.c3",
+      "tree": "culture",
+      "paid_with": "culture",
+      "era": "era_2",
+      "cost": 150,
+      "requires": [
+        "node.c2"
+      ],
+      "boost": {
+        "family": "religion",
+        "percent": 40,
+        "trigger": {
+          "kind": "adopt_belief"
+        }
+      },
+      "unlocks": [
+        {
+          "type": "card",
+          "id": "card.caravan"
+        },
+        {
+          "type": "card",
+          "id": "card.envoy"
+        }
+      ]
+    },
+    {
+      "id": "node.c4",
+      "tree": "culture",
+      "paid_with": "culture",
+      "era": "era_3",
+      "cost": 400,
+      "requires": [
+        "node.c3"
+      ],
+      "boost": {
+        "family": "chain_node",
+        "percent": 40,
+        "trigger": {
+          "kind": "have_node",
+          "node": "node.s5"
+        }
+      },
+      "unlocks": [
+        {
+          "type": "government",
+          "id": "gov.assembly"
+        },
+        {
+          "type": "card",
+          "id": "card.levy"
+        },
+        {
+          "type": "card",
+          "id": "card.devotion"
+        }
+      ]
     }
   ],
   "conditions": [
     {
-      "id": "cond.city_has_hall",
+      "id": "cond.city_has_academy",
       "mode": "all",
       "requirements": [
         {
           "kind": "city_has_building",
           "args": {
-            "building": "bld.hall"
+            "building": "bld.academy"
+          },
+          "negate": false
+        }
+      ]
+    },
+    {
+      "id": "cond.city_has_shrine",
+      "mode": "all",
+      "requirements": [
+        {
+          "kind": "city_has_district",
+          "args": {
+            "district": "dist.shrine"
+          },
+          "negate": false
+        }
+      ]
+    },
+    {
+      "id": "cond.academy_or_shrine",
+      "mode": "any",
+      "requirements": [
+        {
+          "kind": "set_is_met",
+          "args": {
+            "condition": "cond.city_has_academy"
+          },
+          "negate": false
+        },
+        {
+          "kind": "set_is_met",
+          "args": {
+            "condition": "cond.city_has_shrine"
+          },
+          "negate": false
+        }
+      ]
+    },
+    {
+      "id": "cond.hearth_on_field",
+      "mode": "all",
+      "requirements": [
+        {
+          "kind": "city_follows_belief",
+          "args": {
+            "belief": "bel.hearth"
+          },
+          "negate": false
+        },
+        {
+          "kind": "tile_has_improvement",
+          "args": {
+            "improvement": "imp.field"
+          },
+          "negate": false
+        }
+      ]
+    },
+    {
+      "id": "cond.stone_on_quarry",
+      "mode": "all",
+      "requirements": [
+        {
+          "kind": "city_follows_belief",
+          "args": {
+            "belief": "bel.stone_rites"
+          },
+          "negate": false
+        },
+        {
+          "kind": "tile_has_improvement",
+          "args": {
+            "improvement": "imp.quarry"
+          },
+          "negate": false
+        }
+      ]
+    },
+    {
+      "id": "cond.chapter_with_chapel",
+      "mode": "all",
+      "requirements": [
+        {
+          "kind": "city_follows_belief",
+          "args": {
+            "belief": "bel.chapter"
+          },
+          "negate": false
+        },
+        {
+          "kind": "city_has_building",
+          "args": {
+            "building": "bld.chapel"
+          },
+          "negate": false
+        }
+      ]
+    },
+    {
+      "id": "cond.accord_after_contact",
+      "mode": "all",
+      "requirements": [
+        {
+          "kind": "city_follows_belief",
+          "args": {
+            "belief": "bel.accord"
+          },
+          "negate": false
+        },
+        {
+          "kind": "player_met_turns_ago",
+          "args": {
+            "turns": 10
           },
           "negate": false
         }
@@ -203,25 +847,14 @@
   ],
   "effects": [
     {
-      "id": "eff.hall_bonus",
-      "owner": "gov.starter_plus",
-      "scope": "player_cities",
-      "kind": "yield_pct",
-      "args": {
-        "yield": "science",
-        "amount": 10
-      },
-      "when": "cond.city_has_hall"
-    },
-    {
-      "id": "eff.drill_bonus",
+      "id": "eff.drill",
       "owner": "card.drill",
       "scope": "player_cities",
       "kind": "production_pct_by_unit_class",
       "args": {
         "unit_classes": [
-          "melee",
-          "ranged"
+          "uc.melee",
+          "uc.ranged"
         ],
         "eras": [
           "era_1",
@@ -230,28 +863,213 @@
         "amount": 50
       },
       "when": null
+    },
+    {
+      "id": "eff.levy",
+      "owner": "card.levy",
+      "scope": "owner",
+      "kind": "cost_mod",
+      "args": {
+        "target": "unit_purchase",
+        "amount": -25
+      },
+      "when": null
+    },
+    {
+      "id": "eff.surplus",
+      "owner": "card.surplus",
+      "scope": "player_cities",
+      "kind": "growth_pct",
+      "args": {
+        "amount": 15
+      },
+      "when": null
+    },
+    {
+      "id": "eff.caravan",
+      "owner": "card.caravan",
+      "scope": "owner",
+      "kind": "trade_capacity",
+      "args": {
+        "amount": 1
+      },
+      "when": null
+    },
+    {
+      "id": "eff.envoy",
+      "owner": "card.envoy",
+      "scope": "owner",
+      "kind": "influence_points",
+      "args": {
+        "amount": 2
+      },
+      "when": null
+    },
+    {
+      "id": "eff.devotion",
+      "owner": "card.devotion",
+      "scope": "player_cities",
+      "kind": "yield_pct",
+      "args": {
+        "yield": "faith",
+        "amount": 10
+      },
+      "when": "cond.city_has_shrine"
+    },
+    {
+      "id": "eff.council",
+      "owner": "gov.council",
+      "scope": "player_cities",
+      "kind": "yield_pct",
+      "args": {
+        "yield": "culture",
+        "amount": 5
+      },
+      "when": null
+    },
+    {
+      "id": "eff.assembly",
+      "owner": "gov.assembly",
+      "scope": "player_cities",
+      "kind": "yield_pct",
+      "args": {
+        "yield": "science",
+        "amount": 10
+      },
+      "when": "cond.academy_or_shrine"
+    },
+    {
+      "id": "eff.bel_hearth",
+      "owner": "bel.hearth",
+      "scope": "city_tiles",
+      "kind": "tile_yield",
+      "args": {
+        "yield": "food",
+        "amount": 1
+      },
+      "when": "cond.hearth_on_field"
+    },
+    {
+      "id": "eff.bel_stone",
+      "owner": "bel.stone_rites",
+      "scope": "city_tiles",
+      "kind": "tile_yield",
+      "args": {
+        "yield": "faith",
+        "amount": 2
+      },
+      "when": "cond.stone_on_quarry"
+    },
+    {
+      "id": "eff.bel_chapter",
+      "owner": "bel.chapter",
+      "scope": "city_districts",
+      "kind": "yield_flat",
+      "args": {
+        "yield": "culture",
+        "amount": 2
+      },
+      "when": "cond.chapter_with_chapel"
+    },
+    {
+      "id": "eff.bel_accord",
+      "owner": "bel.accord",
+      "scope": "owner",
+      "kind": "trade_route_yield",
+      "args": {
+        "yield": "faith",
+        "amount": 1,
+        "route": "international"
+      },
+      "when": "cond.accord_after_contact"
+    },
+    {
+      "id": "eff.gpi_scholar_a",
+      "owner": "gpi.scholar_a",
+      "scope": "owner",
+      "kind": "yield_flat",
+      "args": {
+        "yield": "science",
+        "amount": 3
+      },
+      "when": null
+    },
+    {
+      "id": "eff.gpi_scholar_b",
+      "owner": "gpi.scholar_b",
+      "scope": "owner",
+      "kind": "yield_flat",
+      "args": {
+        "yield": "science",
+        "amount": 6
+      },
+      "when": null
+    },
+    {
+      "id": "eff.gpi_trader_a",
+      "owner": "gpi.trader_a",
+      "scope": "owner",
+      "kind": "yield_flat",
+      "args": {
+        "yield": "gold",
+        "amount": 120
+      },
+      "when": null
+    },
+    {
+      "id": "eff.gpi_sage_a",
+      "owner": "gpi.sage_a",
+      "scope": "owner",
+      "kind": "yield_flat",
+      "args": {
+        "yield": "faith",
+        "amount": 80
+      },
+      "when": null
     }
   ],
   "governments": [
     {
-      "id": "gov.starter_plus",
-      "tier": 1,
-      "requires_node": "node.c1",
+      "id": "gov.founding",
+      "tier": 0,
+      "requires_node": null,
       "slots": {
         "military": 1,
         "economic": 1,
         "diplomatic": 0,
+        "wildcard": 0
+      },
+      "fixed_bonus": null,
+      "influence_per_turn": 1,
+      "points_per_envoy": 100
+    },
+    {
+      "id": "gov.council",
+      "tier": 1,
+      "requires_node": "node.c2",
+      "slots": {
+        "military": 1,
+        "economic": 1,
+        "diplomatic": 1,
         "wildcard": 1
       },
-      "fixed_bonus": {
-        "kind": "yield_pct",
-        "args": {
-          "yield": "culture",
-          "amount": 5
-        }
-      },
+      "fixed_bonus": "eff.council",
       "influence_per_turn": 3,
       "points_per_envoy": 100
+    },
+    {
+      "id": "gov.assembly",
+      "tier": 2,
+      "requires_node": "node.c4",
+      "slots": {
+        "military": 1,
+        "economic": 2,
+        "diplomatic": 1,
+        "wildcard": 2
+      },
+      "fixed_bonus": "eff.assembly",
+      "influence_per_turn": 5,
+      "points_per_envoy": 150
     }
   ],
   "cards": [
@@ -260,30 +1078,170 @@
       "slot": "military",
       "requires_node": "node.c1",
       "effects": [
-        "eff.drill_bonus"
+        "eff.drill"
+      ]
+    },
+    {
+      "id": "card.levy",
+      "slot": "military",
+      "requires_node": "node.c4",
+      "effects": [
+        "eff.levy"
+      ]
+    },
+    {
+      "id": "card.surplus",
+      "slot": "economic",
+      "requires_node": "node.c2",
+      "effects": [
+        "eff.surplus"
+      ]
+    },
+    {
+      "id": "card.caravan",
+      "slot": "economic",
+      "requires_node": "node.c3",
+      "effects": [
+        "eff.caravan"
+      ]
+    },
+    {
+      "id": "card.envoy",
+      "slot": "diplomatic",
+      "requires_node": "node.c3",
+      "effects": [
+        "eff.envoy"
+      ]
+    },
+    {
+      "id": "card.devotion",
+      "slot": "wildcard",
+      "requires_node": "node.c4",
+      "effects": [
+        "eff.devotion"
       ]
     }
   ],
-  "improvements": [
+  "beliefs": [
     {
-      "id": "imp.field",
-      "requires_node": "node.a1",
-      "valid_on": {
-        "terrain": [
-          "flat"
-        ],
-        "resource_class": [
-          "bonus",
-          null
-        ]
-      },
-      "yields": {
-        "food": 1
-      },
-      "housing_per_tiles": {
-        "housing": 1,
-        "tiles": 2
-      }
+      "id": "bel.hearth",
+      "class": "pantheon",
+      "effects": [
+        "eff.bel_hearth"
+      ]
+    },
+    {
+      "id": "bel.stone_rites",
+      "class": "pantheon",
+      "effects": [
+        "eff.bel_stone"
+      ]
+    },
+    {
+      "id": "bel.chapter",
+      "class": "follower",
+      "effects": [
+        "eff.bel_chapter"
+      ]
+    },
+    {
+      "id": "bel.accord",
+      "class": "founder",
+      "effects": [
+        "eff.bel_accord"
+      ]
     }
-  ]
+  ],
+  "religions": [
+    {
+      "id": "rel.first_light",
+      "beliefs": [
+        "bel.hearth",
+        "bel.chapter",
+        "bel.accord"
+      ],
+      "holy_city": "first_city_with_shrine"
+    }
+  ],
+  "religion_pressure": {
+    "radius": 10,
+    "per_turn_adjacent_city": 1,
+    "holy_city_multiplier": 4,
+    "shrine_district_multiplier": 2,
+    "route_destination": 1.0,
+    "route_origin": 0.5,
+    "pantheon_cost_faith": 25
+  },
+  "faith_sinks": [
+    "great_person_patronage",
+    "building_purchase"
+  ],
+  "faith_units": [],
+  "great_person_individuals": [
+    {
+      "id": "gpi.scholar_a",
+      "class": "gp.scholar",
+      "era": "era_2",
+      "effect": "eff.gpi_scholar_a",
+      "max_claims": 1
+    },
+    {
+      "id": "gpi.scholar_b",
+      "class": "gp.scholar",
+      "era": "era_3",
+      "effect": "eff.gpi_scholar_b",
+      "max_claims": 1
+    },
+    {
+      "id": "gpi.trader_a",
+      "class": "gp.trader",
+      "era": "era_2",
+      "effect": "eff.gpi_trader_a",
+      "max_claims": 1
+    },
+    {
+      "id": "gpi.sage_a",
+      "class": "gp.sage",
+      "era": "era_2",
+      "effect": "eff.gpi_sage_a",
+      "max_claims": 1
+    }
+  ],
+  "city_rules": {
+    "food_per_citizen": 2,
+    "growth_meter": "meter_food",
+    "housing_steps": [
+      {
+        "headroom_at_least": 2,
+        "growth_pct": 100
+      },
+      {
+        "headroom_at_least": 1,
+        "growth_pct": 50
+      },
+      {
+        "headroom_at_least": 0,
+        "growth_pct": 25
+      },
+      {
+        "headroom_at_most": -4,
+        "growth_pct": 0
+      }
+    ],
+    "base_housing": {
+      "no_water": 2,
+      "coast": 3,
+      "river_or_lake": 5
+    },
+    "citizens_per_amenity": 2,
+    "work_radius": 3,
+    "buy_radius": 3,
+    "min_city_distance": 3,
+    "tile_worker_capacity": 1,
+    "settler_cost": {
+      "production": 80,
+      "citizens": 1
+    },
+    "districts_per_citizens": 3
+  }
 }
