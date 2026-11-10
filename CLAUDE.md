@@ -90,3 +90,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - Added branch workflow: feature branch → `version-control` → `main`; created `main` and `version-control`.
 - Added ledger pages 00 (base math) and 01 (units and combat) plus `docs/ledger/db-check.md` (queries the owner runs to confirm numbers).
 - Added ledger page 02 (trade and diplomacy).
+- Added ledger page 03 (cities and districts).

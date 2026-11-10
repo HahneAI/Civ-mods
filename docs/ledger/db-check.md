@@ -58,6 +58,23 @@ WHERE Name LIKE '%TRADE%' OR Name LIKE '%GRIEVANCE%' OR Name LIKE '%DIPLO%'
 
 Paste both results. Based on the table list, Claude will write the follow-up queries.
 
+## Page 03 · Cities and districts
+
+```sql
+SELECT Name, Value FROM GlobalParameters
+WHERE Name LIKE '%DISTRICT%' OR Name LIKE '%CITY_%' OR Name LIKE '%SETTLER%'
+   OR Name LIKE '%SPECIALIST%' OR Name LIKE '%LOYALTY%' OR Name LIKE '%MIN_CITY%' OR Name LIKE '%ADJACEN%';
+
+SELECT DistrictType, Cost, CostProgressionModel, CostProgressionParam1, Housing, Entertainment,
+       CityStrengthModifier, PlunderType, OnePerCity, RequiresPlacement
+FROM Districts;
+
+SELECT * FROM District_Adjacencies LIMIT 80;
+SELECT * FROM Adjacency_YieldChanges LIMIT 80;
+```
+
+If a column errors, run `SELECT * FROM Districts LIMIT 1;` and paste the column names. Also paste `SELECT UnitType, Cost, PopulationCost FROM Units WHERE UnitType LIKE '%SETTLER%';`.
+
 ## Keeping this file current
 
 Add a new section here whenever a new ledger page is started. Queries only: no game text or code is copied into the ledger (hard rule 8).
