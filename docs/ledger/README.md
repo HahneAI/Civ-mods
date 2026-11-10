@@ -16,6 +16,7 @@ Source: custom. Updated 2026-11-10 (end of the second design push: variables and
 | `07-effects-system.md` | how every effect is stored as data; unlocks; era score | new; beliefs, conditions and moments done |
 | `08-design-variables.md` | the four open design questions as switches, with decisions and how to test | new; decisions made, not yet playtested |
 | `db-check.md` | how to read the game database (one click) | rounds 1 to 4 done |
+| `../schema/playground.html` | interactive page for the four design variables (open in a browser) | new |
 
 ## How the numbers were obtained
 

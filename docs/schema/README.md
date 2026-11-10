@@ -13,8 +13,12 @@ Source: custom. Updated 2026-11-10 (end of the first long design session).
 | `../../tools/schemacheck.py` | Checks a dataset against the rules; `python tools/schemacheck.py [file]` |
 | `../../tests/test_schema_example.py` | 27 tests: the example passes and every rule and variable fails when broken |
 | `../ledger/08-design-variables.md` | The same four variables in plain words, with evidence |
+| `playground.html` | **Interactive playground**: open it in a browser (double-click). Left: the four variable switches, 15 "break it" switches, the node tree. Right: the 20 rules answering live. Also published as a private artifact |
+| `playground.template.html`, `playground-check.js` | The parts the playground is built from (page, and a JavaScript copy of the checker plus the switch and break definitions) |
+| `../../tools/build_playground.py` | Rebuilds `playground.html` from its parts: `python tools/build_playground.py` |
+| `../../tests/test_playground.py` | Runs every switch and break through node and checks the JavaScript checker gives the same rule codes as the Python one |
 
-Run everything with `pytest` from the repo root (53 passed at the time of writing).
+Run everything with `pytest` from the repo root (57 passed at the time of writing; the playground parity tests need node and skip without it).
 
 ## Status
 
@@ -26,6 +30,17 @@ Run everything with `pytest` from the repo root (53 passed at the time of writin
 2. **The extended example** has 10 nodes, 3 districts, 6 buildings, 6 cards, 3 governments, 4 beliefs, 4 great people, 16 effects and 7 conditions. It passes all rules.
 3. **Five new rules** (R11 to R15) replaced the three "not yet checked" ones from v0.1 and added two more found while building the example (a condition-nesting loop check, and "no boost only in the first era").
 4. **What the schema still lacks:** full unit stats and promotions, city-states and envoys, governors, espionage, barbarians, victory conditions, price rules for faith spending, catch-up discounts for the shared pool, combat formula as data.
+
+## The playground (how to use it)
+
+1. Open `docs/schema/playground.html`, or the published artifact (private link: https://claude.ai/artifact/2wrH8dvTdMVQ2fTddPd7vK).
+2. **Design variables** (top left): pick another option. With "Convert the data" on, the page rewrites the example to match, so only your breaks can fail. Turn it off to see the raw flip: what you would have to fix by hand.
+3. **Break it**: switch on a damage. The switch says whether the expected rule caught it ("caught by R3") or stayed quiet (for example a faith unit is fine once religion uses units).
+4. **The tree**: nodes are boxed by era; a red node is named by a failing rule. Click one for its cost, requirements, unlocks, boost and the rules naming it.
+5. **Check your own dataset**: paste an edited `example-data.json` to check it as it stands.
+6. Edit the page's parts (`playground.template.html`, `playground-check.js`, or the JSON files), then run `python tools/build_playground.py`. A test fails if the built page is stale.
+
+When a rule changes in `tools/schemacheck.py`, change the same rule in `playground-check.js`; `tests/test_playground.py` will tell you if they drift.
 
 ## Next steps, in order
 

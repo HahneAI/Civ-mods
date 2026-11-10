@@ -62,6 +62,8 @@ python tools/sqlcheck.py            # test CivLayer SQL against the debug DB cop
 python tools/logtriage.py <logdir>  # summarize game logs by mod
 python tools/deploy.py              # copy mod/CivLayer into the game's Mods folder
 python tools/dbdump.py              # read the debug DB, write db-results.md for the ledger
+python tools/schemacheck.py         # check docs/schema/example-data.json against the schema rules
+python tools/build_playground.py    # rebuild docs/schema/playground.html (the interactive schema page)
 pytest                              # tool tests
 luacheck mod/CivLayer               # Lua lint
 ```
@@ -115,3 +117,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - Round 4 database read: page 07 extended (unlocks including units, resolved belief effects, condition sets, era-score moments, era data); corrected earlier claim that late techs unlock nothing.
 - Added `docs/schema/` (draft v0.1 data schema for the owner's own game, enums, example data, tests) and `docs/ledger/README.md` / `docs/schema/README.md` with where-we-left-off notes.
 - Schema v0.2: the four open design questions became switchable variables (`docs/schema/variants.json`, ledger page 08) with decisions; extended example (10 nodes, 3 districts, 6 buildings, 6 cards); `tools/schemacheck.py` with 20 rules; 53 tests; where-we-left-off notes updated.
+- Added the schema playground (`docs/schema/playground.html`, also a private artifact): flip the four design variables, break the example data, watch 20 rules answer; JavaScript checker kept in step with the Python one by `tests/test_playground.py` (57 tests in all).
