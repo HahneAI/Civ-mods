@@ -40,15 +40,15 @@ The ledger records how Civ 6 works. The owner's game will differ. Four questions
 
 | Option | Meaning |
 |---|---|
-| `keep` | late nodes may unlock nothing (prerequisite-only) |
-| `trim` | every node unlocks at least `min_unlocks_per_node` things (default 1) |
+| `keep` | the last `tail_eras` eras (default 1) may hold thin nodes that unlock nothing and need no boost; every other node still unlocks at least `min_unlocks_per_node` |
+| `trim` | every node unlocks at least `min_unlocks_per_node` things (default 1): no thin tail |
 
 **Evidence.** Counted with units included, every tech and civic in eras 1 to 7 unlocks something; only 4 of the 8 future techs, 2 era-8 civics and 1 future civic unlock nothing; average unlocks per tech fall from 4.1 (era 1) to 1.8 (era 8) (ledger 07) `[sure]`. 11 late techs also have no boost (ledger 04) `[sure]`. Design writers argue a node whose only benefit is "needed for another node" is weaker than one with a direct reward, though they also say a pure-enabler tree is not necessarily bad `[web]`.
 
-**Decision `[decision]`: `trim`, minimum 1, rating 8/10.** Plus a boost rule: a node with no boost is allowed only in the first era (R15 in the schema).
+**Decision: `keep`, made by the owner on 2026-11-11** (my first pick was `trim`, 8/10; I rate `keep` 6/10). The owner's choice stands. The evidence cuts both ways: the reference game keeps a thin tail and it is only the last era `[sure]`, but a node that only unlocks other nodes feels weaker than one with a direct reward `[web]`. So `keep` comes with two guardrails: thin nodes may appear only in the last `tail_eras` eras (V3), so the tail trails and never spreads into the middle; and a tail node may carry an effect of its own instead of being a pure prerequisite (the example's science tail node does, its culture tail node does not). R15 allows a node with no boost in the first era, or as a pure tail node.
 
-**Test it.** Play the last era under both options. If `trim` crowds the end, drop the minimum to 0 for the final era only. Metrics: share of researched nodes the player uses at once; nodes the player skips; turns of "just end turn" in the last era.
-**What the checker does.** V3: under `trim`, each node needs at least the minimum number of unlocks. `min_unlocks_per_node` can be raised to 2 to see the pressure.
+**Test it.** Play the last era under `keep`. If tail nodes feel pointless, give each a small direct effect first, and only then try `trim` (the playground converts the data by removing the thin nodes). Metrics: share of tail nodes the player researches; turns spent on the tail as a share of the last era; whether the tail felt pointless or fine.
+**What the checker does.** V3: under `trim`, every node needs at least the minimum number of unlocks; under `keep`, the same holds outside the last `tail_eras` eras. R15: a node without a boost must be in era 1, or a pure tail node under `keep`. Raising `min_unlocks_per_node` to 2, or setting `tail_eras` to 0, shows the pressure.
 
 ## Variable 4 · `great_person_pool`: shared or personal
 
@@ -66,7 +66,7 @@ The ledger records how Civ 6 works. The owner's game will differ. Four questions
 
 ## What the extended example shows
 
-`docs/schema/example-data.json` is one mini-world built on all four decisions: 10 nodes (6 science, 4 culture) over 3 eras; 3 districts; 6 buildings; 6 cards; 3 governments; 4 beliefs and one religion with no spread units; 4 great people. Every node unlocks something, every unboosted node is in era 1, the six boost families are used, and the three governments have 2, 4 and 6 slots. It passes all 20 rules (R1 to R15, V0 to V4).
+`docs/schema/example-data.json` is one mini-world built on all four decisions: 12 nodes (7 science, 5 culture, including 2 tail nodes) over 3 eras; 3 districts; 6 buildings; 6 cards; 3 governments; 4 beliefs and one religion with no spread units; 4 great people. Every node outside the tail unlocks something, every unboosted node is in era 1 or is a pure tail node, the six boost families are used, and the three governments have 2, 4 and 6 slots. It passes all 20 rules (R1 to R15, V0 to V4).
 
 ## Open items
 

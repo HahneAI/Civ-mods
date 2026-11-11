@@ -51,6 +51,8 @@
     var nodeList = rows("nodes");
     var eraValues = Object.keys(eras).map(function (k) { return eras[k]; });
     var minEra = eraValues.length ? Math.min.apply(null, eraValues) : 1;
+    var tailEras = cfg.tail_eras === undefined ? 1 : cfg.tail_eras;
+    var lastEras = tailEras > 0 ? eraValues.slice().sort(function (a, b) { return a - b; }).slice(-tailEras) : [];
 
     // R2 R3 R4
     nodeList.forEach(function (n) {
@@ -97,8 +99,8 @@
         var fam = enums.boost_trigger_kinds[kind];
         if (fam === undefined) errs.push("R6: node " + n.id + " boost trigger kind '" + kind + "' unknown");
         else if (fam !== b.family) errs.push("R6: node " + n.id + " trigger '" + kind + "' belongs to family '" + fam + "', not '" + b.family + "'");
-      } else if (eras[n.era] !== minEra) {
-        errs.push("R15: node " + n.id + " has no boost but is not in the first era");
+      } else if (eras[n.era] !== minEra && !(cfg.late_tail === "keep" && !n.unlocks.length && lastEras.indexOf(eras[n.era]) >= 0)) {
+        errs.push("R15: node " + n.id + " has no boost but is not in the first era (or a pure tail node under late_tail=keep)");
       }
     });
 
@@ -259,12 +261,17 @@
       if (hasRel || units.length) errs.push("V2: religion_mode=off must have no beliefs, religions or faith_units");
     }
 
-    if (cfg.late_tail === "trim") {
-      var minimum = cfg.min_unlocks_per_node === undefined ? 1 : cfg.min_unlocks_per_node;
-      nodeList.forEach(function (n) {
-        if (n.unlocks.length < minimum) errs.push("V3: node " + n.id + " unlocks " + n.unlocks.length + ", below min_unlocks_per_node=" + minimum + " (late_tail=trim)");
-      });
-    }
+    var tailMode = cfg.late_tail;
+    var minimum = cfg.min_unlocks_per_node === undefined ? 1 : cfg.min_unlocks_per_node;
+    nodeList.forEach(function (n) {
+      var inTail = lastEras.indexOf(eras[n.era]) >= 0;
+      if (tailMode === "trim" || (tailMode === "keep" && !inTail)) {
+        if (n.unlocks.length < minimum) {
+          var where = tailMode === "trim" ? "" : " outside the tail";
+          errs.push("V3: node " + n.id + " unlocks " + n.unlocks.length + ", below min_unlocks_per_node=" + minimum + where + " (late_tail=" + tailMode + ")");
+        }
+      }
+    });
 
     var pool = cfg.great_person_pool;
     rows("great_person_individuals").forEach(function (g) {
@@ -300,6 +307,13 @@
       var c3 = nodeById(d, "node.c3");
       if (c3) c3.boost = { family: "chain_node", trigger: { kind: "have_node", node: "node.s2" }, percent: 40 };
     }
+    // late tail: trim removes the thin nodes (no unlocks) and anything they own
+    if (cfg.late_tail === "trim") {
+      var thin = {};
+      d.nodes.forEach(function (n) { if (!n.unlocks.length) thin[n.id] = true; });
+      d.nodes = d.nodes.filter(function (n) { return !thin[n.id]; });
+      d.effects = d.effects.filter(function (e) { return !thin[e.owner]; });
+    }
     // great-person pool
     if (cfg.great_person_pool === "personal") {
       d.great_person_individuals.forEach(function (g) { g.max_claims = null; });
@@ -333,8 +347,8 @@
       apply: function (d) { d.conditions[0].requirements[0].args.building = "bld.nope"; } },
     { id: "slots", label: "Flatten the government slots", expect: "R9", note: "Every government gets the same slots.",
       apply: function (d) { d.governments.forEach(function (g) { g.slots = { military: 1, economic: 1, diplomatic: 0, wildcard: 0 }; }); } },
-    { id: "emptyUnlock", label: "Empty the last node's unlocks", expect: "V3", note: "A node unlocks nothing (fails only when the late tail is trimmed).",
-      apply: function (d) { nodeById(d, "node.s6").unlocks = []; } },
+    { id: "emptyUnlock", label: "Empty a middle node's unlocks", expect: "V3", note: "A second-era node unlocks nothing. Thin nodes are only allowed in the tail, so this always fails.",
+      apply: function (d) { nodeById(d, "node.s4").unlocks = []; } },
     { id: "faithUnit", label: "Add a faith unit", expect: "V2", note: "Fails when religion is pressure-only or off.",
       apply: function (d) { d.faith_units = (d.faith_units || []).concat([{ id: "fu.extra", charges: 3 }]); } },
     { id: "claims", label: "Make one great person claimable by all", expect: "V4", note: "Fails when the pool is shared.",

@@ -44,7 +44,7 @@ def test_example_follows_the_four_decisions():
 
 
 def test_example_size_matches_the_plan():
-    assert len(BASE["nodes"]) == 10
+    assert len(BASE["nodes"]) == 12  # 10 working nodes + 2 tail nodes (late_tail=keep)
     assert len(BASE["districts"]) == 3
     assert len(BASE["buildings"]) == 6
     assert len(BASE["cards"]) == 6
@@ -234,24 +234,65 @@ def test_v2_religion_mode():
     assert "V2" not in codes(run(off_clean))
 
 
-def test_v3_late_tail():
-    def empty(d):
-        node(d, "node.s6")["unlocks"] = []
-    assert "V3" in codes(run(empty))
+def test_v3_thin_nodes_only_in_the_tail():
+    # the example has two tail nodes that unlock nothing, and passes under keep
+    thin = [n["id"] for n in BASE["nodes"] if not n["unlocks"]]
+    assert thin == ["node.s7", "node.c5"]
+    assert run() == []
 
-    def keep(d):
-        d["rules_config"]["late_tail"] = "keep"
-        node(d, "node.s6")["unlocks"] = []
-        for u in ("bld.academy", "bld.exchange", "bld.sanctum"):
-            next(b for b in d["buildings"] if b["id"] == u)["requires_node"] = None
-    assert "V3" not in codes(run(keep))
+    # a thin node in the middle is never allowed
+    def middle(d):
+        node(d, "node.s4")["unlocks"] = []
+    assert "V3" in codes(run(middle))
+
+    def middle_trim(d):
+        d["rules_config"]["late_tail"] = "trim"
+        node(d, "node.s4")["unlocks"] = []
+    assert "V3" in codes(run(middle_trim))
+
+
+def test_v3_trim_forbids_the_tail():
+    def raw_trim(d):
+        d["rules_config"]["late_tail"] = "trim"
+    errs = run(raw_trim)
+    assert "V3" in codes(errs) and "R15" in codes(errs)  # tail nodes now unlock nothing and have no boost
+
+    def trimmed(d):
+        d["rules_config"]["late_tail"] = "trim"
+        d["nodes"] = [n for n in d["nodes"] if n["unlocks"]]
+        d["effects"] = [e for e in d["effects"] if e["owner"] != "node.s7"]
+    assert run(trimmed) == []
+
+
+def test_v3_tail_width_is_adjustable():
+    def no_tail(d):
+        d["rules_config"]["tail_eras"] = 0
+    assert "V3" in codes(run(no_tail))  # with no tail, the thin nodes fail even under keep
+
+    def wide_tail(d):
+        d["rules_config"]["tail_eras"] = 2
+        node(d, "node.s4")["unlocks"] = []
+    assert "V3" not in codes(run(wide_tail))  # second-to-last era is now tail too
+
+
+def test_r15_tail_exemption_needs_keep_and_empty_unlocks():
+    def tail_gets_unlock_no_boost(d):
+        node(d, "node.s7")["unlocks"] = [{"type": "card", "id": "card.drill"}]
+        next(c for c in d["cards"] if c["id"] == "card.drill")["requires_node"] = "node.s7"
+        node(d, "node.c1")["unlocks"] = []
+    errs = run(tail_gets_unlock_no_boost)
+    assert "R15" in codes(errs)  # s7 now unlocks something but still has no boost
+
+
+def test_tail_node_may_carry_its_own_effect():
+    effect = next(e for e in BASE["effects"] if e["owner"] == "node.s7")
+    assert effect["kind"] in ENUMS["effect_kinds"]
 
 
 def test_v3_minimum_is_adjustable():
     def two(d):
         d["rules_config"]["min_unlocks_per_node"] = 2
-    errs = run(two)
-    assert "V3" in codes(errs)  # single-unlock nodes now fail
+    assert "V3" in codes(run(two))  # nodes outside the tail with a single unlock now fail
 
 
 def test_v4_great_person_pool():

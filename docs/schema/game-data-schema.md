@@ -2,7 +2,7 @@
 
 Source: custom design note, built from ledger pages 00 to 07 (which were read from the owner's Civ 6 database). **This is a design document, not engine code.** It describes the *shape* of the data for the owner's own tile game, in the owner's own terms. Names in it are generic placeholders. Numbers marked "reference" are what Civ 6 used (from the ledger) and are starting points to tune, not rules. No Civ 6 names, text, or code are copied (hard rule 8, SPEC section 9).
 
-Machine-checkable parts: `enums.json` (closed lists), `variants.json` (the four design variables and the decisions made), `example-data.json` (an extended mini-world: 10 nodes, 3 districts, 6 buildings, 6 cards), `tools/schemacheck.py` (checks any dataset against the rules in section 5), and `tests/test_schema_example.py` (53 tests: the example passes, and every rule and variable fails when broken).
+Machine-checkable parts: `enums.json` (closed lists), `variants.json` (the four design variables, the decisions made, and who made them), `example-data.json` (an extended mini-world: 10 nodes, 3 districts, 6 buildings, 6 cards), `tools/schemacheck.py` (checks any dataset against the rules in section 5), and `tests/test_schema_example.py` (53 tests: the example passes, and every rule and variable fails when broken).
 
 **v0.2 change:** the four open questions from v0.1 are now **switchable variables** with decisions (section 3.11, ledger page 08). Flip a value in `rules_config` and `python tools/schemacheck.py` lists what in the data must change.
 
@@ -194,7 +194,7 @@ The dataset carries a `rules_config` object. Each key is one design variable (fu
 |---|---|---|---|
 | `tree_layout` | `two_trees`, `one_tree` | `two_trees` | V1: in `two_trees` a node's `paid_with` equals its tree; in `one_tree` every node is tree `main` |
 | `religion_mode` | `pressure_only`, `units_and_pressure`, `off` | `pressure_only` | V2: `pressure_only` needs beliefs, a religion, pressure settings, faith sinks and **no** faith units; `units_and_pressure` needs faith units; `off` needs none of it |
-| `late_tail` | `keep`, `trim` (+ `min_unlocks_per_node`) | `trim`, minimum 1 | V3: under `trim` every node unlocks at least the minimum |
+| `late_tail` | `keep`, `trim` (+ `min_unlocks_per_node`, `tail_eras`) | **`keep`**, minimum 1, tail of 1 era (owner decision, 2026-11-11) | V3: under `trim` every node unlocks at least the minimum; under `keep` the same holds **outside the last `tail_eras` eras**, so thin nodes can trail the tree but never appear in the middle |
 | `great_person_pool` | `shared_finite`, `personal` | `shared_finite` | V4: each great person has `max_claims = 1` (shared) or `null` (personal) |
 
 How to play with a variable: change its value in a copy of the dataset, run `python tools/schemacheck.py <file>`, read what must change, change it, then playtest and compare the metrics listed in `variants.json`.
@@ -219,7 +219,7 @@ Structural rules (codes R1 to R15), run by `tools/schemacheck.py`:
 | R12 | **Card fits slot:** a card's effect kinds must be allowed in its slot (`slot_allowed_effect_kinds`; wildcard allows any) |
 | R13 | **Adjacency selectors resolve:** terrain, feature, improvement, resource class, district named in a neighbor selector exist |
 | R14 | Condition requirements reference real ids; conditions that nest (`set_is_met`) do not loop |
-| R15 | A node with no boost is only allowed in the first era (the reference game left 11 late nodes without one; this closes that gap) |
+| R15 | A node with no boost is only allowed in the first era, or, under `late_tail = keep`, as a pure tail node (no unlocks, in the last `tail_eras` eras). The reference game left 11 late nodes without one; this keeps that to the tail |
 
 Variable rules: V0 (config values are valid options) and V1 to V4 (section 3.11).
 
@@ -239,7 +239,7 @@ R11 to R15 are new in v0.2: R11, R12 and R13 were the three "not yet checked" ru
 | Government = fixed bonus + slots | **Keep** (8/10) | Editable ruleset layer; slots rise with tier (R9) |
 | Great-person pool | **Decided: `shared_finite`** (7/10) | Rival communities exist; `personal` is one switch away |
 | Religion | **Decided: `pressure_only`** (7/10) | Keep the belief sentence and spread by pressure; drop the unit layer |
-| Thin late tail | **Decided: `trim`** (8/10) | Every node unlocks at least one thing; R15 also forbids unboosted late nodes |
+| Thin late tail | **Decided by the owner: `keep`** (6/10; my pick was `trim`, 8/10) | Thin nodes trail the tree (V3, R15) and may carry their own effect; trim is one switch away |
 | Unit unlocks in tech nodes | **Keep** | 45 of 77 reference techs unlock units |
 
 ## 7. What this draft does not cover

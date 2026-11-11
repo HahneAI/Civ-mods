@@ -274,6 +274,7 @@ textarea.paste { width: 100%; min-height: 120px; margin-top: 8px; font-family: v
     var c = {};
     Object.keys(VARIANTS).forEach(function (id) { c[VARIANTS[id].config_key] = VARIANTS[id].decision; });
     c.min_unlocks_per_node = VARIANTS.late_tail.min_unlocks_per_node || 1;
+    c.tail_eras = VARIANTS.late_tail.tail_eras === undefined ? 1 : VARIANTS.late_tail.tail_eras;
     return c;
   }
   var state = { config: decisions(), convert: true, breaks: [], custom: null, selected: null, runs: 0 };
@@ -301,8 +302,10 @@ textarea.paste { width: 100%; min-height: 120px; margin-top: 8px; font-family: v
         html += '<label><input type="radio" name="v_' + id + '" value="' + o + '" data-var="' + id + '"' + (cur === o ? " checked" : "") + '><span>' + esc(o.replace(/_/g, " ")) + (o === v.decision ? ' <b class="star" title="current decision">★</b>' : "") + "</span></label>";
       });
       html += '</div><div class="optnote">' + esc(v.options[cur] || "") + "</div>";
-      if (id === "late_tail" && cur === "trim") {
-        html += '<div class="row" style="margin-top:6px"><label class="check" for="minUnl">Minimum unlocks per node <input type="number" id="minUnl" min="0" max="4" value="' + esc(state.config.min_unlocks_per_node) + '"></label></div>';
+      if (id === "late_tail") {
+        html += '<div class="row" style="margin-top:6px"><label class="check" for="minUnl">Minimum unlocks per node <input type="number" id="minUnl" min="0" max="4" value="' + esc(state.config.min_unlocks_per_node) + '"></label>';
+        if (cur === "keep") html += '<label class="check" for="tailEras">Tail width in eras <input type="number" id="tailEras" min="0" max="3" value="' + esc(state.config.tail_eras) + '"></label>';
+        html += "</div>";
       }
       html += "</div>";
     });
@@ -484,6 +487,7 @@ textarea.paste { width: 100%; min-height: 120px; margin-top: 8px; font-family: v
     var t = e.target;
     if (t.matches("input[data-var]")) { var v = VARIANTS[t.getAttribute("data-var")]; state.config[v.config_key] = t.value; state.custom = null; draw(false); }
     else if (t.id === "convert") { state.convert = t.checked; draw(false); }
+    else if (t.id === "tailEras") { var te = parseInt(t.value, 10); state.config.tail_eras = isNaN(te) ? 1 : Math.max(0, Math.min(3, te)); draw(false); }
     else if (t.id === "minUnl") { var n = parseInt(t.value, 10); state.config.min_unlocks_per_node = isNaN(n) ? 1 : Math.max(0, Math.min(4, n)); draw(false); }
     else if (t.matches("input[data-brk]")) {
       var id = t.getAttribute("data-brk"), i = state.breaks.indexOf(id);

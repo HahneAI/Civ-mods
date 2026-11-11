@@ -12,9 +12,17 @@
       "decision": "two_trees",
       "rating": "8/10",
       "rationale": "The two trees differ in shape on purpose (wide and branching vs. one steady trunk) and that contrast is the strongest thing in the reference data (ledger 04). The data shape is the same either way, so choosing two_trees costs nothing if you later want one.",
-      "metrics": ["share of nodes finished with a boost", "turns spent on each tree per era", "number of times the player is blocked by only one yield"],
+      "metrics": [
+        "share of nodes finished with a boost",
+        "turns spent on each tree per era",
+        "number of times the player is blocked by only one yield"
+      ],
       "how_to_test": "Run the same mini-game with each option. In one_tree, watch whether players still need to choose between yields, or whether one yield always wins.",
-      "checks": ["V1"]
+      "checks": [
+        "V1"
+      ],
+      "decided_by": "claude",
+      "decided_on": "2026-11-10"
     },
     {
       "id": "religion_mode",
@@ -28,25 +36,42 @@
       "decision": "pressure_only",
       "rating": "7/10",
       "rationale": "Players complain most about the unit layer: long waves of missionaries across the map, with little defense (ledger 08). The part that works is the belief sentence (condition + filter + yield, ledger 07) and spread by distance. Keep those, drop the units. Faith keeps a job: it buys great people and religious buildings.",
-      "metrics": ["share of cities following a religion by turn", "turns until the first religion forms", "faith spent per sink"],
+      "metrics": [
+        "share of cities following a religion by turn",
+        "turns until the first religion forms",
+        "faith spent per sink"
+      ],
       "how_to_test": "Run pressure_only and watch whether religion still spreads fast enough to matter by the middle eras. If it stalls, add a pressure multiplier or a small active action before bringing units back.",
-      "checks": ["V2"]
+      "checks": [
+        "V2"
+      ],
+      "decided_by": "claude",
+      "decided_on": "2026-11-10"
     },
     {
       "id": "late_tail",
       "config_key": "late_tail",
       "question": "Keep the thin late-game tail of nodes that unlock little?",
       "options": {
-        "keep": "Late nodes may unlock nothing (prerequisite-only), as in the reference game's final nodes.",
-        "trim": "Every node unlocks at least min_unlocks_per_node things."
+        "keep": "The last tail_eras eras (default 1) may hold thin nodes that unlock nothing and have no boost. Every other node still unlocks at least min_unlocks_per_node.",
+        "trim": "Every node unlocks at least min_unlocks_per_node things, so there is no thin tail."
       },
-      "decision": "trim",
+      "decision": "keep",
       "min_unlocks_per_node": 1,
-      "rating": "8/10",
-      "rationale": "In the reference data every node in eras 1 to 7 unlocks something and only the very last nodes unlock nothing (ledger 07). Design writers also argue that a node whose only benefit is 'needed for another node' is weaker than one with a direct reward (ledger 08). Trim costs little and removes the dead end.",
-      "metrics": ["share of researched nodes the player immediately uses", "nodes the player skips", "turns the player 'just ends turn' in the last era"],
-      "how_to_test": "Compare the last era under keep and trim. If trim makes the last era feel crowded, lower the minimum to 0 for the final era only.",
-      "checks": ["V3"]
+      "rating": "6/10",
+      "rationale": "Owner decision, overriding the earlier recommendation of trim (8/10). In the reference data the thin tail is only the last era: every node in eras 1 to 7 unlocks something (ledger 07). Keeping it matches the reference and lets the tree end on capstone nodes. The risk is dead-feeling nodes (ledger 08), so two guardrails apply: thin nodes are allowed only in the last tail_eras eras (V3), and a tail node can still carry a direct effect of its own (the example's science tail node does) instead of being a pure prerequisite.",
+      "metrics": [
+        "share of tail nodes the player researches",
+        "turns spent on tail nodes as a share of the last era",
+        "player reaction to tail nodes (felt pointless or fine)"
+      ],
+      "how_to_test": "Play the last era under keep. If tail nodes feel pointless, give each a small direct effect first, and only then try trim. Compare turns spent on the tail under keep and under trim.",
+      "checks": [
+        "V3"
+      ],
+      "decided_by": "owner",
+      "decided_on": "2026-11-11",
+      "tail_eras": 1
     },
     {
       "id": "great_person_pool",
@@ -59,9 +84,17 @@
       "decision": "shared_finite",
       "rating": "7/10",
       "rationale": "A civ-style game has rival communities (AI at minimum), so a shared pool gives every player's progress meaning to the others. A personal pool is the safe fallback for a solo mode. The schema supports both with one field.",
-      "metrics": ["share of great people claimed by rivals before the player", "points wasted when a person is taken", "player complaints about being locked out"],
+      "metrics": [
+        "share of great people claimed by rivals before the player",
+        "points wasted when a person is taken",
+        "player complaints about being locked out"
+      ],
       "how_to_test": "Run one game with rivals under shared_finite. If the player is often locked out of a class, add a catch-up discount (as the reference game does for late nodes) before switching to personal.",
-      "checks": ["V4"]
+      "checks": [
+        "V4"
+      ],
+      "decided_by": "claude",
+      "decided_on": "2026-11-10"
     }
   ]
 }

@@ -30,13 +30,15 @@ const scenarios = [];
 function add(name, cfg, convert, breaks) { scenarios.push({name, cfg, convert, breaks}); }
 add("base", {}, true, []);
 S.MUTATIONS.forEach(m => { add("break " + m.id, {}, true, [m.id]); add("break-raw " + m.id, {}, false, [m.id]); });
-const flips = {tree_layout: ["one_tree"], religion_mode: ["units_and_pressure", "off"], late_tail: ["keep"], great_person_pool: ["personal"]};
+const flips = {tree_layout: ["one_tree"], religion_mode: ["units_and_pressure", "off"], late_tail: ["trim"], great_person_pool: ["personal"]};
 Object.keys(flips).forEach(k => flips[k].forEach(v => { const c = {}; c[k] = v; add("flip " + k + "=" + v, c, true, []); add("raw " + k + "=" + v, c, false, []); }));
 add("min2", {min_unlocks_per_node: 2}, true, []);
 add("combo one_tree+skip+cheap", {tree_layout: "one_tree"}, true, ["skip", "cheap"]);
 add("combo off+faithUnit", {religion_mode: "off"}, true, ["faithUnit"]);
 add("combo personal+claims", {great_person_pool: "personal"}, true, ["claims"]);
-add("combo keep+emptyUnlock", {late_tail: "keep"}, true, ["emptyUnlock"]);
+add("combo trim+emptyUnlock", {late_tail: "trim"}, true, ["emptyUnlock"]);
+add("no tail", {tail_eras: 0}, true, []);
+add("wide tail", {tail_eras: 2}, true, ["emptyUnlock"]);
 add("combo bad config", {religion_mode: "crusades"}, true, []);
 const out = scenarios.map(s => { const d = S.buildDataset(example, s.cfg, s.convert, s.breaks); return {name: s.name, data: d, errors: S.check(d, enums, variants)}; });
 process.stdout.write(JSON.stringify(out));
@@ -74,11 +76,13 @@ def test_converted_flips_pass_and_raw_flips_fail():
     out = subprocess.run([NODE, "-e", DRIVER, str(SCHEMA)], capture_output=True, text=True, check=True).stdout
     by_name = {s["name"]: s for s in json.loads(out)}
     for name in ("flip tree_layout=one_tree", "flip religion_mode=units_and_pressure", "flip religion_mode=off",
-                 "flip late_tail=keep", "flip great_person_pool=personal"):
+                 "flip late_tail=trim", "flip great_person_pool=personal"):
         assert by_name[name]["errors"] == [], name
-    for name in ("raw tree_layout=one_tree", "raw religion_mode=units_and_pressure", "raw religion_mode=off", "raw great_person_pool=personal"):
+    for name in ("raw tree_layout=one_tree", "raw religion_mode=units_and_pressure", "raw religion_mode=off", "raw late_tail=trim", "raw great_person_pool=personal"):
         assert by_name[name]["errors"], name
     assert any(e.startswith("V3") for e in by_name["min2"]["errors"])
+    assert any(e.startswith("V3") for e in by_name["no tail"]["errors"])
+    assert not any(e.startswith("V3") for e in by_name["wide tail"]["errors"])
 
 
 def test_built_page_is_up_to_date_and_self_contained():

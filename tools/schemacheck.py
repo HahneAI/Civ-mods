@@ -70,6 +70,9 @@ def check(data: dict, enums: dict | None = None, variants: dict | None = None) -
     eras = {e["id"]: e["index"] for e in rows("eras")}
     nodes = {n["id"]: n for n in rows("nodes")}
     trees_allowed = cfg.get("trees") or enums["node_trees"]
+    # the "tail" = the last tail_eras eras (V3, R15)
+    tail_eras = cfg.get("tail_eras", 1)
+    last_eras = set(sorted(eras.values())[-tail_eras:]) if tail_eras > 0 and eras else set()
 
     # ---- R2 R3 R4 nodes
     for n in nodes.values():
@@ -125,8 +128,9 @@ def check(data: dict, enums: dict | None = None, variants: dict | None = None) -
                 errs.append(f"R6: node {n['id']} boost trigger kind {kind!r} unknown")
             elif fam != b["family"]:
                 errs.append(f"R6: node {n['id']} trigger {kind!r} belongs to family {fam!r}, not {b['family']!r}")
-        elif eras.get(n["era"]) != min(eras.values(), default=1):
-            errs.append(f"R15: node {n['id']} has no boost but is not in the first era")
+        elif eras.get(n["era"]) != min(eras.values(), default=1) and not (
+                cfg.get("late_tail") == "keep" and not n["unlocks"] and eras.get(n["era"]) in last_eras):
+            errs.append(f"R15: node {n['id']} has no boost but is not in the first era (or a pure tail node under late_tail=keep)")
 
     # ---- R7 references
     for d in rows("districts"):
@@ -307,12 +311,15 @@ def check(data: dict, enums: dict | None = None, variants: dict | None = None) -
         if has_rel or units:
             errs.append("V2: religion_mode=off must have no beliefs, religions or faith_units")
 
-    # V3 late tail
-    if cfg.get("late_tail") == "trim":
-        minimum = cfg.get("min_unlocks_per_node", 1)
-        for n in nodes.values():
+    # V3 late tail: keep = only the last tail_eras eras may have thin nodes; trim = none may
+    tail_mode = cfg.get("late_tail")
+    minimum = cfg.get("min_unlocks_per_node", 1)
+    for n in nodes.values():
+        in_tail = eras.get(n["era"]) in last_eras
+        if tail_mode == "trim" or (tail_mode == "keep" and not in_tail):
             if len(n["unlocks"]) < minimum:
-                errs.append(f"V3: node {n['id']} unlocks {len(n['unlocks'])}, below min_unlocks_per_node={minimum} (late_tail=trim)")
+                where = "" if tail_mode == "trim" else " outside the tail"
+                errs.append(f"V3: node {n['id']} unlocks {len(n['unlocks'])}, below min_unlocks_per_node={minimum}{where} (late_tail={tail_mode})")
 
     # V4 great-person pool
     pool = cfg.get("great_person_pool")

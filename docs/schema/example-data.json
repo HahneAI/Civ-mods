@@ -7,9 +7,10 @@
       "culture"
     ],
     "religion_mode": "pressure_only",
-    "late_tail": "trim",
+    "late_tail": "keep",
     "min_unlocks_per_node": 1,
-    "great_person_pool": "shared_finite"
+    "great_person_pool": "shared_finite",
+    "tail_eras": 1
   },
   "eras": [
     {
@@ -715,6 +716,36 @@
           "id": "card.devotion"
         }
       ]
+    },
+    {
+      "id": "node.s7",
+      "tree": "science",
+      "paid_with": "science",
+      "era": "era_3",
+      "cost": 320,
+      "requires": [
+        "node.s6"
+      ],
+      "boost": {
+        "family": "none",
+        "percent": 0
+      },
+      "unlocks": []
+    },
+    {
+      "id": "node.c5",
+      "tree": "culture",
+      "paid_with": "culture",
+      "era": "era_3",
+      "cost": 450,
+      "requires": [
+        "node.c4"
+      ],
+      "boost": {
+        "family": "none",
+        "percent": 0
+      },
+      "unlocks": []
     }
   ],
   "conditions": [
@@ -1024,6 +1055,17 @@
       "args": {
         "yield": "faith",
         "amount": 80
+      },
+      "when": null
+    },
+    {
+      "id": "eff.tail_study",
+      "owner": "node.s7",
+      "scope": "player_cities",
+      "kind": "yield_pct",
+      "args": {
+        "yield": "science",
+        "amount": 5
       },
       "when": null
     }
