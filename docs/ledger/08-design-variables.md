@@ -36,19 +36,22 @@ The ledger records how Civ 6 works. The owner's game will differ. Four questions
 **Test it.** Does religion still spread fast enough to matter by the middle eras? If it stalls, first raise the pressure multipliers or add one small active action; only then bring units back. Metrics: share of cities with a religion by turn; turns until the first religion forms; faith spent per sink.
 **What the checker does.** V2: `pressure_only` needs beliefs, a religion, pressure settings, faith sinks and **no** faith units; `units_and_pressure` needs units; `off` needs no religion data.
 
-## Variable 3 · `late_tail`: keep the thin end of the tree?
+## Variable 3 · `node_rewards`: what must a research node give you?
+
+**Plain terms.** Every research node costs something and should give something back. A reward is either **something new** (a building, unit, district, card, or a project) or a **bonus effect** the node carries itself (for example, +5% science). The question is whether a node may ever give *nothing*. (An earlier draft called nodes that unlock nothing a "thin tail". That was a misreading: in the reference game those nodes still carry a bonus. The word is retired.)
 
 | Option | Meaning |
 |---|---|
-| `keep` | the last `tail_eras` eras (default 1) may hold thin nodes that unlock nothing and need no boost; every other node still unlocks at least `min_unlocks_per_node` |
-| `trim` | every node unlocks at least `min_unlocks_per_node` things (default 1): no thin tail |
+| `unlock_or_effect` | every node gives at least `min_rewards_per_node` rewards, counting both unlocks and its own bonus effects. **Nothing is ever empty** |
+| `unlock_only` | every node must unlock at least that many things; a bonus effect alone does not count |
+| `empty_allowed` | nodes in the last `endgame_eras` eras may give nothing; every other node must unlock something |
 
-**Evidence.** Counted with units included, every tech and civic in eras 1 to 7 unlocks something; only 4 of the 8 future techs, 2 era-8 civics and 1 future civic unlock nothing; average unlocks per tech fall from 4.1 (era 1) to 1.8 (era 8) (ledger 07) `[sure]`. 11 late techs also have no boost (ledger 04) `[sure]`. Design writers argue a node whose only benefit is "needed for another node" is weaker than one with a direct reward, though they also say a pure-enabler tree is not necessarily bad `[web]`.
+**Evidence.** The reference data agrees with the owner `[sure]`: **0 of 77 techs and 0 of 61 civics give nothing.** Counting only unlocks, 4 future techs, 2 late civics and 1 future civic unlock nothing, but every one of them carries a bonus effect (ledger 07). Late nodes also act as gates: the big space projects each need a specific late tech, and those techs are separate nodes. A node that is "only" a prerequisite is normal and not empty when it has a bonus.
 
-**Decision: `keep`, made by the owner on 2026-11-11** (my first pick was `trim`, 8/10; I rate `keep` 6/10). The owner's choice stands. The evidence cuts both ways: the reference game keeps a thin tail and it is only the last era `[sure]`, but a node that only unlocks other nodes feels weaker than one with a direct reward `[web]`. So `keep` comes with two guardrails: thin nodes may appear only in the last `tail_eras` eras (V3), so the tail trails and never spreads into the middle; and a tail node may carry an effect of its own instead of being a pure prerequisite (the example's science tail node does, its culture tail node does not). R15 allows a node with no boost in the first era, or as a pure tail node.
+**Decision: `unlock_or_effect`, made by the owner on 2026-11-11, rating 8/10.** Minimum 1 reward per node. A bonus effect alone is enough. A separate rule says boosts are optional in the last `endgame_eras` eras (default 1), because the reference game leaves its late critical nodes without a boost (R15).
 
-**Test it.** Play the last era under `keep`. If tail nodes feel pointless, give each a small direct effect first, and only then try `trim` (the playground converts the data by removing the thin nodes). Metrics: share of tail nodes the player researches; turns spent on the tail as a share of the last era; whether the tail felt pointless or fine.
-**What the checker does.** V3: under `trim`, every node needs at least the minimum number of unlocks; under `keep`, the same holds outside the last `tail_eras` eras. R15: a node without a boost must be in era 1, or a pure tail node under `keep`. Raising `min_unlocks_per_node` to 2, or setting `tail_eras` to 0, shows the pressure.
+**Test it.** In the simulator, compare the three options. The example has exactly one effect-only node (the last culture node, 450 for a +5% bonus). If effect-only nodes feel too expensive for what they give, lower their cost or raise the bonus before restricting them. Metrics: share of nodes whose only reward is a bonus; turns spent on them; whether players treat them as real choices or skip them.
+**What the checker does.** V3: under `unlock_or_effect`, a node's unlocks plus its own effects must reach the minimum; under `unlock_only`, only unlocks count; under `empty_allowed`, only nodes outside the endgame eras are checked. R15: a node without a boost must be in era 1 or an endgame era. Raise `min_rewards_per_node` to 2 or set `endgame_eras` to 0 to see the pressure.
 
 ## Variable 4 · `great_person_pool`: shared or personal
 
@@ -70,13 +73,13 @@ The playground now has a **Simulate** panel (`docs/schema/playground-sim.js`): a
 
 | Variable | Result with the model's defaults |
 |---|---|
-| `late_tail` | Keeping the 2 tail nodes makes the whole tree finish on **turn 102 instead of 71** (31 turns later). The tail is **37.7% of the total cost** and takes **33.3% of research turns** |
+| `node_rewards` | Counting a bonus as a reward keeps 1 effect-only node in the tree: **22% of the total cost**, and it takes **33% of research turns** (it is the last node of the slower culture tree). Requiring a real unlock drops it, and the tree finishes on **turn 84 instead of 102**. Allowing empty nodes changes nothing here because the example has none |
 | `tree_layout` | Two trees finish on **turn 102**, ending **18 turns apart** (the faster tree sat idle: 837 yield wasted). One shared tree finishes on **turn 85** with 16 wasted |
 | `religion_mode` | Pressure alone converts a new city about **11.9 turns** after it is founded; with spread units about **3.4** (19 units bought). Both reach every city. With religion off, no city converts |
 | `great_person_pool` | Shared pool: you claim **1 of 4** people, rivals take 3, and you are locked out of 2 of 3 classes. Personal pool: you claim all 4 |
 
 How to read them, honestly:
-- **Tail:** the 37.7% is partly an accident of the example, where tail costs follow the era cost ladder (320 and 450). The finding that matters is that **a kept tail is a tuning choice with a real price**: if you keep it, price tail nodes low (a few percent of the tree) or give them effects, otherwise a third of research goes to nodes that unlock nothing.
+- **Rewards:** the 22% is partly an accident of the example, where the last culture node follows the era cost ladder (450). The lesson is not that effect-only nodes are bad (the reference game has them and they are fine) but that **a node's price and its bonus must match**: a 450-cost node for +5% is a weak choice, a 450-cost node that gates a big project is not. Price effect-only nodes by what they give.
 - **Trees:** most of the gap comes from the culture tree costing more per unit of culture than the science tree does per unit of science. Under two trees, balance the two trees' costs against their yields or accept idle time.
 - **Religion:** pressure-only is slower to convert each new city but gets there. Whether 12 turns versus 3 matters is a playtest question, not a model question.
 - **Pool:** the lock-out depends on the rival-pace assumption (default 2 points per class per turn, rising). Set rival strength to 0 and the lock-out vanishes; set it low and you can see where it starts. The example pool is only 4 people, so one claim is a quarter of it.
@@ -85,7 +88,7 @@ How to read them, honestly:
 
 ## What the extended example shows
 
-`docs/schema/example-data.json` is one mini-world built on all four decisions: 12 nodes (7 science, 5 culture, including 2 tail nodes) over 3 eras; 3 districts; 6 buildings; 6 cards; 3 governments; 4 beliefs and one religion with no spread units; 4 great people. Every node outside the tail unlocks something, every unboosted node is in era 1 or is a pure tail node, the six boost families are used, and the three governments have 2, 4 and 6 slots. It passes all 20 rules (R1 to R15, V0 to V4).
+`docs/schema/example-data.json` is one mini-world built on all four decisions: 12 nodes (7 science, 5 culture) over 3 eras, including two endgame nodes (one unlocks a project and carries a bonus, one is a bonus only); 3 districts; 6 buildings; 6 cards; 3 governments; 4 beliefs and one religion with no spread units; 4 great people. Every node gives something (an unlock, a bonus effect, or both), every unboosted node is in era 1 or an endgame era, the six boost families are used, and the three governments have 2, 4 and 6 slots. It passes all 20 rules (R1 to R15, V0 to V4).
 
 ## Open items
 

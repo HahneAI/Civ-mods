@@ -41,7 +41,7 @@ The owner ran `tools/dbdump.py` on their PC (read-only, one file out, `db-result
 
 1. Round 5 dump (optional): units in full, promotions, requirements per card, moment triggers. Needs the owner to rerun `tools/dbdump.py` (steps in `db-check.md`).
 2. Fill the gaps above, one page at a time.
-3. The four owner decisions are now made as switchable variables (page 08): two trees, pressure-only religion, keep the thin late tail (the owner's own call, overriding my pick), shared great-person pool. They are starting points; the owner can flip any in `rules_config`. Playtest data will confirm or reverse them.
+3. The four owner decisions are now made as switchable variables (page 08): two trees, pressure-only religion, every research node gives something, an unlock or a bonus effect (the owner's call, and the reference game does the same), shared great-person pool. They are starting points; the owner can flip any in `rules_config`. Playtest data will confirm or reverse them.
 4. Playtest-based checks: the wounded-unit rule and a few `[approx]` values are quickest confirmed in a game, not in the database.
 
 **Process notes for the next session:**

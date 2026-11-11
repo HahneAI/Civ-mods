@@ -98,11 +98,11 @@ Three of the tier 2 and 3 bonuses **only work in a city that has a governor** (t
 | 8 | 1.8 | 1.3 |
 | Future | 0.6 | 1.5 |
 
-Total unlocks counted: **34 districts, 116 buildings, 115 units, 43 improvements, 15 projects, 118 cards, 12 governments (453)**. Every tech and civic in eras 1 to 7 unlocks something; the only ones with nothing are 4 of 8 future techs, 2 era-8 civics and 1 future civic. **This corrects the earlier draft** (before units were counted) that said most era-8 techs unlock nothing: they unlock units.
+Total unlocks counted: **34 districts, 116 buildings, 115 units, 43 improvements, 15 projects, 118 cards, 12 governments (453)**. Every tech and civic in eras 1 to 7 unlocks something. Only 4 of 8 future techs, 2 era-8 civics and 1 future civic unlock nothing, **and each of those carries at least one bonus effect of its own, so no node in the game gives nothing** (checked against the technology and civic effect rows). **This corrects the earlier draft** (before units were counted) that said most era-8 techs unlock nothing: they unlock units.
 - **Units:** the game has **159 units**; **44 need no tech at all** (starting, civilization-unique, and civilian/great-person ones), and **45 of the 77 techs unlock at least one unit** (medieval techs unlock the most: 21 units in era 3).
 - Techs still give more unlocks of things you **build or make**; civics give more **rules**: cards are 118 of the civic unlocks. Techs lead in the early eras (4.1 to 4.6 per tech vs. 3.7 to 5.1); civics lead from era 4 to 6.
 
-**Design note:** unlocks are richest in the first three eras (about 4 to 5 per node) and thin out to about 2 per node by the end. A tree where every node unlocks something is a good rule; the thin tail is the only part to rethink.
+**Design note:** unlocks are richest in the first three eras (about 4 to 5 per node) and thin out to about 2 per node by the end, but **no node gives nothing**: where a node unlocks little, it carries a bonus effect. That is the rule worth copying (schema variable `node_rewards`).
 
 ## Step 6 · What beliefs do `[sure]`
 

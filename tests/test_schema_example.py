@@ -44,7 +44,7 @@ def test_example_follows_the_four_decisions():
 
 
 def test_example_size_matches_the_plan():
-    assert len(BASE["nodes"]) == 12  # 10 working nodes + 2 tail nodes (late_tail=keep)
+    assert len(BASE["nodes"]) == 12  # 10 core nodes + 2 endgame nodes
     assert len(BASE["districts"]) == 3
     assert len(BASE["buildings"]) == 6
     assert len(BASE["cards"]) == 6
@@ -234,65 +234,73 @@ def test_v2_religion_mode():
     assert "V2" not in codes(run(off_clean))
 
 
-def test_v3_thin_nodes_only_in_the_tail():
-    # the example has two tail nodes that unlock nothing, and passes under keep
-    thin = [n["id"] for n in BASE["nodes"] if not n["unlocks"]]
-    assert thin == ["node.s7", "node.c5"]
+def effects_of(d, nid):
+    return [e for e in d["effects"] if e["owner"] == nid]
+
+
+def test_example_has_effect_only_and_unlock_only_nodes():
+    # every node gives something; one node gives only a bonus effect, the others unlock things
+    effect_only = [n["id"] for n in BASE["nodes"] if not n["unlocks"]]
+    assert effect_only == ["node.c5"]
+    assert effects_of(BASE, "node.c5")
     assert run() == []
 
-    # a thin node in the middle is never allowed
+
+def test_v3_unlock_or_effect_counts_effects():
+    def strip(d):
+        d["effects"] = [e for e in d["effects"] if e["owner"] != "node.c5"]
+    errs = run(strip)
+    assert "V3" in codes(errs) and any("node.c5" in e for e in errs)  # nothing left to give
+
     def middle(d):
+        node(d, "node.s4")["unlocks"] = []
+    assert "V3" in codes(run(middle))  # an empty node is never allowed, in any era but the endgame under empty_allowed
+
+
+def test_v3_unlock_only_ignores_effects():
+    def raw(d):
+        d["rules_config"]["node_rewards"] = "unlock_only"
+    errs = run(raw)
+    assert "V3" in codes(errs) and any("node.c5" in e for e in errs)  # effect-only node fails
+
+    def converted(d):
+        d["rules_config"]["node_rewards"] = "unlock_only"
+        d["nodes"] = [n for n in d["nodes"] if n["unlocks"]]
+        d["effects"] = [e for e in d["effects"] if e["owner"] != "node.c5"]
+    assert run(converted) == []
+
+
+def test_v3_empty_allowed_only_in_endgame_eras():
+    def allowed(d):
+        d["rules_config"]["node_rewards"] = "empty_allowed"
+        d["effects"] = [e for e in d["effects"] if e["owner"] != "node.c5"]
+    assert "V3" not in codes(run(allowed))  # an empty node in the last era is fine
+
+    def middle(d):
+        d["rules_config"]["node_rewards"] = "empty_allowed"
         node(d, "node.s4")["unlocks"] = []
     assert "V3" in codes(run(middle))
 
-    def middle_trim(d):
-        d["rules_config"]["late_tail"] = "trim"
-        node(d, "node.s4")["unlocks"] = []
-    assert "V3" in codes(run(middle_trim))
+    def no_endgame(d):
+        d["rules_config"]["node_rewards"] = "empty_allowed"
+        d["rules_config"]["endgame_eras"] = 0
+        d["effects"] = [e for e in d["effects"] if e["owner"] != "node.c5"]
+    assert "V3" in codes(run(no_endgame))
 
 
-def test_v3_trim_forbids_the_tail():
-    def raw_trim(d):
-        d["rules_config"]["late_tail"] = "trim"
-    errs = run(raw_trim)
-    assert "V3" in codes(errs) and "R15" in codes(errs)  # tail nodes now unlock nothing and have no boost
+def test_r15_boost_optional_in_endgame_eras_only():
+    # the example has unboosted nodes in the last era and passes
+    assert any(n["boost"]["family"] == "none" and n["era"] == "era_3" for n in BASE["nodes"])
 
-    def trimmed(d):
-        d["rules_config"]["late_tail"] = "trim"
-        d["nodes"] = [n for n in d["nodes"] if n["unlocks"]]
-        d["effects"] = [e for e in d["effects"] if e["owner"] != "node.s7"]
-    assert run(trimmed) == []
-
-
-def test_v3_tail_width_is_adjustable():
-    def no_tail(d):
-        d["rules_config"]["tail_eras"] = 0
-    assert "V3" in codes(run(no_tail))  # with no tail, the thin nodes fail even under keep
-
-    def wide_tail(d):
-        d["rules_config"]["tail_eras"] = 2
-        node(d, "node.s4")["unlocks"] = []
-    assert "V3" not in codes(run(wide_tail))  # second-to-last era is now tail too
-
-
-def test_r15_tail_exemption_needs_keep_and_empty_unlocks():
-    def tail_gets_unlock_no_boost(d):
-        node(d, "node.s7")["unlocks"] = [{"type": "card", "id": "card.drill"}]
-        next(c for c in d["cards"] if c["id"] == "card.drill")["requires_node"] = "node.s7"
-        node(d, "node.c1")["unlocks"] = []
-    errs = run(tail_gets_unlock_no_boost)
-    assert "R15" in codes(errs)  # s7 now unlocks something but still has no boost
-
-
-def test_tail_node_may_carry_its_own_effect():
-    effect = next(e for e in BASE["effects"] if e["owner"] == "node.s7")
-    assert effect["kind"] in ENUMS["effect_kinds"]
+    def no_endgame(d):
+        d["rules_config"]["endgame_eras"] = 0
+    assert "R15" in codes(run(no_endgame))  # with no endgame era, those nodes need a boost
 
 
 def test_v3_minimum_is_adjustable():
     def two(d):
-        d["rules_config"]["min_unlocks_per_node"] = 2
-    assert "V3" in codes(run(two))  # nodes outside the tail with a single unlock now fail
+        d["rules_config"]["min_rewards_per_node"] = 2
+    assert "V3" in codes(run(two))  # nodes giving a single reward now fail
 
 
 def test_v4_great_person_pool():
@@ -316,7 +324,7 @@ def test_v4_great_person_pool():
 def test_cli_ok_and_failure(tmp_path, capsys):
     assert schemacheck.main([str(ROOT / "example-data.json")]) == 0
     bad = copy.deepcopy(BASE)
-    bad["rules_config"]["late_tail"] = "nonsense"
+    bad["rules_config"]["node_rewards"] = "nonsense"
     p = tmp_path / "bad.json"
     p.write_text(json.dumps(bad), encoding="utf-8")
     assert schemacheck.main([str(p)]) == 1

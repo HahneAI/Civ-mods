@@ -60,7 +60,7 @@
     var cities = [], pressure = [], follows = [];
     var faith = 0, unitCost = 75, unitsBought = 0;
     var wasted = { science: 0, culture: 0, pooled: 0 }, wastedBlocked = 0;
-    var tailTurns = 0, researchTurns = 0;
+    var effectOnlyTurns = 0, researchTurns = 0;
     var series = { turn: [], nodes_total: [], nodes_science: [], nodes_culture: [], religion_share: [], cities: [], gp_claims: [], gp_rival: [] };
 
     // ----- great people
@@ -111,7 +111,7 @@
       return f;
     }
 
-    var tailIds = {}; nodes.forEach(function (n) { if (!(n.unlocks || []).length) tailIds[n.id] = true; });
+    var effectOnly = {}; nodes.forEach(function (n) { if (!(n.unlocks || []).length) effectOnly[n.id] = true; }); // nodes that give a bonus effect but unlock nothing
     var religionHit50 = null, religionAt100 = null;
 
     for (var t = 1; t <= P.turns; t++) {
@@ -154,7 +154,7 @@
       var rpools = pooled ? [{ name: "pooled", amount: sci + cul, filter: function () { return true; } }]
                          : [{ name: "science", amount: sci, filter: function (nd) { return nd.tree === "science"; } },
                             { name: "culture", amount: cul, filter: function (nd) { return nd.tree === "culture"; } }];
-      var spentAny = false, spentTail = false, incompleteAtStart = Object.keys(done).length < nodes.length;
+      var spentAny = false, spentEffectOnly = false, incompleteAtStart = Object.keys(done).length < nodes.length;
       rpools.forEach(function (pl) {
         var budget = pl.amount, guard = 0;
         while (budget > 1e-9 && guard++ < nodes.length + 2) {
@@ -162,13 +162,13 @@
           if (!cands.length) { wasted[pl.name] += budget; if (incompleteAtStart) wastedBlocked += budget; break; }
           cands.sort(function (a, b) { return (a.cost - progress[a.id]) - (b.cost - progress[b.id]); });
           var cur = cands[0], need = cur.cost - progress[cur.id];
-          spentAny = true; if (tailIds[cur.id]) spentTail = true;
+          spentAny = true; if (effectOnly[cur.id]) spentEffectOnly = true;
           if (budget >= need) { budget -= need; progress[cur.id] = cur.cost; completeNode(cur, t); }
           else { progress[cur.id] += budget; budget = 0; }
         }
       });
       if (spentAny) researchTurns++;
-      if (spentTail) tailTurns++;
+      if (spentEffectOnly) effectOnlyTurns++;
 
       // ---- religion
       if (religionOn && t >= religionTurn) {
@@ -243,7 +243,7 @@
     var lagAvg = lags.length ? Math.round(lags.reduce(function (a, b) { return a + b; }, 0) / lags.length * 10) / 10 : null;
     var unconverted = cities.filter(function (c) { return c.converted === null; }).length;
     var totalCost = nodes.reduce(function (s, x) { return s + x.cost; }, 0);
-    var tailCost = nodes.filter(function (x) { return tailIds[x.id]; }).reduce(function (s, x) { return s + x.cost; }, 0);
+    var effectOnlyCost = nodes.filter(function (x) { return effectOnly[x.id]; }).reduce(function (s, x) { return s + x.cost; }, 0);
     var lockedOut = gpClasses.filter(function (c) { return !claims.some(function (cl) { return cl.id && individuals.filter(function (i) { return i.id === cl.id; })[0]["class"] === c; }) && classTotal[c] > 0; }).length;
     var metrics = {
       nodes_done: Object.keys(done).length, nodes_total: nodes.length,
@@ -253,8 +253,8 @@
       wasted_yield: Math.round(wasted.science + wasted.culture + wasted.pooled),
       wasted_while_blocked: Math.round(wastedBlocked),
       blocked_gap: (pooled || metricsGap() === null) ? 0 : metricsGap(),
-      tail_nodes: Object.keys(tailIds).length, tail_cost_share: totalCost ? Math.round(tailCost / totalCost * 1000) / 10 : 0,
-      tail_turns: tailTurns, tail_turn_share: researchTurns ? Math.round(tailTurns / researchTurns * 1000) / 10 : 0,
+      effect_only_nodes: Object.keys(effectOnly).length, effect_only_cost_share: totalCost ? Math.round(effectOnlyCost / totalCost * 1000) / 10 : 0,
+      effect_only_turns: effectOnlyTurns, effect_only_turn_share: researchTurns ? Math.round(effectOnlyTurns / researchTurns * 1000) / 10 : 0,
       total_cost: totalCost,
       religion_on: religionOn, religion_turn: religionTurn, religion_half: religionHit50, religion_at_100: religionAt100, religion_lag: lagAvg, religion_unconverted: unconverted,
       religion_end_share: series.religion_share[series.religion_share.length - 1], faith_units_bought: unitsBought,

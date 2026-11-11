@@ -20,7 +20,7 @@ Source: custom. Updated 2026-11-10 (end of the first long design session).
 | `playground-sim.js` | The toy simulation behind the playground's Simulate panel (deterministic; every constant is an editable assumption) |
 | `../../tests/test_playground_sim.py` | Checks the simulation is deterministic, survives broken data, and that each comparison points the way the design reasoning says |
 
-Run everything with `pytest` from the repo root (70 passed at the time of writing; the playground parity tests need node and skip without it).
+Run everything with `pytest` from the repo root (71 passed at the time of writing; the playground parity tests need node and skip without it).
 
 ## Status
 
@@ -28,8 +28,8 @@ Run everything with `pytest` from the repo root (70 passed at the time of writin
 
 ## Where we left off
 
-1. **The four open questions became switchable variables** in `rules_config`, with decisions made: `two_trees`, `pressure_only`, `keep` (the thin tail, **owner decision of 2026-11-11**, overriding my first pick of `trim`), `shared_finite`. Each has a checker rule (V1 to V4) and a metric list for playtests.
-2. **The extended example** has 12 nodes (10 working nodes plus 2 tail nodes), 3 districts, 6 buildings, 6 cards, 3 governments, 4 beliefs, 4 great people, 17 effects and 7 conditions. It passes all rules. Of the two tail nodes, one is a pure prerequisite (culture) and one carries a small direct effect (science), to show both ways of ending a tree.
+1. **The four open questions became switchable variables** in `rules_config`, with decisions made: `two_trees`, `pressure_only`, `unlock_or_effect` for node rewards (**owner decision of 2026-11-11**: every node gives something, an unlock or a bonus effect), `shared_finite`. Each has a checker rule (V1 to V4) and a metric list for playtests.
+2. **The extended example** has 12 nodes, 1 project, 3 districts, 6 buildings, 6 cards, 3 governments, 4 beliefs, 4 great people, 18 effects and 7 conditions. It passes all rules. Every node gives something: ten unlock things, one unlocks a project and carries a bonus, and one (the last culture node) is a bonus only.
 3. **Five new rules** (R11 to R15) replaced the three "not yet checked" ones from v0.1 and added two more found while building the example (a condition-nesting loop check, and "no boost only in the first era").
 4. **What the schema still lacks:** full unit stats and promotions, city-states and envoys, governors, espionage, barbarians, victory conditions, price rules for faith spending, catch-up discounts for the shared pool, combat formula as data.
 

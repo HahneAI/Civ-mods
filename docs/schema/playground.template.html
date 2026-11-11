@@ -309,7 +309,7 @@ textarea.paste { width: 100%; min-height: 120px; margin-top: 8px; font-family: v
     ["Variables", "V0", "Config values are valid options"],
     ["Variables", "V1", "Tree layout matches the data"],
     ["Variables", "V2", "Religion mode matches the data"],
-    ["Variables", "V3", "Late tail: minimum unlocks per node"],
+    ["Variables", "V3", "Node rewards: every node gives something"],
     ["Variables", "V4", "Great-person pool matches the data"]
   ];
   var FAMS = [
@@ -326,8 +326,8 @@ textarea.paste { width: 100%; min-height: 120px; margin-top: 8px; font-family: v
   function decisions() {
     var c = {};
     Object.keys(VARIANTS).forEach(function (id) { c[VARIANTS[id].config_key] = VARIANTS[id].decision; });
-    c.min_unlocks_per_node = VARIANTS.late_tail.min_unlocks_per_node || 1;
-    c.tail_eras = VARIANTS.late_tail.tail_eras === undefined ? 1 : VARIANTS.late_tail.tail_eras;
+    c.min_rewards_per_node = VARIANTS.node_rewards.min_rewards_per_node || 1;
+    c.endgame_eras = VARIANTS.node_rewards.endgame_eras === undefined ? 1 : VARIANTS.node_rewards.endgame_eras;
     return c;
   }
   var state = { config: decisions(), convert: true, breaks: [], custom: null, selected: null, runs: 0 };
@@ -355,9 +355,9 @@ textarea.paste { width: 100%; min-height: 120px; margin-top: 8px; font-family: v
         html += '<label><input type="radio" name="v_' + id + '" value="' + o + '" data-var="' + id + '"' + (cur === o ? " checked" : "") + '><span>' + esc(o.replace(/_/g, " ")) + (o === v.decision ? ' <b class="star" title="current decision">★</b>' : "") + "</span></label>";
       });
       html += '</div><div class="optnote">' + esc(v.options[cur] || "") + "</div>";
-      if (id === "late_tail") {
-        html += '<div class="row" style="margin-top:6px"><label class="check" for="minUnl">Minimum unlocks per node <input type="number" id="minUnl" min="0" max="4" value="' + esc(state.config.min_unlocks_per_node) + '"></label>';
-        if (cur === "keep") html += '<label class="check" for="tailEras">Tail width in eras <input type="number" id="tailEras" min="0" max="3" value="' + esc(state.config.tail_eras) + '"></label>';
+      if (id === "node_rewards") {
+        html += '<div class="row" style="margin-top:6px"><label class="check" for="minUnl">Rewards each node must give <input type="number" id="minUnl" min="0" max="4" value="' + esc(state.config.min_rewards_per_node) + '"></label>';
+        html += '<label class="check" for="endEras">Endgame eras (boost optional) <input type="number" id="endEras" min="0" max="3" value="' + esc(state.config.endgame_eras) + '"></label>';
         html += "</div>";
       }
       html += "</div>";
@@ -540,8 +540,8 @@ textarea.paste { width: 100%; min-height: 120px; margin-top: 8px; font-family: v
     var t = e.target;
     if (t.matches("input[data-var]")) { var v = VARIANTS[t.getAttribute("data-var")]; state.config[v.config_key] = t.value; state.custom = null; draw(false); }
     else if (t.id === "convert") { state.convert = t.checked; draw(false); }
-    else if (t.id === "tailEras") { var te = parseInt(t.value, 10); state.config.tail_eras = isNaN(te) ? 1 : Math.max(0, Math.min(3, te)); draw(false); }
-    else if (t.id === "minUnl") { var n = parseInt(t.value, 10); state.config.min_unlocks_per_node = isNaN(n) ? 1 : Math.max(0, Math.min(4, n)); draw(false); }
+    else if (t.id === "endEras") { var te = parseInt(t.value, 10); state.config.endgame_eras = isNaN(te) ? 1 : Math.max(0, Math.min(3, te)); draw(false); }
+    else if (t.id === "minUnl") { var n = parseInt(t.value, 10); state.config.min_rewards_per_node = isNaN(n) ? 1 : Math.max(0, Math.min(4, n)); draw(false); }
     else if (t.matches("input[data-brk]")) {
       var id = t.getAttribute("data-brk"), i = state.breaks.indexOf(id);
       if (t.checked && i < 0) state.breaks.push(id); if (!t.checked && i >= 0) state.breaks.splice(i, 1);
@@ -573,9 +573,9 @@ textarea.paste { width: 100%; min-height: 120px; margin-top: 8px; font-family: v
 
   // ---------- simulate
   var SimAPI = window.SchemaSim;
-  var VAR_LABELS = { tree_layout: "Tree layout", religion_mode: "Religion mode", late_tail: "Late tail", great_person_pool: "Great-person pool" };
+  var VAR_LABELS = { tree_layout: "Tree layout", religion_mode: "Religion mode", node_rewards: "Node rewards", great_person_pool: "Great-person pool" };
   var TABS = [["research", "Research"], ["religion", "Religion"], ["gp", "Great people"]];
-  var sim = { runs: null, tab: "research", view: "chart", params: {}, varId: "late_tail", cross: null };
+  var sim = { runs: null, tab: "research", view: "chart", params: {}, varId: "node_rewards", cross: null };
 
   function nice(v) { return v === null || v === undefined ? "n/a" : (typeof v === "number" ? String(Math.round(v * 10) / 10) : String(v)); }
   function simSetup() {
@@ -603,7 +603,7 @@ textarea.paste { width: 100%; min-height: 120px; margin-top: 8px; font-family: v
   }
 
   var ROWS = {
-    research: [["All nodes done (turn)", "finish_all"], ["Science tree done (turn)", "finish_science"], ["Culture tree done (turn)", "finish_culture"], ["Gap between the trees (turns)", "blocked_gap"], ["Yield wasted while research was blocked", "wasted_while_blocked"], ["Tail nodes", "tail_nodes"], ["Tail share of total cost (%)", "tail_cost_share"], ["Tail share of research turns (%)", "tail_turn_share"]],
+    research: [["All nodes done (turn)", "finish_all"], ["Science tree done (turn)", "finish_science"], ["Culture tree done (turn)", "finish_culture"], ["Gap between the trees (turns)", "blocked_gap"], ["Yield wasted while research was blocked", "wasted_while_blocked"], ["Effect-only nodes (bonus, no unlock)", "effect_only_nodes"], ["Their share of total cost (%)", "effect_only_cost_share"], ["Their share of research turns (%)", "effect_only_turn_share"]],
     religion: [["Religion adopted (turn)", "religion_turn"], ["Half of the cities follow (turn)", "religion_half"], ["Cities following at turn 100 (%)", "religion_at_100"], ["Average turns from founding to conversion", "religion_lag"], ["Cities never converted", "religion_unconverted"], ["Spread units bought", "faith_units_bought"]],
     gp: [["Great people you claimed", "gp_player"], ["Claimed by rivals", "gp_rival"], ["Classes you were locked out of", "gp_locked_classes"], ["Points wasted after the pool emptied", "gp_wasted"]]
   };
@@ -643,9 +643,9 @@ textarea.paste { width: 100%; min-height: 120px; margin-top: 8px; font-family: v
     if (runs.length < 2) return "One run only. Compare options to see differences.";
     var id = sim.varId, m = function (i) { return runs[i].result.metrics; };
     function find(o) { return runs.filter(function (r) { return r.option === o; })[0]; }
-    if (id === "late_tail") {
-      var k = find("keep"), t = find("trim");
-      if (k && t) return "With the tail kept, all nodes finish on turn " + k.result.metrics.finish_all + " instead of " + t.result.metrics.finish_all + " (" + (k.result.metrics.finish_all - t.result.metrics.finish_all) + " turns later). The " + k.result.metrics.tail_nodes + " tail nodes are " + k.result.metrics.tail_cost_share + "% of the total cost and take " + k.result.metrics.tail_turn_share + "% of research turns.";
+    if (id === "node_rewards") {
+      var uoe = find("unlock_or_effect"), uo = find("unlock_only"), ea = find("empty_allowed");
+      if (uoe && uo) return "Letting a node give just a bonus effect keeps " + uoe.result.metrics.effect_only_nodes + " effect-only node" + (uoe.result.metrics.effect_only_nodes === 1 ? "" : "s") + " in the tree, " + uoe.result.metrics.effect_only_cost_share + "% of the total cost. Requiring a real unlock drops them: everything finishes on turn " + uo.result.metrics.finish_all + " instead of " + uoe.result.metrics.finish_all + ". Allowing empty nodes changes nothing in this example because it contains none.";
     }
     if (id === "tree_layout") {
       var two = find("two_trees"), one = find("one_tree");

@@ -114,6 +114,10 @@ District cap (reference): **1 specialty district per 3 citizens** (`districts_pe
 | `boost` | object | `{family, trigger, percent}` |
 | `unlocks` | list of `{type, id}` | type in `district, building, improvement, unit, project, card, government` |
 
+`project` (an unlock type): `{id, cost, requires_node}`; a big goal that a late node opens (reference: the space projects each need a specific late tech).
+
+**What a node must give (variable `node_rewards`):** a *reward* is either an unlock or an effect whose `owner` is the node (a bonus). Under the current decision every node gives at least one.
+
 `boost`: `family` in `build_or_own, chain_node, combat, diplomacy_trade, explore, religion, none`; `trigger` is `{kind, ...}` with arguments such as `count` or a target id; `percent` 0 to 100 (reference 40; one late civic 90).
 
 Cost modifiers (global): game speed multiplier (reference marathon 3.0, epic 1.5, standard 1.0, quick 0.67, online 0.5) and an era shift (reference -20% for a node older than the game era, +20% for newer).
@@ -194,7 +198,7 @@ The dataset carries a `rules_config` object. Each key is one design variable (fu
 |---|---|---|---|
 | `tree_layout` | `two_trees`, `one_tree` | `two_trees` | V1: in `two_trees` a node's `paid_with` equals its tree; in `one_tree` every node is tree `main` |
 | `religion_mode` | `pressure_only`, `units_and_pressure`, `off` | `pressure_only` | V2: `pressure_only` needs beliefs, a religion, pressure settings, faith sinks and **no** faith units; `units_and_pressure` needs faith units; `off` needs none of it |
-| `late_tail` | `keep`, `trim` (+ `min_unlocks_per_node`, `tail_eras`) | **`keep`**, minimum 1, tail of 1 era (owner decision, 2026-11-11) | V3: under `trim` every node unlocks at least the minimum; under `keep` the same holds **outside the last `tail_eras` eras**, so thin nodes can trail the tree but never appear in the middle |
+| `node_rewards` | `unlock_or_effect`, `unlock_only`, `empty_allowed` (+ `min_rewards_per_node`, `endgame_eras`) | **`unlock_or_effect`**, minimum 1, 1 endgame era (owner decision, 2026-11-11) | V3: a node's unlocks plus its own effects must reach the minimum (under `unlock_only` only unlocks count; under `empty_allowed` only nodes outside the endgame eras are checked) |
 | `great_person_pool` | `shared_finite`, `personal` | `shared_finite` | V4: each great person has `max_claims = 1` (shared) or `null` (personal) |
 
 How to play with a variable: change its value in a copy of the dataset, run `python tools/schemacheck.py <file>`, read what must change, change it, then playtest and compare the metrics listed in `variants.json`.
@@ -219,7 +223,7 @@ Structural rules (codes R1 to R15), run by `tools/schemacheck.py`:
 | R12 | **Card fits slot:** a card's effect kinds must be allowed in its slot (`slot_allowed_effect_kinds`; wildcard allows any) |
 | R13 | **Adjacency selectors resolve:** terrain, feature, improvement, resource class, district named in a neighbor selector exist |
 | R14 | Condition requirements reference real ids; conditions that nest (`set_is_met`) do not loop |
-| R15 | A node with no boost is only allowed in the first era, or, under `late_tail = keep`, as a pure tail node (no unlocks, in the last `tail_eras` eras). The reference game left 11 late nodes without one; this keeps that to the tail |
+| R15 | A node with no boost is only allowed in the first era or in an endgame era (the last `endgame_eras` eras). The reference game leaves 11 late critical nodes without a boost; this keeps that to the endgame |
 
 Variable rules: V0 (config values are valid options) and V1 to V4 (section 3.11).
 
@@ -239,7 +243,7 @@ R11 to R15 are new in v0.2: R11, R12 and R13 were the three "not yet checked" ru
 | Government = fixed bonus + slots | **Keep** (8/10) | Editable ruleset layer; slots rise with tier (R9) |
 | Great-person pool | **Decided: `shared_finite`** (7/10) | Rival communities exist; `personal` is one switch away |
 | Religion | **Decided: `pressure_only`** (7/10) | Keep the belief sentence and spread by pressure; drop the unit layer |
-| Thin late tail | **Decided by the owner: `keep`** (6/10; my pick was `trim`, 8/10) | Thin nodes trail the tree (V3, R15) and may carry their own effect; trim is one switch away |
+| What a node must give | **Decided by the owner: `unlock_or_effect`** (8/10) | Every node gives something, an unlock or a bonus effect. The reference game does exactly this (0 of 77 techs and 0 of 61 civics give nothing). An earlier "thin tail" idea was a misreading and is retired |
 | Unit unlocks in tech nodes | **Keep** | 45 of 77 reference techs unlock units |
 
 ## 7. What this draft does not cover

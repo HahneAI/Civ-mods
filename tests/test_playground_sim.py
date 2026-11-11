@@ -22,7 +22,7 @@ const dir = process.argv[1];
 const S = require(dir + "/playground-check.js"), Sim = require(dir + "/playground-sim.js"), fs = require("fs");
 const v = {}; JSON.parse(fs.readFileSync(dir + "/variants.json")).variables.forEach(x => v[x.id] = x);
 const ex = JSON.parse(fs.readFileSync(dir + "/example-data.json"));
-const cfg = {}; Object.values(v).forEach(x => cfg[x.config_key] = x.decision); cfg.min_unlocks_per_node = 1; cfg.tail_eras = 1;
+const cfg = {}; Object.values(v).forEach(x => cfg[x.config_key] = x.decision); cfg.min_rewards_per_node = 1; cfg.endgame_eras = 1;
 const out = {};
 Object.keys(v).forEach(id => {
   out[id] = Sim.compare(S, ex, cfg, id, v, {}).map(r => ({option: r.option, isDecision: r.isDecision, m: r.result.metrics}));
@@ -54,7 +54,7 @@ def test_deterministic_and_respects_turn_count(out):
 
 
 def test_every_option_of_every_variable_runs(out):
-    for vid in ("tree_layout", "religion_mode", "late_tail", "great_person_pool"):
+    for vid in ("tree_layout", "religion_mode", "node_rewards", "great_person_pool"):
         assert len(out[vid]) >= 2
         for row in out[vid]:
             assert row["m"]["nodes_total"] >= 10
@@ -67,11 +67,17 @@ def test_one_shared_tree_finishes_no_later_and_wastes_less(out):
     assert one["blocked_gap"] == 0 and two["blocked_gap"] >= 0
 
 
-def test_trimming_the_tail_finishes_sooner(out):
-    keep, trim = pick(out["late_tail"], "keep"), pick(out["late_tail"], "trim")
-    assert trim["finish_all"] < keep["finish_all"]
-    assert trim["tail_nodes"] == 0 and trim["tail_turn_share"] == 0
-    assert keep["tail_nodes"] == 2 and 0 < keep["tail_cost_share"] < 100
+def test_requiring_a_real_unlock_drops_the_effect_only_nodes(out):
+    both, strict = pick(out["node_rewards"], "unlock_or_effect"), pick(out["node_rewards"], "unlock_only")
+    assert both["effect_only_nodes"] == 1 and strict["effect_only_nodes"] == 0
+    assert strict["nodes_total"] == both["nodes_total"] - 1
+    assert strict["finish_all"] < both["finish_all"]
+    assert 0 < both["effect_only_cost_share"] < 100 and strict["effect_only_turn_share"] == 0
+
+
+def test_allowing_empty_nodes_changes_nothing_when_the_data_has_none(out):
+    both, empty = pick(out["node_rewards"], "unlock_or_effect"), pick(out["node_rewards"], "empty_allowed")
+    assert empty["finish_all"] == both["finish_all"]
 
 
 def test_religion_modes(out):

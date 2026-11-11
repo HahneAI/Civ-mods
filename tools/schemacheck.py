@@ -25,7 +25,7 @@ SCHEMA_DIR = Path(__file__).resolve().parent.parent / "docs" / "schema"
 SECTIONS_WITH_IDS = [
     "eras", "meters", "terrains", "features", "resource_classes", "unit_classes", "improvements", "units",
     "districts", "buildings", "great_person_classes", "great_person_individuals", "nodes", "governments",
-    "cards", "beliefs", "religions", "conditions", "effects",
+    "cards", "beliefs", "religions", "conditions", "effects", "projects",
 ]
 
 
@@ -70,9 +70,10 @@ def check(data: dict, enums: dict | None = None, variants: dict | None = None) -
     eras = {e["id"]: e["index"] for e in rows("eras")}
     nodes = {n["id"]: n for n in rows("nodes")}
     trees_allowed = cfg.get("trees") or enums["node_trees"]
-    # the "tail" = the last tail_eras eras (V3, R15)
-    tail_eras = cfg.get("tail_eras", 1)
-    last_eras = set(sorted(eras.values())[-tail_eras:]) if tail_eras > 0 and eras else set()
+    # the "endgame eras" = the last endgame_eras eras: boosts are optional there (R15) and, under
+    # node_rewards=empty_allowed, a node may give nothing there (V3)
+    endgame_eras = cfg.get("endgame_eras", 1)
+    last_eras = set(sorted(eras.values())[-endgame_eras:]) if endgame_eras > 0 and eras else set()
 
     # ---- R2 R3 R4 nodes
     for n in nodes.values():
@@ -128,9 +129,8 @@ def check(data: dict, enums: dict | None = None, variants: dict | None = None) -
                 errs.append(f"R6: node {n['id']} boost trigger kind {kind!r} unknown")
             elif fam != b["family"]:
                 errs.append(f"R6: node {n['id']} trigger {kind!r} belongs to family {fam!r}, not {b['family']!r}")
-        elif eras.get(n["era"]) != min(eras.values(), default=1) and not (
-                cfg.get("late_tail") == "keep" and not n["unlocks"] and eras.get(n["era"]) in last_eras):
-            errs.append(f"R15: node {n['id']} has no boost but is not in the first era (or a pure tail node under late_tail=keep)")
+        elif eras.get(n["era"]) != min(eras.values(), default=1) and eras.get(n["era"]) not in last_eras:
+            errs.append(f"R15: node {n['id']} has no boost but is not in the first era or an endgame era")
 
     # ---- R7 references
     for d in rows("districts"):
@@ -311,15 +311,23 @@ def check(data: dict, enums: dict | None = None, variants: dict | None = None) -
         if has_rel or units:
             errs.append("V2: religion_mode=off must have no beliefs, religions or faith_units")
 
-    # V3 late tail: keep = only the last tail_eras eras may have thin nodes; trim = none may
-    tail_mode = cfg.get("late_tail")
-    minimum = cfg.get("min_unlocks_per_node", 1)
+    # V3 node rewards: what a node must give you
+    #   unlock_or_effect: at least min_rewards_per_node of (things it unlocks + effects it owns)
+    #   unlock_only:      at least min_rewards_per_node things it unlocks
+    #   empty_allowed:    as unlock_only, except nodes in the endgame eras may give nothing
+    reward_mode = cfg.get("node_rewards")
+    minimum = cfg.get("min_rewards_per_node", 1)
+    owned = Counter(e["owner"] for e in effects.values())
     for n in nodes.values():
-        in_tail = eras.get(n["era"]) in last_eras
-        if tail_mode == "trim" or (tail_mode == "keep" and not in_tail):
-            if len(n["unlocks"]) < minimum:
-                where = "" if tail_mode == "trim" else " outside the tail"
-                errs.append(f"V3: node {n['id']} unlocks {len(n['unlocks'])}, below min_unlocks_per_node={minimum}{where} (late_tail={tail_mode})")
+        unlocks = len(n["unlocks"])
+        endgame = eras.get(n["era"]) in last_eras
+        if reward_mode == "unlock_or_effect":
+            if unlocks + owned.get(n["id"], 0) < minimum:
+                errs.append(f"V3: node {n['id']} gives {unlocks + owned.get(n['id'], 0)} rewards (unlocks plus own effects), below min_rewards_per_node={minimum}")
+        elif reward_mode == "unlock_only" or (reward_mode == "empty_allowed" and not endgame):
+            if unlocks < minimum:
+                where = "" if reward_mode == "unlock_only" else " outside the endgame eras"
+                errs.append(f"V3: node {n['id']} unlocks {unlocks}, below min_rewards_per_node={minimum}{where} (node_rewards={reward_mode})")
 
     # V4 great-person pool
     pool = cfg.get("great_person_pool")

@@ -49,29 +49,31 @@
       "decided_on": "2026-11-10"
     },
     {
-      "id": "late_tail",
-      "config_key": "late_tail",
-      "question": "Keep the thin late-game tail of nodes that unlock little?",
+      "id": "node_rewards",
+      "config_key": "node_rewards",
+      "question": "What must a research node give you? (Can a node give nothing?)",
       "options": {
-        "keep": "The last tail_eras eras (default 1) may hold thin nodes that unlock nothing and have no boost. Every other node still unlocks at least min_unlocks_per_node.",
-        "trim": "Every node unlocks at least min_unlocks_per_node things, so there is no thin tail."
+        "unlock_or_effect": "Every node gives at least min_rewards_per_node rewards, counting both things it unlocks (a building, unit, district, card, project) and bonus effects it carries itself. Nothing is ever empty.",
+        "unlock_only": "Every node must unlock at least min_rewards_per_node things. A bonus effect alone does not count.",
+        "empty_allowed": "Nodes in the last endgame_eras eras may give nothing; every other node must unlock at least min_rewards_per_node things."
       },
-      "decision": "keep",
-      "min_unlocks_per_node": 1,
-      "rating": "6/10",
-      "rationale": "Owner decision, overriding the earlier recommendation of trim (8/10). In the reference data the thin tail is only the last era: every node in eras 1 to 7 unlocks something (ledger 07). Keeping it matches the reference and lets the tree end on capstone nodes. The risk is dead-feeling nodes (ledger 08), so two guardrails apply: thin nodes are allowed only in the last tail_eras eras (V3), and a tail node can still carry a direct effect of its own (the example's science tail node does) instead of being a pure prerequisite.",
-      "metrics": [
-        "share of tail nodes the player researches",
-        "turns spent on tail nodes as a share of the last era",
-        "player reaction to tail nodes (felt pointless or fine)"
-      ],
-      "how_to_test": "Play the last era under keep. If tail nodes feel pointless, give each a small direct effect first, and only then try trim. Compare turns spent on the tail under keep and under trim.",
-      "checks": [
-        "V3"
-      ],
+      "decision": "unlock_or_effect",
       "decided_by": "owner",
       "decided_on": "2026-11-11",
-      "tail_eras": 1
+      "min_rewards_per_node": 1,
+      "endgame_eras": 1,
+      "rating": "8/10",
+      "rationale": "Owner decision, after clarifying: in the reference game every node gives something, either something new or a bonus effect. Late filler nodes still earn their place (for example the late nodes that gate the big space projects). The database confirms it: 0 of 77 techs and 0 of 61 civics give nothing (ledger 07). Nodes that only carry a bonus are normal there (the 4 future techs and 3 late civics without a counted unlock all carry an effect). An earlier draft treated 'unlocks nothing' as 'gives nothing' and called those nodes a thin tail; that was a misreading and is retired.",
+      "metrics": [
+        "share of nodes whose only reward is a bonus effect",
+        "turns spent on effect-only nodes as a share of research",
+        "whether players treat effect-only nodes as real choices or skip them"
+      ],
+      "how_to_test": "Compare the three options in the simulator. If effect-only nodes cost too much for what they give (the example's last culture node is a full 450 for a 5% bonus), price them lower or raise the bonus before restricting them.",
+      "checks": [
+        "V3",
+        "R15"
+      ]
     },
     {
       "id": "great_person_pool",

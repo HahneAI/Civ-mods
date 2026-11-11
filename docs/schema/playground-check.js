@@ -8,7 +8,7 @@
   var SECTIONS_WITH_IDS = [
     "eras", "meters", "terrains", "features", "resource_classes", "unit_classes", "improvements", "units",
     "districts", "buildings", "great_person_classes", "great_person_individuals", "nodes", "governments",
-    "cards", "beliefs", "religions", "conditions", "effects"
+    "cards", "beliefs", "religions", "conditions", "effects", "projects"
   ];
 
   function subset(a, b) { // every element of a is in b
@@ -51,8 +51,8 @@
     var nodeList = rows("nodes");
     var eraValues = Object.keys(eras).map(function (k) { return eras[k]; });
     var minEra = eraValues.length ? Math.min.apply(null, eraValues) : 1;
-    var tailEras = cfg.tail_eras === undefined ? 1 : cfg.tail_eras;
-    var lastEras = tailEras > 0 ? eraValues.slice().sort(function (a, b) { return a - b; }).slice(-tailEras) : [];
+    var endgameEras = cfg.endgame_eras === undefined ? 1 : cfg.endgame_eras;
+    var lastEras = endgameEras > 0 ? eraValues.slice().sort(function (a, b) { return a - b; }).slice(-endgameEras) : [];
 
     // R2 R3 R4
     nodeList.forEach(function (n) {
@@ -99,8 +99,8 @@
         var fam = enums.boost_trigger_kinds[kind];
         if (fam === undefined) errs.push("R6: node " + n.id + " boost trigger kind '" + kind + "' unknown");
         else if (fam !== b.family) errs.push("R6: node " + n.id + " trigger '" + kind + "' belongs to family '" + fam + "', not '" + b.family + "'");
-      } else if (eras[n.era] !== minEra && !(cfg.late_tail === "keep" && !n.unlocks.length && lastEras.indexOf(eras[n.era]) >= 0)) {
-        errs.push("R15: node " + n.id + " has no boost but is not in the first era (or a pure tail node under late_tail=keep)");
+      } else if (eras[n.era] !== minEra && lastEras.indexOf(eras[n.era]) < 0) {
+        errs.push("R15: node " + n.id + " has no boost but is not in the first era or an endgame era");
       }
     });
 
@@ -261,14 +261,20 @@
       if (hasRel || units.length) errs.push("V2: religion_mode=off must have no beliefs, religions or faith_units");
     }
 
-    var tailMode = cfg.late_tail;
-    var minimum = cfg.min_unlocks_per_node === undefined ? 1 : cfg.min_unlocks_per_node;
+    var rewardMode = cfg.node_rewards;
+    var minimum = cfg.min_rewards_per_node === undefined ? 1 : cfg.min_rewards_per_node;
+    var owned = {};
+    Object.keys(effects).forEach(function (k) { owned[effects[k].owner] = (owned[effects[k].owner] || 0) + 1; });
     nodeList.forEach(function (n) {
-      var inTail = lastEras.indexOf(eras[n.era]) >= 0;
-      if (tailMode === "trim" || (tailMode === "keep" && !inTail)) {
-        if (n.unlocks.length < minimum) {
-          var where = tailMode === "trim" ? "" : " outside the tail";
-          errs.push("V3: node " + n.id + " unlocks " + n.unlocks.length + ", below min_unlocks_per_node=" + minimum + where + " (late_tail=" + tailMode + ")");
+      var unlocks = n.unlocks.length;
+      var endgame = lastEras.indexOf(eras[n.era]) >= 0;
+      if (rewardMode === "unlock_or_effect") {
+        var total = unlocks + (owned[n.id] || 0);
+        if (total < minimum) errs.push("V3: node " + n.id + " gives " + total + " rewards (unlocks plus own effects), below min_rewards_per_node=" + minimum);
+      } else if (rewardMode === "unlock_only" || (rewardMode === "empty_allowed" && !endgame)) {
+        if (unlocks < minimum) {
+          var where = rewardMode === "unlock_only" ? "" : " outside the endgame eras";
+          errs.push("V3: node " + n.id + " unlocks " + unlocks + ", below min_rewards_per_node=" + minimum + where + " (node_rewards=" + rewardMode + ")");
         }
       }
     });
@@ -307,8 +313,8 @@
       var c3 = nodeById(d, "node.c3");
       if (c3) c3.boost = { family: "chain_node", trigger: { kind: "have_node", node: "node.s2" }, percent: 40 };
     }
-    // late tail: trim removes the thin nodes (no unlocks) and anything they own
-    if (cfg.late_tail === "trim") {
+    // node rewards: unlock_only removes nodes that give nothing by unlocking (and what they own)
+    if (cfg.node_rewards === "unlock_only") {
       var thin = {};
       d.nodes.forEach(function (n) { if (!n.unlocks.length) thin[n.id] = true; });
       d.nodes = d.nodes.filter(function (n) { return !thin[n.id]; });
@@ -347,8 +353,10 @@
       apply: function (d) { d.conditions[0].requirements[0].args.building = "bld.nope"; } },
     { id: "slots", label: "Flatten the government slots", expect: "R9", note: "Every government gets the same slots.",
       apply: function (d) { d.governments.forEach(function (g) { g.slots = { military: 1, economic: 1, diplomatic: 0, wildcard: 0 }; }); } },
-    { id: "emptyUnlock", label: "Empty a middle node's unlocks", expect: "V3", note: "A second-era node unlocks nothing. Thin nodes are only allowed in the tail, so this always fails.",
-      apply: function (d) { nodeById(d, "node.s4").unlocks = []; } },
+    { id: "emptyUnlock", label: "Give a middle node nothing", expect: "V3", note: "A second-era node unlocks nothing and has no effect of its own, so it gives you nothing.",
+      apply: function (d) { nodeById(d, "node.s4").unlocks = []; d.effects = d.effects.filter(function (e) { return e.owner !== "node.s4"; }); } },
+    { id: "stripEffect", label: "Strip the bonus from the last node", expect: "V3", note: "The final culture node unlocks nothing; remove its bonus effect and it gives nothing (fails unless empty nodes are allowed).",
+      apply: function (d) { d.effects = d.effects.filter(function (e) { return e.owner !== "node.c5"; }); } },
     { id: "faithUnit", label: "Add a faith unit", expect: "V2", note: "Fails when religion is pressure-only or off.",
       apply: function (d) { d.faith_units = (d.faith_units || []).concat([{ id: "fu.extra", charges: 3 }]); } },
     { id: "claims", label: "Make one great person claimable by all", expect: "V4", note: "Fails when the pool is shared.",

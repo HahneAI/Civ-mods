@@ -1,5 +1,5 @@
 {
-  "_note": "Extended example: one mini-world of 3 eras. Made-up placeholder names, not from any game. It follows the schema and the four design decisions in rules_config. Check it with: python tools/schemacheck.py",
+  "_note": "Extended example: one mini-world of 3 eras. Made-up placeholder names, not from any game. It follows the schema and the four design decisions in rules_config. Every node gives something: an unlock, a bonus effect, or both. Check it with: python tools/schemacheck.py",
   "rules_config": {
     "tree_layout": "two_trees",
     "trees": [
@@ -7,10 +7,10 @@
       "culture"
     ],
     "religion_mode": "pressure_only",
-    "late_tail": "keep",
-    "min_unlocks_per_node": 1,
     "great_person_pool": "shared_finite",
-    "tail_eras": 1
+    "node_rewards": "unlock_or_effect",
+    "min_rewards_per_node": 1,
+    "endgame_eras": 1
   },
   "eras": [
     {
@@ -730,7 +730,12 @@
         "family": "none",
         "percent": 0
       },
-      "unlocks": []
+      "unlocks": [
+        {
+          "type": "project",
+          "id": "proj.beacon"
+        }
+      ]
     },
     {
       "id": "node.c5",
@@ -1059,12 +1064,23 @@
       "when": null
     },
     {
-      "id": "eff.tail_study",
+      "id": "eff.endgame_study",
       "owner": "node.s7",
       "scope": "player_cities",
       "kind": "yield_pct",
       "args": {
         "yield": "science",
+        "amount": 5
+      },
+      "when": null
+    },
+    {
+      "id": "eff.endgame_culture",
+      "owner": "node.c5",
+      "scope": "player_cities",
+      "kind": "yield_pct",
+      "args": {
+        "yield": "culture",
         "amount": 5
       },
       "when": null
@@ -1285,5 +1301,12 @@
       "citizens": 1
     },
     "districts_per_citizens": 3
-  }
+  },
+  "projects": [
+    {
+      "id": "proj.beacon",
+      "cost": 600,
+      "requires_node": "node.s7"
+    }
+  ]
 }
