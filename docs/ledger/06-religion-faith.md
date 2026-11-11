@@ -1,6 +1,6 @@
 # Religion and Faith: The Slow-Spread System
 
-Source: custom write-up from general Civ 6 knowledge plus a web check (see "Sources"). Plain words, nothing copied; belief and unit names are left out (hard rule 8). Tags as before: `[sure]`, `[approx]`, `[verify]`. Real numbers come through [`db-check.md`](db-check.md).
+Source: custom write-up. **`[sure]` numbers were read from the owner's own game database** (2026-11-10, via `tools/dbdump.py`); the rest is general knowledge plus a web check. Plain words, nothing copied; belief and unit names are left out (hard rule 8). Tags as before.
 Builds on [`03-cities-districts.md`](03-cities-districts.md) (faith district), [`05-governments-great-people.md`](05-governments-great-people.md) (great prophet), and [`01-units-combat.md`](01-units-combat.md) (religious units).
 
 **Honest warning:** the web check found no clean public number for **how religion spreads per turn**, **how strong religious combat is**, **how many religions a map allows**, or **the religious victory rule**. Those are marked `[verify]` or left open. Also, several search hits described Civ 5 or Civ 7 religion, which is different, so I did not use them.
@@ -22,13 +22,13 @@ FAITH per turn (holy district, buildings, wonders)
 - Faith is earned by a **faith district** and the buildings inside it, by some wonders and natural wonders, and by pantheon and belief effects. `[sure]`
 - It has **almost no base source** (page 00, Step 8). You get faith only if you build for it. `[sure]`
 - Adjacency matters here too: the faith district likes mountains and natural wonders (page 03). `[approx]`
-- Unused great prophet points turn into faith one for one. `[approx]`
+- Unused great prophet points turn into faith one for one. `[sure]` (1.0 faith per point)
 
 **Guardrail:** faith must be chosen; it does not leak in from your citizens. That makes it the "optional" resource.
 
 ## Step 2 · Stage 1: the pantheon (the first belief)
 
-- When your stored faith reaches a small threshold (about **25**), you may adopt a **pantheon**: one small belief. `[approx]`
+- When your stored faith reaches a small threshold (**25**, confirmed), you may adopt a **pantheon**: one small belief. `[sure]`
 - It is free of any unit cost; it just consumes the faith.
 - Each pantheon belief can be taken only once in the world, so rivals pick different ones. `[approx]`
 
@@ -37,7 +37,7 @@ FAITH per turn (holy district, buildings, wonders)
 ## Step 3 · Stage 2: founding a religion
 
 - To found a **religion**, you need a **great prophet** (page 05, points from the faith district), then you spend that prophet in a faith district. `[sure]`
-- The number of religions in a game is **limited** (and grows with map size), so late players can miss out. `[sure]` exact numbers `[verify]`.
+- The number of religions in a game is **limited**, so late players can miss out. The database holds **12 named religions and 12 spare custom slots**; the limit per map size was not in the dump. `[verify]` A new religion starts with **2 beliefs**. `[sure]`
 - Founding lets you pick a set of **beliefs**, one per type:
 
 | Belief type | Who benefits | Plain meaning |
@@ -47,7 +47,7 @@ FAITH per turn (holy district, buildings, wonders)
 | Founder | only the founder | a bonus for starting it |
 | Enhancer | only the founder | a bonus once you strengthen the religion |
 
-A religion holds up to four beliefs (one per type), plus the earlier pantheon. `[approx]`
+A religion holds up to four beliefs (one per type), plus the earlier pantheon. `[approx]` **Belief pool, confirmed** `[sure]`: pantheon 23, follower 9, worship 9, founder 9, enhancer 9 (59 in all).
 
 **Guardrail:** religions are a limited, first-come set; being first matters.
 **Design note:** separating "benefits everyone who follows" from "benefits the founder" makes spread worth doing for both sides. Keep the idea. Decide whether you want four belief types or two.
@@ -55,16 +55,16 @@ A religion holds up to four beliefs (one per type), plus the earlier pantheon. `
 ## Step 4 · Spreading: how a city picks a religion
 
 - Every city has a **majority religion**, decided by comparing how many followers each religion has there. `[sure]`
-- A religion spreads by **pressure**: nearby cities with that religion push followers into a city each turn; pressure rises with the strength of a source (buildings add some) and weakens with distance. `[approx]` I could not find the per-turn number.
+- A religion spreads by **pressure**: nearby cities with that religion push followers into a city each turn; pressure rises with the strength of a source (buildings add some) and weakens with distance. **Confirmed settings** `[sure]`: a city pushes pressure to other cities within **10 tiles**, **1 point per turn** each; a holy city pushes **×4** and a holy-site district **×2**; each trade route carries **1.0 pressure at the destination and 0.5 at the origin**; winning a religious fight gives **250** and capturing a unit **125** (within 6 tiles); having no religion (atheism) adds 50 per citizen. A strength multiplier of 200 scales it. Exact per-turn totals depend on how these combine `[verify]`.
 - Units speed this up: a **missionary-type** unit has a few **spread charges**; each use moves many followers into a city. A stronger **apostle-type** unit has more abilities (spread belief, start an inquisition). `[sure]`
-- Units are bought with **faith**. The price **rises with each one you already bought**. Reported costs are in the low hundreds each; sources disagree on the base. `[verify]`
+- Units are bought with **faith**. The price **rises with each one you already bought**. **Base costs, confirmed** `[sure]`: missionary **75**, inquisitor **75**, apostle **200**, all with 4 movement. All three have **3 spread charges**. Religious strength: missionary **100**, apostle **110**, inquisitor **75**. Each use removes a share of foreign followers: **10%, 25%, 75%** respectively (the inquisitor is the remover). A fourth unit type (guru) has 0 spread charges and **3 heal charges**. How the price rises with each buy `[verify]` (the rule is engine-side).
 
 **Guardrail:** you cannot flip the world with a button; spread is limited by charges, faith cost, and distance.
 **Design note:** "pressure by distance plus a push unit" gives both a slow background effect and an active player lever. Good shape.
 
 ## Step 5 · Defending and fighting for hearts (religious combat)
 
-- Religious units fight **theological combat** with their own strength, in friendly territory stronger than outside it. `[approx]`
+- Religious units fight **theological combat** with their own strength, in friendly territory stronger than outside it. `[approx]` Related confirmed numbers: a unit fighting on its religion's land gets **+5**, on the holy city's tile **+15** combat strength; religious healing is **×3**; a religious unit's heal charge is 40. `[sure]`
 - An **inquisitor-type** unit removes other religions from a city. It becomes available after your religion has been strengthened. `[sure]`
 - Combat works like page 01's idea (strength compare, damage), but on religious strength, not combat strength. `[approx]` the exact formula `[verify]`.
 
@@ -95,17 +95,16 @@ A religion holds up to four beliefs (one per type), plus the earlier pantheon. `
 | Religion | Diplomacy (page 02) | can cause friction between players (agenda-style) `[approx]` |
 | Faith | Great people (page 05) | faith can buy a person |
 
-## Open items (fill in using db-check.md)
+## Open items
 
-- Exact pantheon cost, prophet point rate, religion count by map size.
-- Pressure per turn and distance rule.
-- Spread charges and unit costs, how purchase price rises.
-- Religious strength, home advantage, damage formula.
-- Religious victory rule.
+- Religions allowed per map size; religious victory rule.
+- Belief effects: 64 of 88 belief rows are wrappers that attach another modifier; see [`07-effects-system.md`](07-effects-system.md), Step 6. A follow-up dump resolves one level of wrapping.
+- How price rises per unit bought.
 
 ## Sources
 
-- Overview and units: [Civ 6 wiki, Religion](https://civilization.fandom.com/wiki/Religion_(Civ6)), [Pantheon](https://civ6.gamepedia.com/Pantheon), [Complete religion guide](https://outsidergaming.com/civ-6-complete-religion-guide-and-religious-victory-strategy/).
+- Pantheon cost, pressure settings, unit costs, belief pool: the owner's game database.
+- Overview (earlier draft): [Civ 6 wiki, Religion](https://civilization.fandom.com/wiki/Religion_(Civ6)), [Pantheon](https://civ6.gamepedia.com/Pantheon), [Complete religion guide](https://outsidergaming.com/civ-6-complete-religion-guide-and-religious-victory-strategy/).
 - Belief types: [List of beliefs](https://civilization.fandom.com/wiki/List_of_beliefs_in_Civ6). Some sources describe Civ 5; I ignored those.
 - Unit costs and strengths: figures from low-quality sites; treat as unverified.
 

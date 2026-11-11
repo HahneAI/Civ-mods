@@ -1,6 +1,6 @@
 # Cities and Districts: The Placement Puzzle
 
-Source: custom write-up from general Civ 6 knowledge plus a web check (see "Sources"). Plain words, nothing copied. Tags as before: `[sure]`, `[approx]`, `[verify]`. Real numbers come through [`db-check.md`](db-check.md).
+Source: custom write-up. **`[sure]` numbers were read from the owner's own game database** (2026-11-10, via `tools/dbdump.py`); the rest is general knowledge plus a web check. Plain words, nothing copied (district names are described by role, hard rule 8). Tags as before.
 Builds on [`00-base-math.md`](00-base-math.md) (tiles, citizens, housing) and [`01-units-combat.md`](01-units-combat.md) (city defense).
 
 **Honest warning:** the district population limit and adjacency values below come from fan guides and a third-party coding library. Several numbers disagree between sources. I found nothing on how a district's cost rises, or on city spacing and settler cost, so those are from memory and marked.
@@ -21,8 +21,8 @@ PLACE DISTRICTS on owned tiles -> ADJACENCY bonus from neighbors -> BUILDINGS in
 ## Step 1 · Founding a city
 
 - A **settler** unit founds a city on a tile. `[sure]`
-- Building a settler **costs the home city one citizen** (and production). `[approx: exactly 1 pop, city must be big enough]`
-- A new city must be some minimum distance from other cities (cities cannot sit side by side; about 3 tiles apart). `[verify]`
+- Building a settler **costs the home city one citizen and 80 production**. `[sure]`
+- A new city must be at least **3 tiles** from other cities (the minimum-range setting is 3). `[sure]` A city's buy range is 3 as well.
 - On founding, the city claims the center and nearby ring (page 00), and the center tile gets a free yield floor. `[approx]`
 
 **Guardrail:** expansion costs population, so the economy slows briefly each time you found a city. Spacing keeps cities from overlapping everything.
@@ -54,9 +54,13 @@ specialty districts allowed  ≈  1 + floor((population - 1) / 3)
 | 7 to 9 | 3 |
 | 10 to 12 | 4 |
 
-`[approx]` Some districts do not count against this cap (water, housing, and utility types such as aqueduct, neighborhood, canal, dam). Which ones are `[verify]`.
+**Confirmed:** the game's setting is **one district per 3 citizens** (`DISTRICT_POPULATION_REQUIRED_PER = 3`). `[sure]` The exact starting count (the "+1" in the formula) is `[approx]`.
 
-Each district also costs production, and that cost rises as the city builds more. `[approx]` The way it rises is `[verify]`.
+**Districts that are not "one per city"** (so you can build many; whether they skip the cap is `[approx]`) `[sure]`: the housing district (**+4 housing**), the dam (+3 housing, +1 entertainment), the canal, and one unique housing district (+5). Utility districts that count as one per city: aqueduct, bath-type, spaceport, preserve (+1 housing), and others.
+
+**District cost** `[sure]`: a standard specialty district has a base cost of **54 production**; unique replacements cost **27**; the aqueduct costs 36 and a bath-type unique costs 18; the government district costs 30; the spaceport 1,800; wonders 0 (they are priced separately). Cost then **rises with a "progression model"**: for most specialty districts it depends on how many districts you already have compared with average plus your tech level (parameter 40); for housing and utility districts it rises with game progress (parameter 1,000). `[sure]` that the models exist; the exact curve `[verify]`.
+
+Every specialty district also gives the city **+2 city strength** (see page 01). `[sure]` Entertainment districts give 1 to 3 amenities by type (complex 1, carnival 2, hippodrome 3). `[sure]`
 
 **Guardrail:** a small city cannot be everything. Size (page 00) gates how much special land you can use.
 **Design note:** a "one district per three citizens" ladder ties growth directly to variety. That is an easy rule to copy or tune, and a sharp link between food and buildings.
@@ -69,14 +73,18 @@ Rule in words: a district gains extra yield from what sits on the tiles touching
 district bonus  =  sum over neighbors of (value for that neighbor type)
 ```
 
-Examples, from fan guides `[approx]`:
+Adjacency rows read from the database, **complete** `[sure]`. The bonus is "+N per M matching neighbors" for the tiles around the district:
 
-| District | Likes (per neighbor) |
+| District | Neighbor and bonus |
 |---|---|
-| Science | mountains (+1 each), jungle, other districts (small) |
-| Faith | natural wonders (+2), mountains (+1), forest and other districts (+½) |
-| Gold | rivers and harbors (+2), other districts (+½ to +1 per two) |
-| Government | gives +1 to several neighboring district types |
+| Science (campus-type) | mountain **+1 each**; jungle **+1 per 2**; reef **+2 each**; thermal fissure **+2**; any other district **+1 per 2**; government district **+1** |
+| Faith (holy-site-type) | natural wonder **+2**; mountain **+1 each**; forest **+1 per 2**; any other district **+1 per 2**; government district **+1** |
+| Gold (commercial-hub-type) | river **+2**; harbor-type district **+2**; any other district **+1 per 2**; government district **+1** |
+| Culture (theater-type) | wonder **+2**; entertainment-type district **+2** (four kinds); any other district **+1 per 2**; government district **+1** |
+| Production (industrial-type) | quarry **+1 each**; mine **+1 per 2**; lumber mill **+1 per 2**; aqueduct, canal, dam, or bath-type district **+2 each**; strategic resource **+1**; any other district **+1 per 2**; government district **+1** |
+| Harbor | sea resource **+1**; city center **+2**; any other district **+1 per 2**; government district **+1** |
+
+Military camp, entertainment, aqueduct, and housing districts have **no adjacency bonus**. `[sure]`
 
 Fractions floor (round down) per source, so a pile of small bonuses can be wasted. `[approx]`
 Some neighbors are the map's gift (rivers, mountains, wonders); others you build yourself (a district next to a district).
@@ -94,20 +102,22 @@ This is the link to page 00: a citizen is either a **farmer/worker on land** (ti
 
 **Guardrail:** you cannot put every citizen in a building; slots are limited by what you built.
 
+**The building ladder inside a district, from the database** `[sure]`: each specialty district holds a short run of buildings in cost steps of roughly **90 to 150, then 250 to 330, then 440**. Typical yields per building: first tier +2 (science, gold) to +3 (production), mid tier +4 to +5, last tier +3 to +4 on top. Faith buildings run **+2, +4, then +3 to +6**. Every building in a specialty district has **1 citizen slot** (so a specialist can work it), and entertainment, aqueduct and housing districts have **no citizen slots**. Maintenance is 0 to 3 gold per building, rising with tier. The city center holds a granary-type (+2 housing, +1 food), a monument-type (+1 culture, 60 cost), walls (80), a castle (220) and a sewer (200, +2 housing).
+
 ## Step 6 · Housing and amenities from districts
 
 - Districts and buildings are the main source of **housing** (growth brake, page 00) and **amenities** (happiness gate, page 00). `[sure]`
-- The city center gives a base housing number depending on water access. `[verify]`
+- Housing from water, confirmed `[sure]`: **no water 2, coast 3, river or lake 5**. A city-center tile also guarantees 2 food and 1 production (page 00).
 - Aqueduct-style and neighborhood-style districts exist to raise housing, which is why they don't count against the cap. `[approx]`
 
 **Guardrail:** the same buildings that give yields are also the ones that let you grow, so every city faces "yield or room to grow."
 
 ## Step 7 · City defense and loyalty
 
-- A city has about 200 HP, and its defense strength comes from its garrison, walls, districts, being a capital, and hills. `[approx]`
+- A city has about 200 HP, and its defense strength comes from its garrison, walls, districts (+2 each), population (1 per 2 citizens), being a capital, and hills. `[sure]` for the districts and population parts.
 - A city fires back at attackers; with no ranged units built, its strength is low. `[approx]`
 - Districts can be pillaged or damaged. `[approx]`
-- **Loyalty:** nearby cities and their population pull a city toward their owner. A city with low loyalty can rebel or flip. `[approx]`
+- **Loyalty** `[sure]`: a city starts at **100** (the maximum). Nearby citizens exert identity pressure within **10 tiles**; a city can gain or lose up to **20 loyalty per turn** from it. After capture by combat a city restarts at **50**; after liberation or a cultural flip, at **100**. Low loyalty can make a city rebel or flip. **Loyalty levels, confirmed** `[sure]`: 76 to 100 is the top band (no yield penalty, +1.0 growth change); 51 to 75 (−0.25 yield, +0.75 growth); 26 to 50 (−0.5 yield, +0.25 growth); 0 to 25 (−1.0 yield, 0 growth).
 
 **Guardrail:** conquest needs to be able to hold what it takes, so taking a city requires loyalty pressure, not just force.
 **Design note:** loyalty is a second control layer next to borders. Decide if your game needs both.
@@ -128,18 +138,16 @@ This is the link to page 00: a citizen is either a **farmer/worker on land** (ti
 
 **Core loop to test in your game:** *land → citizens → districts on the best tiles → buildings → housing and yields → more citizens → more land.* The new twist over page 00 is that land is **spent**, not only worked.
 
-## Open items (fill in using db-check.md)
+## Open items
 
-- Exact district-limit rule, and which districts are exempt.
-- District cost and how it rises.
-- Full adjacency table (district x neighbor x value).
-- Settler pop cost, minimum city distance.
-- City-center housing by water type; specialist slot counts and yields.
-- City HP, defense strength parts, loyalty values.
+- Per-improvement housing and yields (Improvements dumped; not yet written up).
+- City HP and wall HP; exact district cost curve.
+- Exact start of the district limit.
 
 ## Sources
 
-- District types and adjacency: [Civ 6 wiki, List of districts](https://civilization.fandom.com/wiki/List_of_districts_in_Civ6), [Civ 6 district guide](https://pcgamesn.com/civilization-vi/civ-6-district-guide), [What do we know about these adjacency bonuses](https://forums.civfanatics.com/threads/what-do-we-know-about-these-adjacency-bonuses.573900/latest).
-- District population limit: a third-party library page, [civ6lib](https://playbooks.com/skills/benchflow-ai/skillsbench/civ6lib). Not official; treat as `[approx]`.
+- Settler, spacing, district costs and housing, loyalty, adjacency rows: the owner's game database.
+- District types and adjacency (earlier draft): [Civ 6 wiki, List of districts](https://civilization.fandom.com/wiki/List_of_districts_in_Civ6), [Civ 6 district guide](https://pcgamesn.com/civilization-vi/civ-6-district-guide), [What do we know about these adjacency bonuses](https://forums.civfanatics.com/threads/what-do-we-know-about-these-adjacency-bonuses.573900/latest).
+- District population limit start: a third-party library page, [civ6lib](https://playbooks.com/skills/benchflow-ai/skillsbench/civ6lib). Its "per 3 citizens" matches the database; the start is unconfirmed.
 - City defense: [City Strength](https://forums.civfanatics.com/threads/city-strength.619428), [City combat](https://forums.civfanatics.com/resources/city-combat.27737/). Some linked material describes Civ 5.
-- Settler cost, spacing, loyalty values: not confirmed by search; from memory.
+
