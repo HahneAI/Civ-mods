@@ -1,0 +1,102 @@
+{
+  "_note": "The four open design questions, turned into switchable variables. 'config_key' is a key in the dataset's rules_config. 'decision' is the current choice. Flip a value, run tools/schemacheck.py, and it lists what in the data must change. Source: custom; evidence from ledger pages 00 to 08.",
+  "variables": [
+    {
+      "id": "tree_layout",
+      "config_key": "tree_layout",
+      "question": "One node type with a tree field, or really two trees?",
+      "options": {
+        "two_trees": "Science tree and culture tree, each paid with its own yield (reference game).",
+        "one_tree": "One shared tree, a node may be paid with either yield."
+      },
+      "decision": "two_trees",
+      "rating": "8/10",
+      "rationale": "The two trees differ in shape on purpose (wide and branching vs. one steady trunk) and that contrast is the strongest thing in the reference data (ledger 04). The data shape is the same either way, so choosing two_trees costs nothing if you later want one.",
+      "metrics": [
+        "share of nodes finished with a boost",
+        "turns spent on each tree per era",
+        "number of times the player is blocked by only one yield"
+      ],
+      "how_to_test": "Run the same mini-game with each option. In one_tree, watch whether players still need to choose between yields, or whether one yield always wins.",
+      "checks": [
+        "V1"
+      ],
+      "decided_by": "claude",
+      "decided_on": "2026-11-10"
+    },
+    {
+      "id": "religion_mode",
+      "config_key": "religion_mode",
+      "question": "Is religion a unit system, or a cultural influence layer?",
+      "options": {
+        "pressure_only": "Beliefs spread by pressure from nearby cities and trade routes. No missionary units. Faith is spent on great people and buildings.",
+        "units_and_pressure": "Pressure plus bought spread units with charges (reference game).",
+        "off": "No religion at all."
+      },
+      "decision": "pressure_only",
+      "rating": "7/10",
+      "rationale": "Players complain most about the unit layer: long waves of missionaries across the map, with little defense (ledger 08). The part that works is the belief sentence (condition + filter + yield, ledger 07) and spread by distance. Keep those, drop the units. Faith keeps a job: it buys great people and religious buildings.",
+      "metrics": [
+        "share of cities following a religion by turn",
+        "turns until the first religion forms",
+        "faith spent per sink"
+      ],
+      "how_to_test": "Run pressure_only and watch whether religion still spreads fast enough to matter by the middle eras. If it stalls, add a pressure multiplier or a small active action before bringing units back.",
+      "checks": [
+        "V2"
+      ],
+      "decided_by": "claude",
+      "decided_on": "2026-11-10"
+    },
+    {
+      "id": "node_rewards",
+      "config_key": "node_rewards",
+      "question": "What must a research node give you? (Can a node give nothing?)",
+      "options": {
+        "unlock_or_effect": "Every node gives at least min_rewards_per_node rewards, counting both things it unlocks (a building, unit, district, card, project) and bonus effects it carries itself. Nothing is ever empty.",
+        "unlock_only": "Every node must unlock at least min_rewards_per_node things. A bonus effect alone does not count.",
+        "empty_allowed": "Nodes in the last endgame_eras eras may give nothing; every other node must unlock at least min_rewards_per_node things."
+      },
+      "decision": "unlock_or_effect",
+      "decided_by": "owner",
+      "decided_on": "2026-11-11",
+      "min_rewards_per_node": 1,
+      "endgame_eras": 1,
+      "rating": "8/10",
+      "rationale": "Owner decision, after clarifying: in the reference game every node gives something, either something new or a bonus effect. Late filler nodes still earn their place (for example the late nodes that gate the big space projects). The database confirms it: 0 of 77 techs and 0 of 61 civics give nothing (ledger 07). Nodes that only carry a bonus are normal there (the 4 future techs and 3 late civics without a counted unlock all carry an effect). An earlier draft treated 'unlocks nothing' as 'gives nothing' and called those nodes a thin tail; that was a misreading and is retired.",
+      "metrics": [
+        "share of nodes whose only reward is a bonus effect",
+        "turns spent on effect-only nodes as a share of research",
+        "whether players treat effect-only nodes as real choices or skip them"
+      ],
+      "how_to_test": "Compare the three options in the simulator. If effect-only nodes cost too much for what they give (the example's last culture node is a full 450 for a 5% bonus), price them lower or raise the bonus before restricting them.",
+      "checks": [
+        "V3",
+        "R15"
+      ]
+    },
+    {
+      "id": "great_person_pool",
+      "config_key": "great_person_pool",
+      "question": "Is the great-person pool shared between players (needs rivals)?",
+      "options": {
+        "shared_finite": "Each person exists once in the world; whoever gets there first claims them (reference game). Works with AI or human rivals.",
+        "personal": "Each community has its own supply of people; no race."
+      },
+      "decision": "shared_finite",
+      "rating": "7/10",
+      "rationale": "A civ-style game has rival communities (AI at minimum), so a shared pool gives every player's progress meaning to the others. A personal pool is the safe fallback for a solo mode. The schema supports both with one field.",
+      "metrics": [
+        "share of great people claimed by rivals before the player",
+        "points wasted when a person is taken",
+        "player complaints about being locked out"
+      ],
+      "how_to_test": "Run one game with rivals under shared_finite. If the player is often locked out of a class, add a catch-up discount (as the reference game does for late nodes) before switching to personal.",
+      "checks": [
+        "V4"
+      ],
+      "decided_by": "claude",
+      "decided_on": "2026-11-10"
+    }
+  ]
+}

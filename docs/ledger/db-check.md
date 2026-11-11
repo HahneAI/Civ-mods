@@ -135,6 +135,20 @@ SELECT BuildingType, Cost, ReligiousPressure FROM Buildings WHERE ReligiousPress
 
 Same fallback as before if a column errors. Also useful: `SELECT * FROM Maps_Religions` or any table from `sqlite_master` with `%Religion%` in the name, since the religion limit per map size is stored there.
 
+## Round 1 result and the follow-up dump
+
+Round 1 (2026-11-10) read pages 00 to 06 from the owner's database. It answered most open numbers and corrected several earlier guesses (tech costs, housing stop point, city-center yield, wounded units, boost size). A few tables were cut to 12 columns, which hid the neighbor-district rows of the adjacency table and the per-building yields.
+
+**Round 2 (2026-11-10) done:** the follow-up dump was read and pages 02, 03, 05 and 06 updated.
+
+`tools/dbdump.py` now dumps those tables in full (adjacency, districts, building yields, great-person points, governments, policies). To fill the remaining gaps, run it again the same way and attach the new `db-results.md`. Expect a larger file (a few hundred KB).
+
+## Round 3: what things do
+
+Rounds 1 and 2 gave the numbers. Round 3 adds **what each thing actually does**: the game stores the effect of every policy card, belief, building, civic, tech, district, improvement, governor promotion and unit promotion as a "modifier" row. `tools/dbdump.py` now turns those into one line each (`owner | effect | arguments`), skips civilization and leader content, and also dumps **every** GlobalParameters row, a catalog of **all 430 tables** with row counts, and a few more systems (resources, improvements, governors, promotions, historic moments, full eras). Expect a larger file (about 0.5 to 2 MB).
+
+**Round 3 (2026-11-10) done:** the modifier digest was read; see page 07. The digest now also resolves one level of "attach another modifier" wrappers (beliefs and many cards hide their real effect there). **Round 4 (2026-11-10) done:** read and written into page 07. It also resolved the attach wrappers, adds a condition-set digest (what each "when" means), era-score moments, era data for both expansions, city-state bonuses, projects, unit upgrades, and which tech or civic unlocks each unit.
+
 ## Keeping this file current
 
 Add a new section here whenever a new ledger page is started. Queries only: no game text or code is copied into the ledger (hard rule 8).

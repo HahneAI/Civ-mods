@@ -1,9 +1,9 @@
 # Base Math: How the Resource Systems Connect
 
-Source: custom write-up, from general Civ 6 knowledge plus a web check (see "Sources"). Rules described in plain words, no copied code or text.
+Source: custom write-up. **Numbers marked `[sure]` were read from the owner's own game database** (2026-11-10, both expansions loaded, via `tools/dbdump.py`); the rest is from general knowledge and a web check. Rules described in plain words, no copied code or text.
 Purpose: a reference for the owner's own tile game. Each section ends with a **Guardrail** (the rule that limits the player) and a **Design note** (keep / change / cut / open question).
 
-**Confidence tags:** `[sure]` = standard, widely documented. `[approx]` = numbers vary by source. `[verify]` = not confirmed; check in game or in the debug DB before relying on it.
+**Confidence tags:** `[sure]` = read from the database or standard and documented. `[approx]` = numbers vary by source. `[verify]` = not confirmed; check in game or in the debug DB before relying on it.
 
 ---
 
@@ -36,7 +36,22 @@ tile yield = terrain + feature (forest, hills...) + resource + improvement + bon
 Example: Grassland (2 food) + a Farm (+1 food) = 3 food. `[sure]`
 
 - Yields are whole numbers per turn: Food, Production, Gold, Science, Culture, Faith.
-- A **city center** tile is always worked for free and gets a minimum floor of 1 food and 1 production. `[sure]` (exact floor rules `[verify]`)
+- A **city center** tile is always worked for free and gets a minimum floor of **2 food and 1 production**. `[sure]` (database: the city center is treated as at least that)
+
+**Base yields, read from the database** `[sure]` (food / production unless noted):
+
+| Terrain | Yield | Feature | Adds |
+|---|---|---|---|
+| Grassland | 2 food | Forest | +1 production |
+| Grassland hills | 2 food, 1 prod | Jungle | +1 food |
+| Plains | 1 food, 1 prod | Marsh | +1 food |
+| Plains hills | 1 food, 2 prod | Floodplains | +2 food |
+| Tundra, tundra hills | 1 food (+1 prod hills) | Oasis | +3 food, +1 gold |
+| Desert, snow | 0 | Reef | +1 food, +1 prod |
+| Coast | 1 food, 1 gold | Natural wonders | each has its own set (3 to 5 of a kind) |
+| Ocean | 1 food | | |
+
+Desert hills and snow hills give 1 production. **Resources** (55): 34 luxury (4 amenities each, three give 6), 11 bonus, 7 strategic, 2 artifact, 1 ley line; luxuries add gold +1 to +3 or 1 to 2 of food, culture, faith, science or production, bonus resources add +1 food or +2 gold, strategic ones +1 to +3 production. **Improvements** (17 buildable): farm +1 food, mine +1 production, quarry +1 production, fishing boat +1 food, pasture +1 production, plantation +2 gold, camp +2 gold, lumber mill +2 production; farm-type improvements give 1 housing per 2 improved tiles. `[sure]` See [`07-effects-system.md`](07-effects-system.md). Game speed scales costs everywhere: **marathon 3.0, epic 1.5, standard 1.0, quick 0.67, online 0.5**.
 
 **Guardrail:** terrain and features are the map's fixed "budget". You choose which tiles to use, not how much they give.
 **Design note:** this additive tile sum is the easiest thing to keep. Open question: do you want adjacency bonuses (placement puzzles) in your game?
@@ -53,13 +68,13 @@ Three plain rules:
 
 How tiles are gained: the city fills a **culture** meter and claims the cheapest nearby tile each time it fills, or the player **buys** a tile with gold. Each tile claimed makes the next one cost more. `[sure]`
 
-Culture cost of the next tile `[approx]`, from modder testing:
+Culture cost of the next tile, formula from modder testing `[approx]`, **knobs confirmed in the database** `[sure]`:
 
 ```
 cost = first_plot_cost + (later_multiplier x (tiles_claimed - 1)) ^ later_exponent
 ```
 
-Older builds: first = 10, multiplier = 6, exponent = 1.3. Later builds appear to use bigger numbers (first about 20, multiplier about 15, exponent about 1.35), which is why sources disagree. Policies and civ traits can cut this cost by about 25%. Gold buy price has its own base (about 50) `[approx]` and is computed inside the game engine, not in a readable table, so the formula may not be recoverable from the database.
+**This install: first = 10, multiplier = 6, exponent = 1.3** `[sure]` (other sources quoted bigger numbers from other versions). Example: tile 2 costs 10 + 6^1.3 ≈ 20, tile 6 costs 10 + 30^1.3 ≈ 93. `[derived]` Other confirmed settings: a tile can be bought up to **3 tiles** from the center; the gold buy price starts from a **base of 50**, and the full gold formula is computed inside the game engine. One citizen works one tile. Policies and civ traits can cut the culture cost by about 25%. `[approx]`
 
 **Guardrail:** land you do not own, or that is out of range, produces nothing for you. This is the rule that makes borders matter.
 **Design note:** a very strong idea to keep. It ties culture (a soft resource) directly to map control. Decide if you want gold to be able to buy land.
@@ -99,7 +114,7 @@ food needed to grow from size P  ≈  15 + 8 x (P - 1) + (P - 1)^1.5     (rounde
 | 3 | 33–34 |
 | 4 | ~44 |
 
-The formula has three knobs in the game's settings table (`GlobalParameters`): a per-size multiplier (default about 8), an exponent (about 1.5), and a flat start (about 15). `[approx]` names/values from modder posts. Turns to grow ≈ food needed ÷ surplus. Example: needs 24, surplus +4 → 6 turns.
+The formula has three knobs in the game's settings table (`GlobalParameters`): **a flat start of 15, a per-size multiplier of 8, and an exponent of 1.5**. `[sure]` The exact way they combine is the community formula above `[approx]`. Food eaten per citizen: **2** `[sure]`. Turns to grow ≈ food needed ÷ surplus. Example: needs 24, surplus +4 → 6 turns.
 
 **Guardrail:** growth gets slower as you get larger, so a city cannot snowball forever on food alone.
 **Design note:** the rising basket is a "soft cap". Keep the idea, tune the numbers yourself.
@@ -110,14 +125,15 @@ The formula has three knobs in the game's settings table (`GlobalParameters`): a
 
 Each city has a **housing** number (from water access, buildings, districts). Compare it with population (called "headroom"):
 
-| Housing minus population | Growth speed | Tag |
+| Housing minus population ("headroom") | Growth speed | Tag |
 |---|---|---|
 | 2 or more | full speed | `[sure]` |
-| 1 | half speed | `[approx]` |
-| 0 to slightly over | about quarter speed | `[approx]` |
-| 5+ over | growth stops | `[approx]` |
+| 1 | half speed (50%) | `[sure]` |
+| 0 | quarter speed (25%) | `[sure]` |
+| -4 or lower | growth stops | `[sure]` |
+| -1 to -3 | between 25% and 0 (steps not in this dump) | `[verify]` |
 
-Typical starting housing: a bit higher with fresh water (river/lake) than none. `[verify]` exact numbers.
+Starting housing from water access, confirmed: **no fresh water 2, coast 3, river or lake 5**. `[sure]` Two aqueduct settings also exist (a boost of 2 and a minimum size of 6); how they combine `[verify]`. This corrects the earlier draft, which said growth stops at 5 over; the real stopping point is 4 over.
 
 **Guardrail:** food cannot buy unlimited size; you must also build housing. Housing is the link from *infrastructure* back to *citizens*.
 **Design note:** this is where "build things" becomes a requirement for "grow things". Keep. Open question: do you want a single housing cap, or the stepped slowdown?
@@ -126,13 +142,19 @@ Typical starting housing: a bit higher with fresh water (river/lake) than none. 
 
 ## Step 6 · Amenities: the happiness gate
 
-Rule in words: a city needs a number of amenities that rises with its population, about **1 per 2 citizens, rounded up, with the first few citizens free**. `[approx]` Sources disagree on where it starts (some say from size 3), so treat the exact start as `[verify]`.
+Rule in words: a city needs **1 amenity per 2 citizens** (rounded), none given for free. `[sure]` The city's *amenity score* is amenities it has minus what it needs. That score picks a mood, and the mood changes growth and every non-food yield `[sure]`:
 
-- Enough or more: bonus to yields and growth.
-- Short a little: growth slows.
-- Short a lot (unrest): all non-food yields drop by about 30%, and rebellion risk starts. `[approx]`
+| Mood | Score | Growth | Non-food yields | Rebellion points per turn |
+|---|---|---|---|---|
+| Ecstatic | 5 or more | +20% | +20% | -1 |
+| Happy | 3 to 4 | +10% | +10% | -1 |
+| Content | 0 to 2 | normal | normal | -1 |
+| Displeased | -1 to -2 | -15% | -10% | -1 |
+| Unhappy | -3 to -4 | -30% | -20% | 0 |
+| Unrest | -5 to -6 | stops (-100%) | -30% | +1 |
+| Revolt | -7 or less | stops | -40% | +4 |
 
-`[verify]` exact thresholds and percentages.
+Two more confirmed rules: a **negative gold balance** costs amenities, and **war weariness** costs amenities (points build up to 400 per lost amenity). `[sure]`
 
 **Guardrail:** a big city must be kept happy, so size alone doesn't win.
 **Design note:** consider merging amenities and housing into one "comfort" system in your game, if two separate meters feel like bookkeeping. This is a *change* candidate, not a fact.
@@ -210,7 +232,7 @@ net gold per turn = gold income - upkeep (buildings, units)
 
 ## Step 11 · Where each number lives (for the database check)
 
-No game database is reachable from this chat (no computer is linked and the repo has no copy), so none of this was read from game data. Numbers above are from community posts. This map tells you where to look. Table and column names are `[verify]`.
+Table names below were checked against the owner's database; the ones marked read in the left column fed this page.
 
 | Rule | Likely place |
 |---|---|
@@ -226,20 +248,16 @@ Note: in later game builds these parameters are split across several files, so o
 
 See [`db-check.md`](db-check.md) for the setup steps and the exact queries. Paste the rows into the chat and every `[approx]` above gets replaced.
 
-## Open items (check against the real game/debug DB before treating as final)
+## Open items
 
-- Exact city-center yield floors.
-- Exact housing numbers by water type, and exact stepped growth percentages.
-- Exact amenities thresholds and penalty percentages.
-- Border culture cost knobs for your installed version; gold tile-buy formula (may be engine-only).
-- Gold purchase cost formula for production.
-- Base science/culture per citizen.
-
-These can be pulled with `tools/sqlcheck.py` / the debug database once Phase 2 tooling exists, then marked `[sure]` here.
+- Housing steps between -1 and -3, and how the aqueduct settings combine.
+- Gold price of a tile and of production (engine-only; may need testing in game).
+- Base science and culture per citizen.
 
 ## Sources
 
-- Growth formula and housing steps: community Civ 6 wiki growth page (https://civilization.fandom.com/wiki/Growth_(Civ6)), cross-checked against forum posts. Numbers differ by 1 at some sizes, hence `[approx]`.
+- Growth knobs, housing steps, amenity table, border knobs: the owner's game database (`GlobalParameters`, `Happinesses`).
+- Growth formula shape: community Civ 6 wiki growth page (https://civilization.fandom.com/wiki/Growth_(Civ6)). Numbers differ by 1 at some sizes, hence `[approx]`.
 - Border cost and growth knobs: CivFanatics modding threads, e.g. [City Tile Purchase Cost?](https://forums.civfanatics.com/threads/city-tile-purchase-cost.606599/latest), [Help with adjusting food growth](https://forums.civfanatics.com/threads/help-with-adjusting-food-growth.613552), [Calculating Border Growth Speed](https://forums.civfanatics.com/threads/calculating-border-growth-speed-bugs.663825).
 - Amenities: [Civ 6 wiki, Amenity](https://civilization.fandom.com/wiki/Amenity_(Civ6)); its own examples contradict each other.
-- Everything else: general game knowledge, not yet confirmed in game.
+- Everything else: general game knowledge, not yet confirmed.

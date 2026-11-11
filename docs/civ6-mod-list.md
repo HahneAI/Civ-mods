@@ -22,7 +22,7 @@ Ten mods from two YouTube videos, with grammar cleaned up from the auto-transcri
 
    On paper these don't change the balance much, but they make every map feel fresher and make tile evaluation more interesting. Sukritact's Oceans is the standout for naval and archipelago games: it adds new sea resources (such as seals, squid, coral, kelp forests, and lake caviar) and makes water tiles worth working. Coastal cities get better yields and more to improve without being overpowered, and everything looks like it could have shipped in the base game. The capybara is a highlight: once improved, it gives very strong food and gold. The new luxuries also work with the Monopolies and Corporations game mode, so they can form industries and monopolies.
 
-4. **Workable 4th Ring** (by PhantomJ_M) — **confirmed by owner.** Workshop ID: TBD.
+4. **Workable 4th Ring** (by PhantomJ_M) — **confirmed by owner.** Workshop ID 3220078106.
    Removes the base game's three-tile working radius. In vanilla, your borders can grow to the fourth or fifth ring, but citizens can't work those tiles, so that land is economically useless. This mod lets cities work tiles in the fourth ring at full yields. It also opens up aggressive play: an Encampment four tiles from your city center can sit just two tiles from an enemy city, making a forward military base you can also work tiles around. Overall it raises how big cities can scale, makes late border growth worth more, and allows more creative district placement.
 
 5. **Civilizations Expanded + Steel and Thunder: Unit Expansion** (two mods used together)
@@ -120,6 +120,9 @@ Monopolies and Corporations matters for the resource mods: their new luxuries ca
 | Workable 4th Ring + Movable Districts | **Unknown** | Moving a district into the 4th ring may or may not be allowed. Test it. |
 | Repeat Project + Non Stop Project | **Don't run both** | They do the same job. |
 | Enhanced Camera + other camera mods | **Likely conflict** | Camera mods edit the same camera file. Run only one. |
+| Real Strategy (AI) + AI+ | **Confirmed conflict** | Author: not compatible, expect database errors. Never run both. |
+| Real Strategy (AI) + other AI-altering mods | **Not recommended** | Author: results get weird. Applies to Civilizations Expanded and Steel and Thunder until tested. |
+| Real Strategy (AI) + scenarios, Barbarian Clans, Zombies | **Poor fit** | Author: scenarios and AI-behavior game modes fight its logic. See `docs/ai-tuning/real-strategy.md`. |
 | Movable Districts in multiplayer | **Reported** | Players reported desyncs and lost Great Works after a move. Single-player is safer. |
 
 ### Install order that keeps testing simple
@@ -168,7 +171,7 @@ Mods outside the original 10. Each one notes how it relates to the goal: a tuned
 
 | Mod | What it does | How it relates | Rating |
 |---|---|---|---|
-| **Real Strategy (AI)** (infixo; Workshop ID likely 1617282434, unconfirmed; v2.3.1, Aug 2023) — **CHOSEN by owner, replaces Deity++** | Makes the AI play better through Lua logic and retuned priorities (settling, unit choice, support units, aircraft, more aggression in later eras). It works through the mod system, so it tunes the AI rather than rewriting it. | Fills the biggest gap. Deity++ only gives the AI more resources, so this pair makes it both richer and smarter. It's also a study case for the utility AI in your own game. | 8/10 |
+| **Real Strategy (AI)** (infixo; Workshop ID 1617282434, confirmed; ~122k subscribers; v2.3.1, Aug 2023) — **CHOSEN by owner, replaces Deity++** | Makes the AI play better through Lua logic and retuned priorities (settling, unit choice, support units, aircraft, more aggression in later eras). It works through the mod system, so it tunes the AI rather than rewriting it. | Fills the biggest gap. Deity++ only gives the AI more resources, so this pair makes it both richer and smarter. It's also a study case for the utility AI in your own game. | 8/10 |
 | **Detailed Map Tacks** | Turns map pins into a district and wonder planner with yields, adjacency, and placement checks. | Plan before you commit, and use Movable Districts to fix mistakes. It overlaps with the Radial Measuring Tool for planning. In your own game, it's the "explain every number" UI idea. | 8/10 |
 | **Sukritact's Global Relations Panel** | Shows every leader's opinions, wars, alliances, and deals in one panel. | The diplomacy version of the city-state quest screen: same goal of less clicking around. | 7/10 |
 | **Real Era Tracker** | Lists historic moments you haven't earned yet, to help you reach Golden Ages. | A Rise and Fall quality-of-life mod. Useful only if you own Rise and Fall or Gathering Storm. | 7/10 |

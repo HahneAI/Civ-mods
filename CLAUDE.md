@@ -20,6 +20,7 @@ This repo will shift over time. Civ 6 modding is the first stage only. The real 
 2. `TODO.md` — find the first unchecked item in the current phase.
 3. `docs/civ6-mod-list.md` — the mods, DLC needs, and known conflicts.
 4. `docs/dlc-owned.md` — what the owner actually has. If it's empty, ask before writing DLC-dependent code.
+5. `docs/ai-tuning/` — AI tuning notes. **Owner priority.** Start with `real-strategy.md`.
 
 ## How to work
 
@@ -62,6 +63,8 @@ python tools/sqlcheck.py            # test CivLayer SQL against the debug DB cop
 python tools/logtriage.py <logdir>  # summarize game logs by mod
 python tools/deploy.py              # copy mod/CivLayer into the game's Mods folder
 python tools/dbdump.py              # read the debug DB, write db-results.md for the ledger
+python tools/schemacheck.py         # check docs/schema/example-data.json against the schema rules
+python tools/build_playground.py    # rebuild docs/schema/playground.html (the interactive schema page)
 pytest                              # tool tests
 luacheck mod/CivLayer               # Lua lint
 ```
@@ -107,3 +110,17 @@ These tools don't exist until TODO Phase 2 builds them.
 - Added ledger page 06 (religion and faith) with a master map of all systems.
 - Merged `version-control` into the feature branch (conflict was only the CLAUDE.md changelog; kept both sets).
 - Built `tools/dbdump.py` (one-click read-only database check, output `db-results.md`, git-ignored) with tests; `docs/ledger/db-check.md` now leads with it.
+- Round 1 database read (owner ran `dbdump.py`): ledger pages 00 to 06 updated with confirmed numbers; page 04 rewritten from real tree data; `dbdump.py` extended for a follow-up dump (adjacency, buildings, policies, great-person points).
+- Round 2 database read: complete adjacency, building ladders, trade yields by district, diplomacy ladder, alliances, government bonuses, great-person points and religious units added to ledger pages 02, 03, 05, 06.
+- `tools/dbdump.py` round 3: modifier digest (what policies, beliefs, buildings etc. do), all GlobalParameters, table catalog, extra systems.
+- Round 3 database read: new ledger page 07 (effects system), unlock counts and era thresholds on page 04, resources and improvements on page 00; `dbdump.py` now resolves attach-modifier wrappers.
+- `dbdump.py` round 4: condition-set digest, moments, era data, city-state bonuses, projects, unit upgrades and unit unlocks.
+- Round 4 database read: page 07 extended (unlocks including units, resolved belief effects, condition sets, era-score moments, era data); corrected earlier claim that late techs unlock nothing.
+- Added `docs/schema/` (draft v0.1 data schema for the owner's own game, enums, example data, tests) and `docs/ledger/README.md` / `docs/schema/README.md` with where-we-left-off notes.
+- Schema v0.2: the four open design questions became switchable variables (`docs/schema/variants.json`, ledger page 08) with decisions; extended example (10 nodes, 3 districts, 6 buildings, 6 cards); `tools/schemacheck.py` with 20 rules; 53 tests; where-we-left-off notes updated.
+- Added the schema playground (`docs/schema/playground.html`, also a private artifact): flip the four design variables, break the example data, watch 20 rules answer; JavaScript checker kept in step with the Python one by `tests/test_playground.py` (57 tests in all).
+- Owner decision: `late_tail` = keep (overrides my trim). V3 now allows thin nodes only in the last `tail_eras` eras, R15 allows unboosted pure tail nodes; example has 12 nodes; playground gets a tail-width control; 61 tests.
+- Added the playground's Simulate panel (`docs/schema/playground-sim.js`, a toy deterministic model comparing each option of the four variables: research pace, religion spread, great-person claims); first numbers on ledger page 08; 70 tests.
+- Corrected a misreading: the 'thin tail' idea is retired. Variable `late_tail` became `node_rewards` (`unlock_or_effect` decided by the owner: every node gives an unlock or a bonus effect; reference data confirms 0 empty nodes). R15 now means boost optional in endgame eras; example gets a project and an effect-only last node; 71 tests.
+- Workable 4th Ring ID 3220078106 and Real Strategy ID 1617282434 confirmed. Added `docs/ai-tuning/real-strategy.md` (owner priority: AI tuning) and a pointer in this file.
+- Merged `version-control` into the feature branch (only conflict: this changelog; kept both sets). 71 tests pass.
