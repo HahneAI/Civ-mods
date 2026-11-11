@@ -29,7 +29,9 @@ def _json(path: Path) -> str:
 def fragment() -> str:
     tpl = (SCHEMA / "playground.template.html").read_text(encoding="utf-8")
     js = (SCHEMA / "playground-check.js").read_text(encoding="utf-8")
+    sim = (SCHEMA / "playground-sim.js").read_text(encoding="utf-8")
     out = tpl.replace("/*@CHECKJS@*/", js.replace("</script", "<\\/script"))
+    out = out.replace("/*@SIMJS@*/", sim.replace("</script", "<\\/script"))
     out = out.replace("/*@ENUMS@*/null", _json(SCHEMA / "enums.json"))
     out = out.replace("/*@VARIANTS@*/null", _json(SCHEMA / "variants.json"))
     out = out.replace("/*@EXAMPLE@*/null", _json(SCHEMA / "example-data.json"))

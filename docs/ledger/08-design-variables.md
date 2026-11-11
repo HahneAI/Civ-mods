@@ -64,13 +64,32 @@ The ledger records how Civ 6 works. The owner's game will differ. Four questions
 **Test it.** One game with rivals. If the player is often locked out of a whole class, add a catch-up discount (the reference game already does this for late nodes: about -20% for a node older than the game era) before switching to `personal`. Metrics: share of people claimed by rivals first; points wasted when a person is taken; how often a player gives up on a class.
 **What the checker does.** V4: every great person has `max_claims = 1` (shared) or `null` (personal).
 
+## What the simulator shows (first numbers)
+
+The playground now has a **Simulate** panel (`docs/schema/playground-sim.js`): a small deterministic toy model that plays the example world for 200 turns (cities grow, yields flow, nodes are researched cheapest-first with boosts, a religion spreads by pressure, great people are earned against rivals). **It compares setups against each other; it does not forecast balance.** Every constant is a visible, editable assumption, and the example world is tiny. Defaults give these numbers (all are `[derived]` from the model, not from the game):
+
+| Variable | Result with the model's defaults |
+|---|---|
+| `late_tail` | Keeping the 2 tail nodes makes the whole tree finish on **turn 102 instead of 71** (31 turns later). The tail is **37.7% of the total cost** and takes **33.3% of research turns** |
+| `tree_layout` | Two trees finish on **turn 102**, ending **18 turns apart** (the faster tree sat idle: 837 yield wasted). One shared tree finishes on **turn 85** with 16 wasted |
+| `religion_mode` | Pressure alone converts a new city about **11.9 turns** after it is founded; with spread units about **3.4** (19 units bought). Both reach every city. With religion off, no city converts |
+| `great_person_pool` | Shared pool: you claim **1 of 4** people, rivals take 3, and you are locked out of 2 of 3 classes. Personal pool: you claim all 4 |
+
+How to read them, honestly:
+- **Tail:** the 37.7% is partly an accident of the example, where tail costs follow the era cost ladder (320 and 450). The finding that matters is that **a kept tail is a tuning choice with a real price**: if you keep it, price tail nodes low (a few percent of the tree) or give them effects, otherwise a third of research goes to nodes that unlock nothing.
+- **Trees:** most of the gap comes from the culture tree costing more per unit of culture than the science tree does per unit of science. Under two trees, balance the two trees' costs against their yields or accept idle time.
+- **Religion:** pressure-only is slower to convert each new city but gets there. Whether 12 turns versus 3 matters is a playtest question, not a model question.
+- **Pool:** the lock-out depends on the rival-pace assumption (default 2 points per class per turn, rising). Set rival strength to 0 and the lock-out vanishes; set it low and you can see where it starts. The example pool is only 4 people, so one claim is a quarter of it.
+
+**Use it:** open the playground, choose a variable under Simulate, press Run. The chart shows the series per option (research progress, share of cities following, great people claimed), the table gives the measures, and the sentence under it states the main difference. Change any assumption and run again.
+
 ## What the extended example shows
 
 `docs/schema/example-data.json` is one mini-world built on all four decisions: 12 nodes (7 science, 5 culture, including 2 tail nodes) over 3 eras; 3 districts; 6 buildings; 6 cards; 3 governments; 4 beliefs and one religion with no spread units; 4 great people. Every node outside the tail unlocks something, every unboosted node is in era 1 or is a pure tail node, the six boost families are used, and the three governments have 2, 4 and 6 slots. It passes all 20 rules (R1 to R15, V0 to V4).
 
 ## Open items
 
-- Playtest the metrics above: this needs a playable build; until then they are written down, not measured.
+- The simulator measures the research, religion and great-person metrics in a toy model only. Real playtest data still decides; until there is a playable build, treat simulator numbers as a way to compare options, not as results.
 - Decide whether `faith_sinks` needs price rules (not in the dataset yet).
 - Add catch-up discount settings to the schema if the shared pool is kept.
 

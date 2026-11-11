@@ -34,6 +34,7 @@
   --f-exp: #a07a00;
   --f-rel: #b04a7e;
   --f-none: #7b8a95;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; /* chart series, validated categorical slots 1 to 3 */
   --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
   --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
@@ -44,6 +45,7 @@
     --accent: #4cc3d6; --accent-soft: #123640; --on-accent: #07222a;
     --pass: #59c98a; --pass-bg: #123525; --fail: #ff8f86; --fail-bg: #3b1a19; --warn: #e6b450; --warn-bg: #3a2d10;
     --f-own: #6ea8e6; --f-chn: #b497dd; --f-cmb: #e48a63; --f-trd: #4cc2a4; --f-exp: #d8b24a; --f-rel: #e282b0; --f-none: #8fa0ac;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70;
     color-scheme: dark;
   }
 }
@@ -52,6 +54,7 @@
   --accent: #4cc3d6; --accent-soft: #123640; --on-accent: #07222a;
   --pass: #59c98a; --pass-bg: #123525; --fail: #ff8f86; --fail-bg: #3b1a19; --warn: #e6b450; --warn-bg: #3a2d10;
   --f-own: #6ea8e6; --f-chn: #b497dd; --f-cmb: #e48a63; --f-trd: #4cc2a4; --f-exp: #d8b24a; --f-rel: #e282b0; --f-none: #8fa0ac;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -161,6 +164,44 @@ svg.tree .badge { fill: var(--surface-2); }
 @keyframes flash { from { opacity: 0.25; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .flash { animation: none; } }
 
+/* simulate */
+.sim { margin-top: 16px; }
+.sim select { font: inherit; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; }
+.assump { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px 16px; margin-top: 10px; }
+.assump label { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 13px; }
+.assump input { width: 5em; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 8px; }
+.tabs label { position: relative; }
+.tabs input { position: absolute; opacity: 0; inset: 0; }
+.tabs span { display: inline-block; border: 1px solid var(--line); border-radius: 6px; padding: 4px 12px; background: var(--surface); }
+.tabs input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.tabs input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.chartwrap { position: relative; max-width: 900px; }
+svg.chart { display: block; width: 100%; height: auto; touch-action: pan-y; }
+svg.chart text { font-family: var(--font-mono); font-size: 11px; fill: var(--muted); }
+svg.chart .grid { stroke: var(--line); stroke-width: 1; }
+svg.chart .axis { stroke: var(--muted); stroke-width: 1; opacity: 0.6; }
+svg.chart .cross { stroke: var(--muted); stroke-width: 1; }
+svg.chart .ring { stroke: var(--surface); stroke-width: 2; }
+svg.chart:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; font-size: 12.5px; min-width: 150px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+.tip .tt { color: var(--muted); margin-bottom: 3px; font-family: var(--font-mono); font-size: 11.5px; }
+.tip .tr { display: flex; align-items: center; gap: 7px; }
+.tip .tr b { margin-left: auto; font-variant-numeric: tabular-nums; }
+.tip .tr span { color: var(--muted); }
+.key { display: inline-block; width: 16px; height: 0; border-top: 2px solid; vertical-align: middle; }
+.key.d3 { border-top-style: dashed; }
+.chartlegend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 6px 0 4px; font-size: 12.5px; }
+.chartlegend span.i { display: inline-flex; gap: 6px; align-items: center; }
+.ytitle { font-size: 12px; color: var(--muted); margin: 4px 0 0; }
+.tablewrap { overflow-x: auto; margin-top: 10px; }
+table.metrics { border-collapse: collapse; width: 100%; font-size: 13px; }
+table.metrics th, table.metrics td { padding: 5px 10px; border-top: 1px solid var(--line); text-align: right; font-variant-numeric: tabular-nums; }
+table.metrics th:first-child, table.metrics td:first-child { text-align: left; }
+table.metrics thead th { border-top: 0; font-weight: 500; color: var(--muted); }
+table.metrics td.na { color: var(--muted); }
+.simtake { margin-top: 10px; padding: 8px 10px; background: var(--surface-2); border-radius: 6px; font-size: 13px; }
+
 /* json */
 details.box > summary { cursor: pointer; font-weight: 500; }
 pre.json { max-height: 260px; overflow: auto; background: var(--surface-2); border-radius: 6px; padding: 10px; margin: 8px 0 0; font-family: var(--font-mono); font-size: 12px; }
@@ -230,6 +271,17 @@ textarea.paste { width: 100%; min-height: 120px; margin-top: 8px; font-family: v
       </section>
     </aside>
   </div>
+
+  <section class="panel sim" aria-labelledby="h-sim">
+    <header><h2 id="h-sim">Simulate</h2><span class="hint">A toy model for comparing setups against each other. It is not a balance forecast and ignores the break switches.</span></header>
+    <div class="row">
+      <label class="check" for="simVar">Compare <select id="simVar"></select></label>
+      <button class="btn primary" id="simRun" type="button">Run simulation</button>
+      <span class="hint" id="simNote"></span>
+    </div>
+    <details class="box" style="margin-top:10px"><summary>Assumptions (change a number, then run again)</summary><div class="assump" id="assump"></div></details>
+    <div id="simOut"></div>
+  </section>
 
   <p class="foot">Source: custom design tool (docs/schema). The example dataset uses placeholder names, not names from any game. The checker here is a JavaScript copy of the Python checker; a test compares the two on every switch and break above.</p>
 </div>
@@ -608,6 +660,288 @@ textarea.paste { width: 100%; min-height: 120px; margin-top: 8px; font-family: v
   root.SchemaCheck = api;
 })(typeof globalThis !== "undefined" ? globalThis : this);
 </script>
+<script>/* Toy simulation over a schema dataset. Source: custom (docs/schema).
+ *
+ * What it is: a small, deterministic model that plays the example dataset forward turn by turn
+ * (city growth, yields, research, religion spread, great people) so the four design variables can be
+ * compared with numbers. What it is NOT: a balance forecast. Every constant is a visible assumption
+ * (DEFAULTS), tuned for plausible shapes, not calibrated to any game. Use it to compare setups
+ * against each other, never to read an absolute turn count.
+ *
+ * Deliberate simplifications: one yield pool per tree, greedy cheapest-first research, every city
+ * builds every unlocked district and building after a fixed delay, a straight line of cities,
+ * policy cards ignored, rivals are a smooth points-per-turn curve.
+ */
+(function (root) {
+  "use strict";
+
+  var DEFAULTS = {
+    turns: 200,
+    city_interval: 25, max_cities: 8,
+    food_surplus: 4, size_cap: 12,
+    base_sci: 2, base_cul: 1.5, base_faith: 1, sci_per_citizen: 0.5, cul_per_citizen: 0.35,
+    building_delay: 15,
+    boost_delay_own: 6, boost_delay_combat: 30, boost_delay_trade: 20, boost_delay_explore: 18,
+    religion_found_turn: 40, convert_threshold: 60, city_spacing: 5, unit_push: 40, unit_cost_step: 25,
+    rival_strength: 1.0, rival_start: 30, rival_rate: 2, rival_growth: 150
+  };
+  var DESCRIPTIONS = {
+    turns: "Turns to simulate", city_interval: "Turns between new cities", max_cities: "Maximum cities", food_surplus: "Food surplus per city per turn",
+    size_cap: "City size cap", base_sci: "Base science per city", base_cul: "Base culture per city", sci_per_citizen: "Science per citizen", cul_per_citizen: "Culture per citizen",
+    building_delay: "Turns to build each district or building", religion_found_turn: "Turn the religion is adopted", convert_threshold: "Pressure a city needs to convert",
+    unit_push: "Pressure per missionary charge", rival_strength: "Rival great-people pace (1 = default)", rival_start: "Turn rivals start earning points"
+  };
+
+  function clone(x) { return JSON.parse(JSON.stringify(x)); }
+  function by(list) { var m = {}; (list || []).forEach(function (x) { m[x.id] = x; }); return m; }
+
+  function simulate(data, userParams) {
+    var P = {}; Object.keys(DEFAULTS).forEach(function (k) { P[k] = DEFAULTS[k]; });
+    Object.keys(userParams || {}).forEach(function (k) { if (userParams[k] !== undefined && userParams[k] !== null && !isNaN(userParams[k])) P[k] = Number(userParams[k]); });
+    var cfg = data.rules_config || {};
+    var nodes = clone(data.nodes || []);
+    var nodeMap = by(nodes);
+    var eraIdx = {}; (data.eras || []).forEach(function (e) { eraIdx[e.id] = e; });
+    var layout = cfg.tree_layout;
+    var pooled = layout === "one_tree";
+
+    // ----- helpers from the data
+    var foodMeter = (data.meters || []).filter(function (m) { return m.id === "meter_food"; })[0];
+    var fm = foodMeter ? foodMeter.cost_params : { start: 15, per_step: 8, exponent: 1.5 };
+    function foodNeeded(size) { return fm.start + fm.per_step * (size - 1) + Math.pow(size - 1, fm.exponent); }
+    var buildings = data.buildings || [], districts = data.districts || [];
+    var gov = data.governments || [];
+    var effects = data.effects || [];
+
+    // ----- state
+    var done = {}, doneTurn = {}, avail = {}, progress = {}, boosted = {}, boostAt = {};
+    var unlockTurn = {};
+    nodes.forEach(function (n) { progress[n.id] = 0; });
+    var religionOn = cfg.religion_mode !== "off" && (data.beliefs || []).length > 0;
+    var religionTurn = religionOn ? P.religion_found_turn : null;
+    var cities = [], pressure = [], follows = [];
+    var faith = 0, unitCost = 75, unitsBought = 0;
+    var wasted = { science: 0, culture: 0, pooled: 0 }, wastedBlocked = 0;
+    var tailTurns = 0, researchTurns = 0;
+    var series = { turn: [], nodes_total: [], nodes_science: [], nodes_culture: [], religion_share: [], cities: [], gp_claims: [], gp_rival: [] };
+
+    // ----- great people
+    var gpClasses = (data.great_person_classes || []).map(function (c) { return c.id; });
+    var individuals = (data.great_person_individuals || []).slice().sort(function (a, b) { return ((eraIdx[a.era] || {}).index || 0) - ((eraIdx[b.era] || {}).index || 0); });
+    var shared = cfg.great_person_pool === "shared_finite";
+    var pools = {}, playerPts = {}, rivalPts = {}, claims = [], rivalClaims = 0, gpWasted = 0;
+    gpClasses.forEach(function (c) { pools[c] = individuals.filter(function (i) { return i["class"] === c; }); playerPts[c] = 0; rivalPts[c] = 0; });
+    var classTotal = {}; gpClasses.forEach(function (c) { classTotal[c] = pools[c].length; });
+
+    function nodeAvailable(n) { return !done[n.id] && n.requires.every(function (r) { return done[r]; }); }
+    function activeTurn(entityId, requiresNode) { // turn the thing starts producing, or null
+      var u = unlockTurn[entityId];
+      return u === undefined ? null : u + P.building_delay;
+    }
+
+    function completeNode(n, t) {
+      done[n.id] = true; doneTurn[n.id] = t;
+      (n.unlocks || []).forEach(function (u) { unlockTurn[u.id] = t; });
+      nodes.forEach(function (m) { if (avail[m.id] === undefined && nodeAvailable(m)) avail[m.id] = t; });
+    }
+    nodes.forEach(function (n) { if (!n.requires.length) avail[n.id] = 0; });
+
+    function boostFireTurn(n) {
+      var b = n.boost || {};
+      if (!b.family || b.family === "none" || avail[n.id] === undefined) return null;
+      var trig = b.trigger || {}, count = trig.count || 1;
+      switch (b.family) {
+        case "build_or_own": return avail[n.id] + P.boost_delay_own * count;
+        case "chain_node": return done[trig.node] ? Math.max(avail[n.id], doneTurn[trig.node]) : null;
+        case "combat": return avail[n.id] + P.boost_delay_combat * count;
+        case "diplomacy_trade": return avail[n.id] + P.boost_delay_trade * count;
+        case "explore": return avail[n.id] + P.boost_delay_explore;
+        case "religion": return religionTurn === null ? null : Math.max(avail[n.id], religionTurn);
+      }
+      return null;
+    }
+
+    function govFactor(yieldName, t) {
+      // highest-tier unlocked government's fixed bonus, plus effects owned by finished nodes; only unconditional yield_pct
+      var f = 1, best = null;
+      gov.forEach(function (g) { if ((!g.requires_node || done[g.requires_node]) && (best === null || g.tier > best.tier)) best = g; });
+      effects.forEach(function (e) {
+        if (e.kind !== "yield_pct" || (e.when !== null && e.when !== undefined) || !e.args || e.args["yield"] !== yieldName) return;
+        var active = (best && best.fixed_bonus === e.id) || (done[e.owner] === true);
+        if (active) f *= 1 + e.args.amount / 100;
+      });
+      return f;
+    }
+
+    var tailIds = {}; nodes.forEach(function (n) { if (!(n.unlocks || []).length) tailIds[n.id] = true; });
+    var religionHit50 = null, religionAt100 = null;
+
+    for (var t = 1; t <= P.turns; t++) {
+      // ---- cities and growth
+      var target = Math.min(P.max_cities, 1 + Math.floor((t - 1) / P.city_interval));
+      while (cities.length < target) { cities.push({ size: 1, food: 0, x: cities.length * P.city_spacing, founded: t, converted: null }); pressure.push(0); follows.push(false); }
+      var citizens = 0;
+      cities.forEach(function (c) {
+        c.food += P.food_surplus;
+        var need = foodNeeded(c.size);
+        if (c.food >= need && c.size < P.size_cap) { c.food -= need; c.size += 1; }
+        citizens += c.size;
+      });
+      var n = cities.length;
+
+      // ---- yields from buildings
+      var bY = { science: 0, culture: 0, faith: 0 };
+      var districtActive = {};
+      districts.forEach(function (d) { var a = activeTurn(d.id); districtActive[d.id] = a !== null && t >= a; });
+      buildings.forEach(function (b) {
+        var a = activeTurn(b.id);
+        if (a === null || t < a || !districtActive[b.district]) return;
+        Object.keys(b.yields || {}).forEach(function (y) { if (bY[y] !== undefined) bY[y] += b.yields[y] * n; });
+      });
+      var sci = (P.base_sci * n + P.sci_per_citizen * citizens + bY.science) * govFactor("science", t);
+      var cul = (P.base_cul * n + P.cul_per_citizen * citizens + bY.culture) * govFactor("culture", t);
+      var fai = (P.base_faith * n + bY.faith) * govFactor("faith", t);
+
+      // ---- boosts
+      nodes.forEach(function (nd) {
+        if (done[nd.id] || boosted[nd.id]) return;
+        var at = boostFireTurn(nd);
+        if (at !== null && t >= at) {
+          boosted[nd.id] = true;
+          progress[nd.id] = Math.min(nd.cost - 1, progress[nd.id] + nd.cost * nd.boost.percent / 100);
+        }
+      });
+
+      // ---- research
+      var rpools = pooled ? [{ name: "pooled", amount: sci + cul, filter: function () { return true; } }]
+                         : [{ name: "science", amount: sci, filter: function (nd) { return nd.tree === "science"; } },
+                            { name: "culture", amount: cul, filter: function (nd) { return nd.tree === "culture"; } }];
+      var spentAny = false, spentTail = false, incompleteAtStart = Object.keys(done).length < nodes.length;
+      rpools.forEach(function (pl) {
+        var budget = pl.amount, guard = 0;
+        while (budget > 1e-9 && guard++ < nodes.length + 2) {
+          var cands = nodes.filter(function (nd) { return pl.filter(nd) && nodeAvailable(nd); });
+          if (!cands.length) { wasted[pl.name] += budget; if (incompleteAtStart) wastedBlocked += budget; break; }
+          cands.sort(function (a, b) { return (a.cost - progress[a.id]) - (b.cost - progress[b.id]); });
+          var cur = cands[0], need = cur.cost - progress[cur.id];
+          spentAny = true; if (tailIds[cur.id]) spentTail = true;
+          if (budget >= need) { budget -= need; progress[cur.id] = cur.cost; completeNode(cur, t); }
+          else { progress[cur.id] += budget; budget = 0; }
+        }
+      });
+      if (spentAny) researchTurns++;
+      if (spentTail) tailTurns++;
+
+      // ---- religion
+      if (religionOn && t >= religionTurn) {
+        if (t === religionTurn) { follows[0] = true; cities[0].converted = t; }
+        var shrine = !!districtActive["dist.shrine"];
+        var rp = data.religion_pressure || {};
+        var radius = rp.radius || 10, per = rp.per_turn_adjacent_city || 1, holy = rp.holy_city_multiplier || 4, shrineMult = rp.shrine_district_multiplier || 2;
+        for (var j = 0; j < n; j++) {
+          if (follows[j]) continue;
+          for (var k = 0; k < n; k++) {
+            if (!follows[k] || Math.abs(cities[j].x - cities[k].x) > radius) continue;
+            pressure[j] += per * (k === 0 ? holy : 1) * (shrine ? shrineMult : 1);
+          }
+        }
+        if (cfg.religion_mode === "units_and_pressure") {
+          faith += fai;
+          while (faith >= unitCost) {
+            faith -= unitCost; unitCost += P.unit_cost_step; unitsBought++;
+            var charges = ((data.faith_units && data.faith_units[0] && data.faith_units[0].charges) || 3);
+            for (var ch = 0; ch < charges; ch++) {
+              var tgt = -1;
+              for (var q = 0; q < n; q++) if (!follows[q]) { tgt = q; break; }
+              if (tgt >= 0) pressure[tgt] += P.unit_push;
+            }
+          }
+        }
+        for (var m2 = 0; m2 < n; m2++) if (!follows[m2] && pressure[m2] >= P.convert_threshold) { follows[m2] = true; cities[m2].converted = t; }
+      }
+      var fcount = follows.filter(Boolean).length, share = n ? fcount / n : 0;
+      if (religionOn && religionHit50 === null && share >= 0.5 && t >= religionTurn) religionHit50 = t;
+      if (religionOn && t === 100) religionAt100 = Math.round(share * 1000) / 10;
+
+      // ---- great people
+      var rivalRate = P.rival_strength * P.rival_rate * (1 + t / P.rival_growth);
+      gpClasses.forEach(function (c) {
+        var rate = 0;
+        districts.forEach(function (d) { if (d.great_person_class === c && districtActive[d.id]) rate += (d.gp_points_per_turn || 0) * n; });
+        buildings.forEach(function (b) {
+          var a = activeTurn(b.id);
+          if (a !== null && t >= a && districtActive[b.district] && b.great_person_points && b.great_person_points[c]) rate += b.great_person_points[c] * n;
+        });
+        if (!pools[c].length) { gpWasted += rate; return; }
+        playerPts[c] += rate;
+        if (shared && t >= P.rival_start) rivalPts[c] += rivalRate;
+        var loop = 0;
+        while (pools[c].length && loop++ < 20) {
+          var next = pools[c][0], cost = (eraIdx[next.era] || { great_person_base_cost: 60 }).great_person_base_cost;
+          var pOk = playerPts[c] >= cost, rOk = shared && rivalPts[c] >= cost;
+          if (!pOk && !rOk) break;
+          var playerWins = pOk && (!rOk || (playerPts[c] / cost) >= (rivalPts[c] / cost));
+          if (playerWins) { playerPts[c] -= cost; claims.push({ id: next.id, turn: t }); } else { rivalPts[c] -= cost; rivalClaims++; }
+          pools[c].shift();
+        }
+      });
+
+      series.turn.push(t); series.nodes_total.push(Object.keys(done).length);
+      series.nodes_science.push(nodes.filter(function (x) { return done[x.id] && x.tree === "science"; }).length);
+      series.nodes_culture.push(nodes.filter(function (x) { return done[x.id] && x.tree === "culture"; }).length);
+      series.religion_share.push(religionOn ? Math.round(share * 1000) / 10 : 0);
+      series.cities.push(n); series.gp_claims.push(claims.length); series.gp_rival.push(rivalClaims);
+    }
+
+    function lastDone(filter) {
+      var ts = nodes.filter(filter).map(function (x) { return doneTurn[x.id]; });
+      return ts.length && ts.every(function (v) { return v !== undefined; }) ? Math.max.apply(null, ts) : null;
+    }
+    function metricsGap() {
+      var a = lastDone(function (x) { return x.tree === "science"; }), b = lastDone(function (x) { return x.tree === "culture"; });
+      return a === null || b === null ? null : Math.abs(a - b);
+    }
+    var lags = cities.filter(function (c, i) { return i > 0 && c.converted !== null; }).map(function (c) { return c.converted - Math.max(c.founded, religionTurn || 0); });
+    var lagAvg = lags.length ? Math.round(lags.reduce(function (a, b) { return a + b; }, 0) / lags.length * 10) / 10 : null;
+    var unconverted = cities.filter(function (c) { return c.converted === null; }).length;
+    var totalCost = nodes.reduce(function (s, x) { return s + x.cost; }, 0);
+    var tailCost = nodes.filter(function (x) { return tailIds[x.id]; }).reduce(function (s, x) { return s + x.cost; }, 0);
+    var lockedOut = gpClasses.filter(function (c) { return !claims.some(function (cl) { return cl.id && individuals.filter(function (i) { return i.id === cl.id; })[0]["class"] === c; }) && classTotal[c] > 0; }).length;
+    var metrics = {
+      nodes_done: Object.keys(done).length, nodes_total: nodes.length,
+      finish_all: lastDone(function () { return true; }),
+      finish_science: pooled ? null : lastDone(function (x) { return x.tree === "science"; }),
+      finish_culture: pooled ? null : lastDone(function (x) { return x.tree === "culture"; }),
+      wasted_yield: Math.round(wasted.science + wasted.culture + wasted.pooled),
+      wasted_while_blocked: Math.round(wastedBlocked),
+      blocked_gap: (pooled || metricsGap() === null) ? 0 : metricsGap(),
+      tail_nodes: Object.keys(tailIds).length, tail_cost_share: totalCost ? Math.round(tailCost / totalCost * 1000) / 10 : 0,
+      tail_turns: tailTurns, tail_turn_share: researchTurns ? Math.round(tailTurns / researchTurns * 1000) / 10 : 0,
+      total_cost: totalCost,
+      religion_on: religionOn, religion_turn: religionTurn, religion_half: religionHit50, religion_at_100: religionAt100, religion_lag: lagAvg, religion_unconverted: unconverted,
+      religion_end_share: series.religion_share[series.religion_share.length - 1], faith_units_bought: unitsBought,
+      gp_player: claims.length, gp_rival: rivalClaims, gp_wasted: Math.round(gpWasted), gp_locked_classes: lockedOut, gp_total: individuals.length
+    };
+    return { metrics: metrics, series: series, params: P, doneTurn: doneTurn };
+  }
+
+  // Run the sim for each option of one variable, with everything else as given.
+  function compare(S, pristine, config, variableId, variants, params) {
+    var v = variants[variableId];
+    return Object.keys(v.options).map(function (opt) {
+      var cfg = {}; Object.keys(config).forEach(function (k) { cfg[k] = config[k]; });
+      cfg[v.config_key] = opt;
+      var d = S.buildDataset(pristine, cfg, true, []);
+      var r = simulate(d, params);
+      return { option: opt, isDecision: opt === v.decision, result: r };
+    });
+  }
+
+  var api = { simulate: simulate, compare: compare, DEFAULTS: DEFAULTS, DESCRIPTIONS: DESCRIPTIONS };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  root.SchemaSim = api;
+})(typeof globalThis !== "undefined" ? globalThis : this);
+</script>
 <script>
 (function () {
   "use strict";
@@ -897,6 +1231,188 @@ textarea.paste { width: 100%; min-height: 120px; margin-top: 8px; font-family: v
   };
   $("paste").value = "";
   draw(false);
+
+  // ---------- simulate
+  var SimAPI = window.SchemaSim;
+  var VAR_LABELS = { tree_layout: "Tree layout", religion_mode: "Religion mode", late_tail: "Late tail", great_person_pool: "Great-person pool" };
+  var TABS = [["research", "Research"], ["religion", "Religion"], ["gp", "Great people"]];
+  var sim = { runs: null, tab: "research", view: "chart", params: {}, varId: "late_tail", cross: null };
+
+  function nice(v) { return v === null || v === undefined ? "n/a" : (typeof v === "number" ? String(Math.round(v * 10) / 10) : String(v)); }
+  function simSetup() {
+    var opts = Object.keys(VARIANTS).map(function (id) { return '<option value="' + id + '">' + esc(VAR_LABELS[id] || id) + "</option>"; }).join("") + '<option value="__current">Current setup only</option>';
+    $("simVar").innerHTML = opts; $("simVar").value = sim.varId;
+    var a = "";
+    Object.keys(SimAPI.DESCRIPTIONS).forEach(function (k) {
+      var val = sim.params[k] !== undefined ? sim.params[k] : SimAPI.DEFAULTS[k];
+      a += '<label for="ap_' + k + '">' + esc(SimAPI.DESCRIPTIONS[k]) + '<input type="number" step="any" id="ap_' + k + '" data-ap="' + k + '" value="' + esc(val) + '"></label>';
+    });
+    $("assump").innerHTML = a;
+  }
+  function runSim() {
+    var id = $("simVar").value; sim.varId = id;
+    var runs;
+    if (id === "__current") {
+      var d = S.buildDataset(EXAMPLE, state.config, state.convert, []);
+      runs = [{ option: "current setup", isDecision: false, result: SimAPI.simulate(d, sim.params) }];
+    } else {
+      runs = SimAPI.compare(S, EXAMPLE, state.config, id, VARIANTS, sim.params);
+    }
+    sim.runs = runs; sim.cross = null;
+    $("simNote").textContent = runs.length + " run" + (runs.length === 1 ? "" : "s") + ", " + runs[0].result.params.turns + " turns each";
+    renderSim();
+  }
+
+  var ROWS = {
+    research: [["All nodes done (turn)", "finish_all"], ["Science tree done (turn)", "finish_science"], ["Culture tree done (turn)", "finish_culture"], ["Gap between the trees (turns)", "blocked_gap"], ["Yield wasted while research was blocked", "wasted_while_blocked"], ["Tail nodes", "tail_nodes"], ["Tail share of total cost (%)", "tail_cost_share"], ["Tail share of research turns (%)", "tail_turn_share"]],
+    religion: [["Religion adopted (turn)", "religion_turn"], ["Half of the cities follow (turn)", "religion_half"], ["Cities following at turn 100 (%)", "religion_at_100"], ["Average turns from founding to conversion", "religion_lag"], ["Cities never converted", "religion_unconverted"], ["Spread units bought", "faith_units_bought"]],
+    gp: [["Great people you claimed", "gp_player"], ["Claimed by rivals", "gp_rival"], ["Classes you were locked out of", "gp_locked_classes"], ["Points wasted after the pool emptied", "gp_wasted"]]
+  };
+  var SERIES = {
+    research: { key: "nodes_total", label: "Nodes researched", max: function (runs) { return Math.max.apply(null, runs.map(function (r) { return r.result.metrics.nodes_total; })); } },
+    religion: { key: "religion_share", label: "Cities following the religion (%)", max: function () { return 100; } },
+    gp: { key: "gp_claims", label: "Great people claimed by you", max: function (runs) { return Math.max(1, Math.max.apply(null, runs.map(function (r) { return r.result.metrics.gp_total; }))); } }
+  };
+  function optLabel(r) { return r.option.replace(/_/g, " ") + (r.isDecision ? " ★" : ""); }
+
+  function renderSim() {
+    var out = $("simOut");
+    if (!sim.runs) { out.innerHTML = '<p class="hint" style="margin-top:12px">Pick what to compare and press Run simulation. Each option is run against the same example world, with everything else left as in the switches above.</p>'; return; }
+    var runs = sim.runs, spec = SERIES[sim.tab];
+    var html = '<div class="tabs" role="radiogroup" aria-label="What to plot">' + TABS.map(function (t) { return '<label><input type="radio" name="simtab" value="' + t[0] + '"' + (sim.tab === t[0] ? " checked" : "") + "><span>" + t[1] + "</span></label>"; }).join("") + "</div>";
+    html += '<div class="row" style="justify-content:space-between"><div class="ytitle">' + esc(spec.label) + ' by turn</div><label class="check"><input type="checkbox" id="simTable"' + (sim.view === "table" ? " checked" : "") + '> Show as a table</label></div>';
+    html += '<div class="chartlegend">' + runs.map(function (r, i) { return '<span class="i"><i class="key' + (i === 2 ? " d3" : "") + '" style="border-top-color:var(--s' + (i + 1) + ')"></i>' + esc(optLabel(r)) + "</span>"; }).join("") + "</div>";
+    html += sim.view === "table" ? '<div class="tablewrap" id="dataTable"></div>' : '<div class="chartwrap" id="chartWrap"></div>';
+    html += '<div class="tablewrap"><table class="metrics"><thead><tr><th>Measure</th>' + runs.map(function (r) { return "<th>" + esc(optLabel(r)) + "</th>"; }).join("") + "</tr></thead><tbody>";
+    ROWS[sim.tab].forEach(function (row) {
+      html += "<tr><td>" + esc(row[0]) + "</td>";
+      runs.forEach(function (r) {
+        var v = r.result.metrics[row[1]];
+        if (sim.tab === "gp" && row[1] === "gp_player") v = v + " of " + r.result.metrics.gp_total;
+        html += '<td class="' + (v === null || v === undefined ? "na" : "") + '">' + esc(v === null || v === undefined ? "never / n/a" : nice(v)) + "</td>";
+      });
+      html += "</tr>";
+    });
+    html += "</tbody></table></div>";
+    html += '<div class="simtake" id="simTake"></div>';
+    out.innerHTML = html;
+    if (sim.view === "table") fillDataTable(runs, spec); else drawChart(runs, spec);
+    $("simTake").textContent = takeaway(runs);
+  }
+
+  function takeaway(runs) {
+    if (runs.length < 2) return "One run only. Compare options to see differences.";
+    var id = sim.varId, m = function (i) { return runs[i].result.metrics; };
+    function find(o) { return runs.filter(function (r) { return r.option === o; })[0]; }
+    if (id === "late_tail") {
+      var k = find("keep"), t = find("trim");
+      if (k && t) return "With the tail kept, all nodes finish on turn " + k.result.metrics.finish_all + " instead of " + t.result.metrics.finish_all + " (" + (k.result.metrics.finish_all - t.result.metrics.finish_all) + " turns later). The " + k.result.metrics.tail_nodes + " tail nodes are " + k.result.metrics.tail_cost_share + "% of the total cost and take " + k.result.metrics.tail_turn_share + "% of research turns.";
+    }
+    if (id === "tree_layout") {
+      var two = find("two_trees"), one = find("one_tree");
+      if (two && one) return "Two trees finish on turn " + two.result.metrics.finish_all + " (the trees end " + two.result.metrics.blocked_gap + " turns apart, " + two.result.metrics.wasted_while_blocked + " yield wasted while one side had nothing to research). One shared tree finishes on turn " + one.result.metrics.finish_all + " with " + one.result.metrics.wasted_while_blocked + " wasted.";
+    }
+    if (id === "religion_mode") {
+      var po = find("pressure_only"), up = find("units_and_pressure");
+      if (po && up) return "Pressure alone converts a new city in about " + nice(po.result.metrics.religion_lag) + " turns after founding; with spread units, about " + nice(up.result.metrics.religion_lag) + " (" + up.result.metrics.faith_units_bought + " units bought). Whether that difference is worth the unit layer is the design question.";
+    }
+    if (id === "great_person_pool") {
+      var sh = find("shared_finite"), pe = find("personal");
+      if (sh && pe) return "With a shared pool you claim " + sh.result.metrics.gp_player + " of " + sh.result.metrics.gp_total + " great people and rivals take " + sh.result.metrics.gp_rival + " (locked out of " + sh.result.metrics.gp_locked_classes + " classes). With a personal pool you claim " + pe.result.metrics.gp_player + ". Rival pace is an assumption: change it above.";
+    }
+    return "";
+  }
+
+  function seriesVal(r, spec, i) { return r.result.series[spec.key][i]; }
+  function fillDataTable(runs, spec) {
+    var turns = runs[0].result.series.turn, step = Math.max(1, Math.round(turns.length / 10));
+    var h = '<table class="metrics"><thead><tr><th>Turn</th>' + runs.map(function (r) { return "<th>" + esc(optLabel(r)) + "</th>"; }).join("") + "</tr></thead><tbody>";
+    for (var i = step - 1; i < turns.length; i += step) h += "<tr><td>" + turns[i] + "</td>" + runs.map(function (r) { return "<td>" + esc(nice(seriesVal(r, spec, i))) + "</td>"; }).join("") + "</tr>";
+    h += "</tbody></table>";
+    $("dataTable").innerHTML = h;
+  }
+
+  function drawChart(runs, spec) {
+    var cw = $("chartWrap").clientWidth || 700;
+    var W = Math.max(300, Math.min(900, cw)), H = W < 480 ? 230 : 280, L = 38, R = 18, T = 14, B = 34;
+    var turns = runs[0].result.series.turn, n = turns.length;
+    var ymax = spec.max(runs); if (spec.key === "religion_share") ymax = 100;
+    var step = ymax <= 6 ? 1 : ymax <= 12 ? 2 : ymax <= 30 ? 5 : ymax <= 60 ? 10 : 25;
+    ymax = Math.ceil(ymax / step) * step;
+    function X(i) { return L + (W - L - R) * (i / Math.max(1, n - 1)); }
+    function Y(v) { return T + (H - T - B) * (1 - v / ymax); }
+    var s = '<svg class="chart" viewBox="0 0 ' + W + " " + H + '" role="img" tabindex="0" aria-label="' + esc(spec.label) + ' by turn, one line per option. Use the arrow keys to read values; a table is available below.">';
+    for (var y = 0; y <= ymax; y += step) {
+      s += '<line class="' + (y === 0 ? "axis" : "grid") + '" x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(y) + '" y2="' + Y(y) + '"/>';
+      s += '<text x="' + (L - 8) + '" y="' + (Y(y) + 4) + '" text-anchor="end">' + y + "</text>";
+    }
+    var xs = Math.max(1, Math.round(turns.length / 4 / 25) * 25) || 50;
+    for (var tv = 0; tv <= turns.length; tv += xs) {
+      var xi = Math.max(0, tv - 1);
+      s += '<text x="' + X(xi) + '" y="' + (H - 12) + '" text-anchor="middle">' + tv + "</text>";
+    }
+    s += '<text x="' + ((L + W - R) / 2) + '" y="' + (H - 0) + '" text-anchor="middle" style="font-size:10.5px">turn</text>';
+    runs.forEach(function (r, i) {
+      var pts = turns.map(function (t, k) { return (k === 0 ? "M" : "L") + X(k).toFixed(1) + "," + Y(seriesVal(r, spec, k)).toFixed(1); }).join(" ");
+      s += '<path d="' + pts + '" fill="none" stroke="var(--s' + (i + 1) + ')" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"' + (i === 2 ? ' stroke-dasharray="6 4"' : "") + "/>";
+      var last = n - 1;
+      s += '<circle class="ring" cx="' + X(last) + '" cy="' + Y(seriesVal(r, spec, last)) + '" r="4" fill="var(--s' + (i + 1) + ')"/>';
+    });
+    s += '<line class="cross" id="cross" x1="0" x2="0" y1="' + T + '" y2="' + (H - B) + '" style="display:none"/>';
+    s += '<g id="dots"></g>';
+    s += '<rect id="hit" x="' + L + '" y="' + T + '" width="' + (W - L - R) + '" height="' + (H - T - B) + '" fill="transparent"/>';
+    s += "</svg><div class=\"tip\" id=\"tip\" hidden></div>";
+    $("chartWrap").innerHTML = s;
+    var svg = $("chartWrap").querySelector("svg"), tip = $("tip"), cross = $("cross"), dots = $("dots");
+    function show(i) {
+      i = Math.max(0, Math.min(n - 1, i)); sim.cross = i;
+      var x = X(i);
+      cross.setAttribute("x1", x); cross.setAttribute("x2", x); cross.style.display = "";
+      dots.innerHTML = runs.map(function (r, k) { return '<circle class="ring" cx="' + x + '" cy="' + Y(seriesVal(r, spec, i)) + '" r="4" fill="var(--s' + (k + 1) + ')"/>'; }).join("");
+      tip.hidden = false; tip.textContent = "";
+      var tt = document.createElement("div"); tt.className = "tt"; tt.textContent = "Turn " + turns[i]; tip.appendChild(tt);
+      runs.forEach(function (r, k) {
+        var row = document.createElement("div"); row.className = "tr";
+        var key = document.createElement("i"); key.className = "key" + (k === 2 ? " d3" : ""); key.style.borderTopColor = "var(--s" + (k + 1) + ")";
+        var nm = document.createElement("span"); nm.textContent = optLabel(r);
+        var val = document.createElement("b"); val.textContent = nice(seriesVal(r, spec, i));
+        row.appendChild(key); row.appendChild(nm); row.appendChild(val); tip.appendChild(row);
+      });
+      var box = $("chartWrap").getBoundingClientRect(), px = (x / W) * box.width;
+      tip.style.left = Math.min(Math.max(0, px + 12), Math.max(0, box.width - 190)) + "px"; tip.style.top = "8px";
+    }
+    function idxFromEvent(e) {
+      var box = svg.getBoundingClientRect(), vx = (e.clientX - box.left) / box.width * W;
+      return Math.round((vx - L) / (W - L - R) * (n - 1));
+    }
+    $("hit").addEventListener("pointermove", function (e) { show(idxFromEvent(e)); });
+    $("hit").addEventListener("pointerdown", function (e) { show(idxFromEvent(e)); });
+    svg.addEventListener("pointerleave", function () { tip.hidden = true; cross.style.display = "none"; dots.innerHTML = ""; });
+    svg.addEventListener("keydown", function (e) {
+      var cur = sim.cross === null ? n - 1 : sim.cross;
+      if (e.key === "ArrowRight") { e.preventDefault(); show(cur + 5); }
+      else if (e.key === "ArrowLeft") { e.preventDefault(); show(cur - 5); }
+      else if (e.key === "Home") { e.preventDefault(); show(0); }
+      else if (e.key === "End") { e.preventDefault(); show(n - 1); }
+    });
+    svg.addEventListener("focus", function () { show(sim.cross === null ? n - 1 : sim.cross); });
+    svg.addEventListener("blur", function () { tip.hidden = true; cross.style.display = "none"; dots.innerHTML = ""; });
+  }
+
+  document.addEventListener("change", function (e) {
+    var t = e.target;
+    if (t.name === "simtab") { sim.tab = t.value; sim.cross = null; renderSim(); }
+    else if (t.id === "simTable") { sim.view = t.checked ? "table" : "chart"; renderSim(); }
+    else if (t.getAttribute && t.getAttribute("data-ap")) { var v = parseFloat(t.value); sim.params[t.getAttribute("data-ap")] = isNaN(v) ? undefined : v; }
+    else if (t.id === "simVar") { sim.varId = t.value; }
+  });
+  var resizeTimer = null;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { if (sim.runs && sim.view === "chart" && $("chartWrap")) drawChart(sim.runs, SERIES[sim.tab]); }, 120);
+  });
+  $("simRun").onclick = runSim;
+  simSetup(); renderSim();
 })();
 </script>
 
