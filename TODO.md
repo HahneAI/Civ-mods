@@ -74,6 +74,7 @@ Only for mods worth it: abandoned, badly conflicting, or ones you want to custom
 ## Phase 5 · Your customizations
 
 - [ ] **[You]** Pick the top three items from the wall list.
+  - Wall item 1 (owner, 2026-11-13): **Heroes and Legends rework** (rarer, more infrastructure, better AI use). Ledger page drafted: `docs/ledger/09-custom-heroes-legends.md`. Decisions and a round 5 database dump still needed. Nothing built.
 - [ ] **[Claude]** For each: write a ledger entry first (design decision), then build it in `Data/custom/` or `Scripts/`, with `CL_` prefixes.
 - [ ] **[You]** Playtest each one alone before stacking the next.
 

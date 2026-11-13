@@ -109,7 +109,8 @@ TABLES = [
 
 # Words used to list candidate tables when a table name above does not exist.
 DISCOVERY_WORDS = ["Trade", "Diplo", "Grievance", "Agenda", "Envoy", "Alliance", "CasusBelli",
-                   "Religion", "Boost", "Prereq", "Promotion", "Wall", "Heal", "Specialist", "Loyalty"]
+                   "Religion", "Boost", "Prereq", "Promotion", "Wall", "Heal", "Specialist", "Loyalty",
+                   "Hero"]
 
 
 def find_db(arg: str | None) -> Path | None:

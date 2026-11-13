@@ -15,6 +15,7 @@ Source: custom. Updated 2026-11-10 (end of the second design push: variables and
 | `06-religion-faith.md` | pantheon, beliefs, spread, faith units | confirmed; belief effects unpacked on page 07 |
 | `07-effects-system.md` | how every effect is stored as data; unlocks; era score | new; beliefs, conditions and moments done |
 | `08-design-variables.md` | the four open design questions as switches, with decisions and how to test | new; decisions made, not yet playtested |
+| `09-custom-heroes-legends.md` | **custom change:** Heroes and Legends rework (rarer, more infrastructure, better AI use) | design draft, nothing built; needs a round 5 dump |
 | `db-check.md` | how to read the game database (one click) | rounds 1 to 4 done |
 | `../schema/playground.html` | interactive page for the four design variables, with rule checks and a toy simulation (open in a browser) | new |
 

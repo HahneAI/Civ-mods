@@ -125,3 +125,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - Workable 4th Ring ID 3220078106 and Real Strategy ID 1617282434 confirmed. Added `docs/ai-tuning/real-strategy.md` (owner priority: AI tuning) and a pointer in this file.
 - Merged `version-control` into the feature branch (only conflict: this changelog; kept both sets). 71 tests pass.
 - Started `docs/playtests/003-group3.md`: UI bugs logged (Great People screen turns transparent; top-left tabs jump over production numbers). CQUI first suspect.
+- Added ledger page 09 (`docs/ledger/09-custom-heroes-legends.md`): design draft for the owner's Heroes and Legends rework; `dbdump.py` now lists "Hero" tables for round 5; wall item 1 in TODO.

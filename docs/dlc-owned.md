@@ -43,6 +43,10 @@ The owner confirmed the screenshots are the complete list. Anything not shown is
 - **Vietnam and Kublai Khan Pack**, so the New Frontier Pass is incomplete (5 of 6 civ packs). Nothing on the mod list needs it.
 - The Ottomans still come with Gathering Storm itself, so they're available anyway.
 
+## Game modes seen in use
+
+- **Heroes and Legends** was on in playtest 002 (log line "Hero MODE is: ON"), so it is available. It was not in the screenshots above; it ships with the Babylon Pack content. See `docs/ledger/09-custom-heroes-legends.md`.
+
 ## What this decides
 
 - Civilizations Expanded: **in**. Civ rework choice defaults to Civilizations Expanded (SPEC section 11).
