@@ -124,3 +124,4 @@ These tools don't exist until TODO Phase 2 builds them.
 - Corrected a misreading: the 'thin tail' idea is retired. Variable `late_tail` became `node_rewards` (`unlock_or_effect` decided by the owner: every node gives an unlock or a bonus effect; reference data confirms 0 empty nodes). R15 now means boost optional in endgame eras; example gets a project and an effect-only last node; 71 tests.
 - Workable 4th Ring ID 3220078106 and Real Strategy ID 1617282434 confirmed. Added `docs/ai-tuning/real-strategy.md` (owner priority: AI tuning) and a pointer in this file.
 - Merged `version-control` into the feature branch (only conflict: this changelog; kept both sets). 71 tests pass.
+- Started `docs/playtests/003-group3.md`: UI bugs logged (Great People screen turns transparent; top-left tabs jump over production numbers). CQUI first suspect.
